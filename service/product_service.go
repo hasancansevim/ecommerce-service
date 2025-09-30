@@ -9,9 +9,11 @@ import (
 
 type IProductService interface {
 	GetAllProducts() []domain.Product
-	//GetAllByStoreName(storeName string) []domain.Product
-	//GetProductById(productId int64) (domain.Product, error)
+	GetAllProductsByStoreName(storeName string) []domain.Product
+	GetProductById(productId int64) (domain.Product, error)
 	AddProduct(productCreate model.ProductCreate) error
+	DeleteProductById(productId int64) error
+	UpdatePrice(productId int64, newPrice float32) error
 }
 
 type ProductService struct {
@@ -28,6 +30,14 @@ func (productService *ProductService) GetAllProducts() []domain.Product {
 	return productService.productRepository.GetAllProducts()
 }
 
+func (productService *ProductService) GetAllProductsByStoreName(storeName string) []domain.Product {
+	return productService.productRepository.GetAllByStoreName(storeName)
+}
+
+func (productService *ProductService) GetProductById(productId int64) (domain.Product, error) {
+	return productService.productRepository.GetProductById(productId)
+}
+
 func (productService *ProductService) AddProduct(productCreate model.ProductCreate) error {
 	validateError := validateProductCreate(productCreate)
 	if validateError != nil {
@@ -39,6 +49,14 @@ func (productService *ProductService) AddProduct(productCreate model.ProductCrea
 		Discount: productCreate.Discount,
 		Store:    productCreate.Store,
 	})
+}
+
+func (productService *ProductService) DeleteProductById(productId int64) error {
+	return productService.productRepository.DeleteProductById(productId)
+}
+
+func (productService *ProductService) UpdatePrice(productId int64, newPrice float32) error {
+	return productService.productRepository.UpdatePrice(productId, newPrice)
 }
 
 func validateProductCreate(productCreate model.ProductCreate) error {

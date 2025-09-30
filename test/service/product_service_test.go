@@ -67,3 +67,60 @@ func Test_WhenNoValidationErrorOccurred_ShouldAddProduct(t *testing.T) {
 		}, actualProducts[len(actualProducts)-1])
 	})
 }
+
+func Test_AllProductsThatMatchTheStoreNameMustBeBrought(t *testing.T) {
+	t.Run("All products that match the store name must be brought", func(t *testing.T) {
+		expectedProducts := []domain.Product{
+			{
+				Id:       1,
+				Name:     "Laptop",
+				Price:    20000.0,
+				Discount: 10.0,
+				Store:    "Teknosa",
+			},
+			{
+				Id:       2,
+				Name:     "Klavye",
+				Price:    800.0,
+				Discount: 0.0,
+				Store:    "Teknosa",
+			},
+		}
+		actualProducts := productService.GetAllProductsByStoreName("Teknosa")
+		assert.Equal(t, expectedProducts, actualProducts)
+		assert.Equal(t, 2, len(actualProducts))
+	})
+}
+
+func Test_TheProductWithTheGivenIdShouldBeDeleted(t *testing.T) {
+	t.Run("The product with the given id should be deleted", func(t *testing.T) {
+		productService.DeleteProductById(2)
+		actualProducts := productService.GetAllProducts()
+		expectedProducts := []domain.Product{
+			{
+				Id:       1,
+				Name:     "Laptop",
+				Price:    20000.0,
+				Discount: 10.0,
+				Store:    "Teknosa",
+			},
+		}
+		assert.Equal(t, 1, len(actualProducts))
+		assert.Equal(t, expectedProducts, actualProducts)
+	})
+}
+
+func Test_ThePriceOfTheProductSentShouldBeUpdated(t *testing.T) {
+	t.Run("The price of the product sent should be updated.", func(t *testing.T) {
+		productService.UpdatePrice(1, 20000.0)
+		actualProduct, _ := productService.GetProductById(1)
+		expectedProduct := domain.Product{
+			Id:       1,
+			Name:     "Laptop",
+			Price:    20000.0,
+			Discount: 10.0,
+			Store:    "Teknosa",
+		}
+		assert.Equal(t, expectedProduct, actualProduct)
+	})
+}

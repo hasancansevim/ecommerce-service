@@ -140,3 +140,54 @@ func TestGetProductById(t *testing.T) {
 	})
 	clear(ctx, dbPool)
 }
+
+func TestUpdatePrice(t *testing.T) {
+	setup(ctx, dbPool)
+	t.Run("Update price from product", func(t *testing.T) {
+		productRepository.UpdatePrice(1, 18000.0)
+		updatedProduct, _ := productRepository.GetProductById(1)
+		expectedProducts := domain.Product{
+			Id:       1,
+			Name:     "Laptop",
+			Price:    18000.0,
+			Discount: 10.0,
+			Store:    "Teknosa",
+		}
+		assert.Equal(t, expectedProducts, updatedProduct)
+	})
+	clear(ctx, dbPool)
+}
+
+func TestDeleteProductById(t *testing.T) {
+	setup(ctx, dbPool)
+	t.Run("Delete Product by Id", func(t *testing.T) {
+		productRepository.DeleteProductById(3)
+		actualProduct := productRepository.GetAllProducts()
+		expectedProducts := []domain.Product{
+			{
+				Id:       1,
+				Name:     "Laptop",
+				Price:    20000.0,
+				Discount: 10.0,
+				Store:    "Teknosa",
+			},
+			{
+				Id:       2,
+				Name:     "Klavye",
+				Price:    800.0,
+				Discount: 0.0,
+				Store:    "Teknosa",
+			},
+			{
+				Id:       4,
+				Name:     "Ütü",
+				Price:    200.0,
+				Discount: 0.0,
+				Store:    "Güzel Evim",
+			},
+		}
+		assert.Equal(t, expectedProducts, actualProduct)
+		assert.Equal(t, 3, len(actualProduct))
+	})
+	clear(ctx, dbPool)
+}

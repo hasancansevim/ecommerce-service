@@ -18,7 +18,7 @@ type IProductRepository interface {
 	GetProductById(productId int64) (domain.Product, error)
 	AddProduct(product domain.Product) error
 	DeleteProductById(productId int64) error
-	UpdateProduct(productId int64, newPrice float32) error
+	UpdatePrice(productId int64, newPrice float32) error
 }
 
 type ProductRepository struct {
@@ -102,8 +102,14 @@ func (productRepository *ProductRepository) AddProduct(product domain.Product) e
 	return nil
 }
 
-func (productRepository *ProductRepository) UpdateProduct(productId int64, newPrice float32) error {
+func (productRepository *ProductRepository) UpdatePrice(productId int64, newPrice float32) error {
 	ctx := context.Background()
+	_, getProductByIdError := productRepository.GetProductById(productId)
+
+	if getProductByIdError != nil {
+		return errors.New(fmt.Sprintf("Product not found with id : %v", productId))
+	}
+
 	updatePriceSql := "update products set price=$1 where id=$2"
 	_, execErr := productRepository.dbPool.Exec(ctx, updatePriceSql, newPrice, productId)
 
@@ -116,6 +122,13 @@ func (productRepository *ProductRepository) UpdateProduct(productId int64, newPr
 
 func (productRepository *ProductRepository) DeleteProductById(productId int64) error {
 	ctx := context.Background()
+
+	_, getProductByIdErr := productRepository.GetProductById(productId)
+
+	if getProductByIdErr != nil {
+		return errors.New(fmt.Sprintf("Product not found with id : %v", productId))
+	}
+
 	deleteProductSql := "delete from products where id = $1"
 	_, execErr := productRepository.dbPool.Exec(ctx, deleteProductSql, productId)
 
