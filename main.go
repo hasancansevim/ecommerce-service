@@ -25,5 +25,20 @@ func main() {
 	productService := service.NewProductService(productRepository)
 	productController := controller.NewProductController(productService)
 	productController.RegisterRoutes(e)
+
+	userRepository := persistence.NewUserRepository(dbPool)
+	userService := service.NewUserService(userRepository)
+	userController := controller.NewUserController(userService)
+	userController.RegisterRoutes(e)
+
+	cartRepository := persistence.NewCartRepository(dbPool)
+	cartService := service.NewCartService(cartRepository)
+	cartController := controller.NewCartController(cartService)
+	cartController.RegisterRoutes(e)
+
+	carItemRepository := persistence.NewCartItemRepository(dbPool)
+	carItemService := service.NewCartItemService(carItemRepository)
+	cartItemController := controller.NewCartItemController(carItemService)
+	cartItemController.RegiesterRoutes(e)
 	e.Start("localhost:8080")
 }

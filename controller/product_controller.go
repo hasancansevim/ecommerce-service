@@ -87,11 +87,10 @@ func (productController *ProductController) UpdatePrice(c echo.Context) error {
 			ErrorDescription: convertErr.Error(),
 		})
 	}
-	// Query parametresi - BOŞSA hata ver!
+
 	queryParam := c.QueryParam("newPrice")
 	fmt.Printf("Gelen newPrice: %s\n", queryParam)
 
-	// DÜZELTME: Boşsa hata ver, doluysa devam et
 	if queryParam == "" {
 		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
 			ErrorDescription: "newPrice parameter is required",

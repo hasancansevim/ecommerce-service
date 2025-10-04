@@ -15,11 +15,11 @@ import (
 
 var productRepository persistence.IProductRepository
 var dbPool *pgxpool.Pool
-var ctx context.Context
+var product_ctx context.Context
 
-func TestMain(m *testing.M) {
-	ctx = context.Background()
-	dbPool = postgresql.GetConnectionPool(ctx, postgresql.Config{
+func ProductTestMain(m *testing.M) {
+	product_ctx = context.Background()
+	dbPool = postgresql.GetConnectionPool(product_ctx, postgresql.Config{
 		Host:                  "localhost",
 		Port:                  "6432",
 		Username:              "postgres",
@@ -30,22 +30,22 @@ func TestMain(m *testing.M) {
 	})
 	productRepository = persistence.NewProductRepository(dbPool)
 
-	fmt.Println("Before All Tests")
+	fmt.Println("Before All Tests - Product")
 	exitCode := m.Run()
-	fmt.Println("After All Tests")
+	fmt.Println("After All Tests - Product")
 	os.Exit(exitCode)
 }
 
 func setup(ctx context.Context, dbPool *pgxpool.Pool) {
-	TestDataInitalize(ctx, dbPool)
+	ProductTestDataInitalize(ctx, dbPool)
 }
 
 func clear(ctx context.Context, dbPool *pgxpool.Pool) {
-	TruncateTestData(ctx, dbPool)
+	TruncateProductTestData(ctx, dbPool)
 }
 
 func TestGetAllProducts(t *testing.T) {
-	setup(ctx, dbPool)
+	setup(product_ctx, dbPool)
 	t.Run("Get All Products", func(t *testing.T) {
 		allProducts := productRepository.GetAllProducts()
 		assert.Equal(t, 4, len(allProducts))
@@ -83,11 +83,11 @@ func TestGetAllProducts(t *testing.T) {
 
 		assert.Equal(t, expectedProducts, allProducts)
 	})
-	clear(ctx, dbPool)
+	clear(product_ctx, dbPool)
 }
 
 func TestGetAllProductsByStoreName(t *testing.T) {
-	setup(ctx, dbPool)
+	setup(product_ctx, dbPool)
 	t.Run("Get All Products by Store Name", func(t *testing.T) {
 		allProductsByStore := productRepository.GetAllByStoreName("Teknosa")
 
@@ -118,11 +118,11 @@ func TestGetAllProductsByStoreName(t *testing.T) {
 		assert.Equal(t, 3, len(allProductsByStore))
 		assert.Equal(t, expectedProducts, allProductsByStore)
 	})
-	clear(ctx, dbPool)
+	clear(product_ctx, dbPool)
 }
 
 func TestGetProductById(t *testing.T) {
-	setup(ctx, dbPool)
+	setup(product_ctx, dbPool)
 	t.Run("Get Product by Id", func(t *testing.T) {
 		actualProduct, _ := productRepository.GetProductById(3)
 		_, actualProductErr := productRepository.GetProductById(5)
@@ -138,11 +138,11 @@ func TestGetProductById(t *testing.T) {
 		assert.Equal(t, expectedProduct, actualProduct)
 		assert.Equal(t, "Product not found with id : 5", actualProductErr.Error())
 	})
-	clear(ctx, dbPool)
+	clear(product_ctx, dbPool)
 }
 
 func TestUpdatePrice(t *testing.T) {
-	setup(ctx, dbPool)
+	setup(product_ctx, dbPool)
 	t.Run("Update price from product", func(t *testing.T) {
 		productRepository.UpdatePrice(1, 18000.0)
 		updatedProduct, _ := productRepository.GetProductById(1)
@@ -155,11 +155,11 @@ func TestUpdatePrice(t *testing.T) {
 		}
 		assert.Equal(t, expectedProducts, updatedProduct)
 	})
-	clear(ctx, dbPool)
+	clear(product_ctx, dbPool)
 }
 
 func TestDeleteProductById(t *testing.T) {
-	setup(ctx, dbPool)
+	setup(product_ctx, dbPool)
 	t.Run("Delete Product by Id", func(t *testing.T) {
 		productRepository.DeleteProductById(3)
 		actualProduct := productRepository.GetAllProducts()
@@ -189,5 +189,5 @@ func TestDeleteProductById(t *testing.T) {
 		assert.Equal(t, expectedProducts, actualProduct)
 		assert.Equal(t, 3, len(actualProduct))
 	})
-	clear(ctx, dbPool)
+	clear(product_ctx, dbPool)
 }
