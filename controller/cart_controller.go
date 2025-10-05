@@ -40,7 +40,7 @@ func (cartController *CartController) GetCartById(c echo.Context) error {
 }
 
 func (cartController *CartController) CreateCart(c echo.Context) error {
-	var addCartRequest request.AddCartCreate
+	var addCartRequest request.AddCartRequest
 	bindErr := c.Bind(&addCartRequest)
 	if bindErr != nil {
 		return c.JSON(http.StatusBadRequest, response.ErrorResponse{

@@ -44,7 +44,7 @@ docker exec -i postgres-test psql -U postgres -d ecommerce -c "
         id BIGSERIAL NOT NULL PRIMARY KEY,
         user_id BIGINT NOT NULL,
         total_price DOUBLE PRECISION NOT NULL,
-        status VARCHAR(50) NOT NULL,
+        status BOOLEAN NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
     );

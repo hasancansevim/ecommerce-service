@@ -32,6 +32,20 @@ type CartItemResponse struct {
 	Quantity  int   `json:"quantity"`
 }
 
+type OrderResponse struct {
+	UserId     int64   `json:"user_id"`
+	TotalPrice float32 `json:"total_price"`
+	Status     bool    `json:"status"`
+	CreatedAt  string  `json:"created_at"`
+}
+
+type OrderItemResponse struct {
+	OrderId   int64   `json:"order_id"`
+	ProductId int64   `json:"product_id"`
+	Quantity  int     `json:"quantity"`
+	Price     float32 `json:"price"`
+}
+
 func ToResponse(product domain.Product) ProductResponse {
 	return ProductResponse{
 		Name:     product.Name,
@@ -66,6 +80,24 @@ func ToResponseCartItemData(cartItem domain.CartItem) CartItemResponse {
 	}
 }
 
+func ToResponseOrderData(order domain.Order) OrderResponse {
+	return OrderResponse{
+		UserId:     order.UserId,
+		TotalPrice: order.TotalPrice,
+		Status:     order.Status,
+		CreatedAt:  order.CreatedAt.String(),
+	}
+}
+
+func ToResponseOrderItemData(orderItem domain.OrderItem) OrderItemResponse {
+	return OrderItemResponse{
+		OrderId:   orderItem.OrderId,
+		ProductId: orderItem.ProductId,
+		Quantity:  orderItem.Quantity,
+		Price:     orderItem.Price,
+	}
+}
+
 func ToResponseList(products []domain.Product) []ProductResponse {
 	var productResponseList = []ProductResponse{}
 
@@ -92,4 +124,21 @@ func ToResponseListCartItems(cartItems []domain.CartItem) []CartItemResponse {
 	}
 
 	return cartItemResponseList
+}
+
+func ToResponseListOrders(orders []domain.Order) []OrderResponse {
+	var orderResponseList = []OrderResponse{}
+
+	for _, order := range orders {
+		orderResponseList = append(orderResponseList, ToResponseOrderData(order))
+	}
+	return orderResponseList
+}
+
+func ToResponseListOrderItems(orderItems []domain.OrderItem) []OrderItemResponse {
+	var orderItemResponseList = []OrderItemResponse{}
+	for _, orderItem := range orderItems {
+		orderItemResponseList = append(orderItemResponseList, ToResponseOrderItemData(orderItem))
+	}
+	return orderItemResponseList
 }

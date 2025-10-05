@@ -27,3 +27,16 @@ type CartItemCreate struct {
 	ProductId int64
 	Quantity  int
 }
+
+type OrderCreate struct {
+	UserId     int64
+	TotalPrice float32
+	Status     bool
+	CreatedAt  time.Time
+}
+type OrderItemCreate struct {
+	OrderId   int64
+	ProductId int64
+	Quantity  int
+	Price     float32
+}

@@ -40,5 +40,16 @@ func main() {
 	carItemService := service.NewCartItemService(carItemRepository)
 	cartItemController := controller.NewCartItemController(carItemService)
 	cartItemController.RegiesterRoutes(e)
+
+	orderRepository := persistence.NewOrderRepository(dbPool)
+	orderService := service.NewOrderService(orderRepository)
+	orderController := controller.NewOrderController(orderService)
+	orderController.RegisterRoutes(e)
+
+	orderItemRepository := persistence.NewOrderItemRepository(dbPool)
+	orderItemService := service.NewOrderItemService(orderItemRepository)
+	orderItemController := controller.NewOrderItemController(orderItemService)
+	orderItemController.RegisterRoutes(e)
+
 	e.Start("localhost:8080")
 }
