@@ -42,7 +42,7 @@ func (productRepository *ProductRepository) GetAllProducts() []domain.Product {
 
 func (productRepository *ProductRepository) GetAllByStoreName(storeName string) []domain.Product {
 	ctx := context.Background()
-	products, err := productRepository.scannner.QueryAndScan(ctx, "SELECT * FROM products WHERE store_name = $1", storeName)
+	products, err := productRepository.scannner.QueryAndScan(ctx, "SELECT * FROM products WHERE store = $1", storeName)
 	if err != nil {
 		log.Fatal(err)
 		return nil

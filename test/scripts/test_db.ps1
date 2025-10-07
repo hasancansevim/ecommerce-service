@@ -1,10 +1,15 @@
+# database-reset.ps1
+docker stop postgres-test
+docker rm postgres-test
+
 docker run --name postgres-test -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=123456 -p 6432:5432 -d postgres:latest
 
 Write-Output "PostgreSql Starting ..."
 Start-Sleep -Seconds 10
 
+docker exec -i postgres-test psql -U postgres -d postgres -c "DROP DATABASE IF EXISTS ecommerce;"
 docker exec -i postgres-test psql -U postgres -d postgres -c "CREATE DATABASE ecommerce;"
-Write-Output "Database ecommerce created"
+Write-Output "Database ecommerce recreated"
 
 docker exec -i postgres-test psql -U postgres -d ecommerce -c "
     CREATE TABLE IF NOT EXISTS products (
@@ -60,4 +65,4 @@ docker exec -i postgres-test psql -U postgres -d ecommerce -c "
     );
 "
 
-Write-Output "All tables created successfully"
+Write-Output "All tables recreated successfully"
