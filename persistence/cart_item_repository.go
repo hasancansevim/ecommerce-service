@@ -3,8 +3,8 @@ package persistence
 import (
 	"context"
 	"go-ecommerce-service/domain"
+	"go-ecommerce-service/persistence/helper"
 
-	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/labstack/gommon/log"
 )
@@ -20,132 +20,96 @@ type ICartItemRepository interface {
 }
 
 type CartItemRepository struct {
-	dbPool *pgxpool.Pool
+	dbPool  *pgxpool.Pool
+	scanner *helper.GenericScanner[domain.CartItem]
 }
 
 func NewCartItemRepository(dbPool *pgxpool.Pool) ICartItemRepository {
 	return &CartItemRepository{
-		dbPool: dbPool,
+		dbPool:  dbPool,
+		scanner: helper.NewGenericScanner(dbPool, helper.ScanCartItem),
 	}
 }
 
 func (cartItemRepository *CartItemRepository) AddItemToCart(cartItem domain.CartItem) error {
 	ctx := context.Background()
-	addItemToCartSql := `insert into cart_items (cart_id,product_id,quantity) values ($1,$2,$3)`
-	cartExec, cartExecErr := cartItemRepository.dbPool.Exec(ctx, addItemToCartSql, cartItem.CartId, cartItem.ProductId, cartItem.Quantity)
-	if cartExecErr != nil {
-		log.Error("Error while add cart item : %v ", cartExecErr.Error())
-		return cartExecErr
+	err := cartItemRepository.scanner.ExecuteExec(ctx, "insert into cart_items (cart_id,product_id,quantity) values ($1,$2,$3)",
+		cartItem.CartId, cartItem.ProductId, cartItem.Quantity)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
-	log.Info("Added cart item : %v ", cartExec)
 	return nil
 }
 
 func (cartItemRepository *CartItemRepository) UpdateItemQuantity(cart_item_id int64, newQuantity int) error {
 	ctx := context.Background()
-	updateItemQuantitySql := `update cart_items set quantity=$1 where id=$2`
-	updatedCartItem, execErr := cartItemRepository.dbPool.Exec(ctx, updateItemQuantitySql, newQuantity, cart_item_id)
-	if execErr != nil {
-		log.Error("Error while update cart item : %v ", execErr.Error())
-		return execErr
+	err := cartItemRepository.scanner.ExecuteExec(ctx, "update cart_items set quantity=$1 where id=$2", newQuantity, cart_item_id)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
-	log.Info("Updated cart item : %v ", updatedCartItem)
 	return nil
 }
 
 func (cartItemRepository *CartItemRepository) RemoveItemFromCart(cart_item_id int64) error {
 	ctx := context.Background()
-	removeItemFromCartSql := `delete from cart_items where id=$1`
-	_, execErr := cartItemRepository.dbPool.Exec(ctx, removeItemFromCartSql, cart_item_id)
-	if execErr != nil {
-		log.Error("Error while remove cart item : %v ", execErr.Error())
-		return execErr
+	err := cartItemRepository.scanner.ExecuteExec(ctx, "elete from cart_items where id=$1", cart_item_id)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
-	log.Info("Removed cart item : %v ", cart_item_id)
 	return nil
 }
 
 func (cartItemRepository *CartItemRepository) GetItemsByCartId(cart_id int64) []domain.CartItem {
 	ctx := context.Background()
-	getItemsByCartIdSql := `select * from cart_items where cart_id = $1`
-	queryRow, queryRowErr := cartItemRepository.dbPool.Query(ctx, getItemsByCartIdSql, cart_id)
-
-	if queryRowErr != nil {
-		log.Error("Error while get cart item : %v ", queryRowErr.Error())
+	items, err := cartItemRepository.scanner.QueryAndScan(ctx, "select * from cart_items where cart_id = $1", cart_id)
+	if err != nil {
+		log.Error(err)
 		return []domain.CartItem{}
 	}
-	return extractCartItemsFromRows(queryRow)
+	return items
 }
 
 func (cartItemRepository *CartItemRepository) ClearCartItems(cart_id int64) error {
 	ctx := context.Background()
-	clearCartItemsSql := `delete from cart_items where cart_id=$1`
-	_, execErr := cartItemRepository.dbPool.Exec(ctx, clearCartItemsSql, cart_id)
-	if execErr != nil {
-		log.Error("Error while clear cart item : %v ", execErr.Error())
-		return execErr
+	err := cartItemRepository.scanner.ExecuteExec(ctx, "delete from cart_items where cart_id=$1", cart_id)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
-	log.Info("Cleared cart items : %v ", cart_id)
 	return nil
 }
 
 func (cartItemRepository *CartItemRepository) IncreaseItemQuantity(cart_item_id int64, amount int) error {
 	ctx := context.Background()
-	getCartItemSql := `select * from cart_items where id = $1`
-	queryRow, queryRowErr := cartItemRepository.dbPool.Query(ctx, getCartItemSql, cart_item_id)
-	if queryRowErr != nil {
-		log.Error("Error while get cart item : %v ", queryRowErr.Error())
-		return queryRowErr
+	item, err := cartItemRepository.scanner.QueryRowAndScan(ctx, "select * from cart_items where id = $1", cart_item_id)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
-	rows := extractCartItemsFromRows(queryRow)
-	quantity := rows[0].Quantity
-	increasedQuantity := quantity + amount
-	increaseItemQuantitySql := `update cart_items set quantity=$1 where id=$2`
-	_, execErr := cartItemRepository.dbPool.Exec(ctx, increaseItemQuantitySql, increasedQuantity, cart_item_id)
-	if execErr != nil {
-		log.Error("Error while increase cart item : %v ", execErr.Error())
-		return execErr
+	increasedQuantity := item.Quantity + amount
+	executeExecErr := cartItemRepository.scanner.ExecuteExec(ctx, "update cart_items set quantity=$1 where id=$2", increasedQuantity, cart_item_id)
+	if executeExecErr != nil {
+		log.Error(executeExecErr)
+		return executeExecErr
 	}
-	log.Info("Increased cart item : %v ", cart_item_id)
 	return nil
 }
 
 func (cartItemRepository *CartItemRepository) DecreaseItemQuantity(cart_item_id int64, amount int) error {
 	ctx := context.Background()
-	getCartItemSql := `select * from cart_items where id = $1`
-	queryRow, queryRowErr := cartItemRepository.dbPool.Query(ctx, getCartItemSql, cart_item_id)
-	if queryRowErr != nil {
-		log.Error("Error while get cart item : %v ", queryRowErr.Error())
-		return queryRowErr
+	item, err := cartItemRepository.scanner.QueryRowAndScan(ctx, "select * from cart_items where id = $1", cart_item_id)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
-	rows := extractCartItemsFromRows(queryRow)
-	quantity := rows[0].Quantity
-	decreasedQuantity := quantity - amount
-	decreaseItemQuantitySql := `update cart_items set quantity=$1 where id=$2`
-	_, execErr := cartItemRepository.dbPool.Exec(ctx, decreaseItemQuantitySql, decreasedQuantity, cart_item_id)
-	if execErr != nil {
-		log.Error("Error while decrease cart item : %v ", execErr.Error())
-		return execErr
+	decreasedQuantity := item.Quantity - amount
+	executeExecErr := cartItemRepository.scanner.ExecuteExec(ctx, "update cart_items set quantity=$1 where id=$2", decreasedQuantity, cart_item_id)
+	if executeExecErr != nil {
+		log.Error(executeExecErr)
+		return executeExecErr
 	}
-	log.Info("Decreased cart item : %v ", cart_item_id)
 	return nil
-}
-
-func extractCartItemsFromRows(row pgx.Rows) []domain.CartItem {
-	var cartItems []domain.CartItem
-	var id int64
-	var cart_id int64
-	var product_id int64
-	var quantity int
-
-	for row.Next() {
-		row.Scan(&id, &cart_id, &product_id, &quantity)
-		cartItems = append(cartItems, domain.CartItem{
-			Id:        id,
-			CartId:    cart_id,
-			ProductId: product_id,
-			Quantity:  quantity,
-		})
-	}
-	return cartItems
 }

@@ -3,9 +3,8 @@ package persistence
 import (
 	"context"
 	"go-ecommerce-service/domain"
-	"time"
+	"go-ecommerce-service/persistence/helper"
 
-	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/labstack/gommon/log"
 )
@@ -19,102 +18,63 @@ type ICartRepository interface {
 }
 
 type CartRepository struct {
-	dbPool *pgxpool.Pool
+	dbPool  *pgxpool.Pool
+	scanner *helper.GenericScanner[domain.Cart]
 }
 
 func NewCartRepository(dbPool *pgxpool.Pool) ICartRepository {
 	return &CartRepository{
-		dbPool: dbPool,
+		dbPool:  dbPool,
+		scanner: helper.NewGenericScanner(dbPool, helper.ScanCart),
 	}
 }
 
 func (cartRepository *CartRepository) GetCartsByUserId(userId int64) []domain.Cart {
 	ctx := context.Background()
-	getCartByUserIdSql := `select * from carts where user_id = $1`
-
-	queryRows, queryRowsErr := cartRepository.dbPool.Query(ctx, getCartByUserIdSql, userId)
-
-	if queryRowsErr != nil {
-		log.Error(queryRowsErr)
+	carts, err := cartRepository.scanner.QueryAndScan(ctx, "select * from carts where user_id = $1", userId)
+	if err != nil {
+		log.Error(err)
 		return []domain.Cart{}
 	}
-
-	return extractCartFromRows(queryRows)
+	return carts
 }
 
 func (cartRepository *CartRepository) GetCartById(cartId int64) domain.Cart {
 	ctx := context.Background()
-	getCartByIdSql := `select * from carts where id = $1`
-
-	query, queryErr := cartRepository.dbPool.Query(ctx, getCartByIdSql, cartId)
-
-	if queryErr != nil {
-		log.Error(queryErr)
+	cart, err := cartRepository.scanner.QueryRowAndScan(ctx, "select * from carts where id = $1", cartId)
+	if err != nil {
+		log.Error(err)
 		return domain.Cart{}
-	}
-
-	var cart domain.Cart
-	var id int64
-	var user_id int64
-	var created_at time.Time
-	for query.Next() {
-		query.Scan(&id, &user_id, &created_at)
-		cart = domain.Cart{
-			Id:        id,
-			UserId:    user_id,
-			CreatedAt: created_at,
-		}
 	}
 	return cart
 }
 
 func (cartRepository *CartRepository) CreateCart(cart domain.Cart) error {
 	ctx := context.Background()
-	createCartSql := `insert into carts (user_id, created_at) values ($1, $2)`
-	_, cartExecErr := cartRepository.dbPool.Exec(ctx, createCartSql, cart.UserId, time.Now())
-	if cartExecErr != nil {
-		log.Error(cartExecErr)
-		return cartExecErr
+	err := cartRepository.scanner.ExecuteExec(ctx, "insert into carts (user_id, created_at) values ($1, $2)", cart.UserId, cart.CreatedAt)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
 	return nil
 }
 
 func (cartRepository *CartRepository) DeleteCartById(cartId int64) error {
 	ctx := context.Background()
-	deleteCartByIdSql := `delete from carts where id = $1`
-	_, execErr := cartRepository.dbPool.Exec(ctx, deleteCartByIdSql, cartId)
-	if execErr != nil {
-		log.Error(execErr)
-		return execErr
+	err := cartRepository.scanner.ExecuteExec(ctx, "delete from carts where id = $1", cartId)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
 	return nil
 }
 
 func (cartRepository *CartRepository) ClearUserCart(userId int64) error {
 	ctx := context.Background()
-	clearUserCartSql := `delete from carts where user_id = $1`
-	_, execErr := cartRepository.dbPool.Exec(ctx, clearUserCartSql, userId)
-	if execErr != nil {
-		log.Error(execErr)
-		return execErr
+	err := cartRepository.scanner.ExecuteExec(ctx, "delete from carts where user_id = $1", userId)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
 	return nil
-
-}
-func extractCartFromRows(rows pgx.Rows) []domain.Cart {
-	var carts []domain.Cart
-
-	var id int64
-	var user_id int64
-	var created_at time.Time
-
-	for rows.Next() {
-		rows.Scan(&id, &user_id, &created_at)
-		carts = append(carts, domain.Cart{
-			Id:        id,
-			UserId:    user_id,
-			CreatedAt: created_at,
-		})
-	}
-	return carts
 }

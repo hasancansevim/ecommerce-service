@@ -28,7 +28,6 @@ func (orderController *OrderController) RegisterRoutes(e *echo.Echo) {
 	e.DELETE("/api/v1/orders/:id", orderController.DeleteOrderById)
 	e.PUT("/api/v1/orders/:id", orderController.UpdateOrderTotalPrice)
 	e.GET("/api/v1/orders/", orderController.GetOrdersByStatus)
-	e.GET("/api/v1/orders/get-order-count-by-user-id/", orderController.GetOrderCountByUserId) // !
 }
 
 func (orderController *OrderController) CreateOrder(c echo.Context) error {
@@ -157,21 +156,4 @@ func (orderController *OrderController) GetOrdersByStatus(c echo.Context) error 
 		})
 	}
 	return c.JSON(http.StatusOK, response.ToResponseListOrders(ordersByStatus))
-}
-
-func (orderController *OrderController) GetOrderCountByUserId(c echo.Context) error {
-	queryParam := c.QueryParam("user_id")
-	user_id, convertErr := strconv.Atoi(queryParam)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
-	}
-	orderCountByUserId, orderCountByUserIdErr := orderController.orderService.GetOrderCountByUserId(int64(user_id))
-	if orderCountByUserIdErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: orderCountByUserIdErr.Error(),
-		})
-	}
-	return c.JSON(http.StatusOK, orderCountByUserId)
 }

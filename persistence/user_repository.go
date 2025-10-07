@@ -3,9 +3,8 @@ package persistence
 import (
 	"context"
 	"go-ecommerce-service/domain"
-	"time"
+	"go-ecommerce-service/persistence/helper"
 
-	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/labstack/gommon/log"
 )
@@ -16,60 +15,34 @@ type IUserRepository interface {
 }
 
 type UserRepository struct {
-	dbPool *pgxpool.Pool
+	dbPool  *pgxpool.Pool
+	scanner *helper.GenericScanner[domain.User]
 }
 
 func NewUserRepository(dbPool *pgxpool.Pool) IUserRepository {
 	return &UserRepository{
-		dbPool: dbPool,
+		dbPool:  dbPool,
+		scanner: helper.NewGenericScanner(dbPool, helper.ScanUser),
 	}
 }
 
 func (userRepository *UserRepository) GetAllUser() []domain.User {
 	ctx := context.Background()
-	getAllUserSql := "select * from users"
-	userRows, queryRowErr := userRepository.dbPool.Query(ctx, getAllUserSql)
-	if queryRowErr != nil {
-		log.Error(queryRowErr.Error())
-		return []domain.User{}
+	users, err := userRepository.scanner.QueryAndScan(ctx, "SELECT * FROM users")
+	if err != nil {
+		log.Error(err)
+		return nil
 	}
-	usersFromRows := extractUsersFromRows(userRows)
-	return usersFromRows
+	return users
 }
 
 func (userRepository *UserRepository) AddUser(user domain.User) error {
 	ctx := context.Background()
-	addUserSql := `insert into users (first_name,last_name,email,password,created_at) values ($1,$2,$3,$4,$5)`
-	addNewUser, execErr := userRepository.dbPool.Exec(ctx, addUserSql,
+	err := userRepository.scanner.ExecuteExec(ctx, "insert into users (first_name,last_name,email,password,created_at) values ($1,$2,$3,$4,$5)",
 		user.FirstName, user.LastName, user.Email, user.Password, user.CreatedAt)
-
-	if execErr != nil {
-		log.Error(execErr.Error())
-		return execErr
+	if err != nil {
+		log.Error(err)
+		return err
 	}
-	log.Info("Added new user %v : ", addNewUser)
 	return nil
-}
-
-func extractUsersFromRows(rows pgx.Rows) []domain.User {
-	var users = []domain.User{}
-	var id int64
-	var fist_name string
-	var last_name string
-	var email string
-	var password string
-	var created_at time.Time
-
-	for rows.Next() {
-		rows.Scan(&id, &fist_name, &last_name, &email, &password, &created_at)
-		users = append(users, domain.User{
-			Id:        id,
-			FirstName: fist_name,
-			LastName:  last_name,
-			Email:     email,
-			Password:  password,
-			CreatedAt: created_at,
-		})
-	}
-	return users
 }

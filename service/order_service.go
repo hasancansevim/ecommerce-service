@@ -15,7 +15,6 @@ type IOrderService interface {
 	DeleteOrderById(orderId int64) error
 	UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) error
 	GetOrdersByStatus(status string) ([]domain.Order, error)
-	GetOrderCountByUserId(userId int64) (int, error)
 }
 
 type OrderService struct {
@@ -93,12 +92,4 @@ func (orderService *OrderService) GetOrdersByStatus(status string) ([]domain.Ord
 		return []domain.Order{}, getOrdersByStatusErr
 	}
 	return ordersByStatus, nil
-}
-
-func (orderService *OrderService) GetOrderCountByUserId(userId int64) (int, error) {
-	orderCountByUserId, orderCountByUserIdErr := orderService.orderRepository.GetOrderCountByUserId(userId)
-	if orderCountByUserIdErr != nil {
-		return 0, orderCountByUserIdErr
-	}
-	return orderCountByUserId, nil
 }
