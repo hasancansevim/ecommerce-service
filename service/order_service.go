@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/persistence"
 	"go-ecommerce-service/service/model"
+	"go-ecommerce-service/service/validation"
 )
 
 type IOrderService interface {
@@ -28,6 +29,11 @@ func NewOrderService(orderRepository persistence.IOrderRepository) IOrderService
 }
 
 func (orderService *OrderService) CreateOrder(orderCreate model.OrderCreate) error {
+
+	if validationErr := validation.ValidateOrderCreate(orderCreate); validationErr != nil {
+		return validationErr
+	}
+
 	createOrderErr := orderService.orderRepository.CreateOrder(domain.Order{
 		UserId:     orderCreate.UserId,
 		TotalPrice: orderCreate.TotalPrice,
@@ -36,9 +42,8 @@ func (orderService *OrderService) CreateOrder(orderCreate model.OrderCreate) err
 	})
 	if createOrderErr != nil {
 		return createOrderErr
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func (orderService *OrderService) GetOrderById(orderId int64) domain.Order {

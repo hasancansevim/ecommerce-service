@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/persistence"
 	"go-ecommerce-service/service/model"
+	"go-ecommerce-service/service/validation"
 )
 
 type ICartService interface {
@@ -29,6 +30,11 @@ func (cartService *CartService) GetCartById(cartId int64) domain.Cart {
 }
 
 func (cartService *CartService) CreateCart(cart model.CartCreate) error {
+
+	if validationErr := validation.ValidateCartCreate(cart); validationErr != nil {
+		return validationErr
+	}
+
 	err := cartService.cartRepository.CreateCart(domain.Cart{
 		UserId:    cart.UserId,
 		CreatedAt: cart.CreatedAt,

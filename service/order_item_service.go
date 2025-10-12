@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/persistence"
 	"go-ecommerce-service/service/model"
+	"go-ecommerce-service/service/validation"
 )
 
 type IOrderItemService interface {
@@ -28,6 +29,10 @@ func NewOrderItemService(orderItemRepository persistence.IOrderItemRepository) I
 }
 
 func (orderItemService *OrderItemService) AddOrderItem(orderItemCreate model.OrderItemCreate) error {
+	if validationErr := validation.ValidateOrderItemCreate(orderItemCreate); validationErr != nil {
+		return validationErr
+	}
+
 	addOrderItemErr := orderItemService.orderItemRepository.AddOrderItem(domain.OrderItem{
 		OrderId:   orderItemCreate.OrderId,
 		ProductId: orderItemCreate.ProductId,
@@ -65,7 +70,7 @@ func (orderItemService *OrderItemService) GetOrderItemsByProductId(productId int
 }
 
 func (orderItemService *OrderItemService) UpdateOrderItem(orderItem_id int64, orderItem domain.OrderItem) error {
-	updateOrderItemErr := orderItemService.UpdateOrderItem(orderItem_id, orderItem)
+	updateOrderItemErr := orderItemService.orderItemRepository.UpdateOrderItem(orderItem_id, orderItem)
 	if updateOrderItemErr != nil {
 		return updateOrderItemErr
 	}

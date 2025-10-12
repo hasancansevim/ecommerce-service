@@ -1,10 +1,10 @@
 package service
 
 import (
-	"errors"
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/persistence"
 	"go-ecommerce-service/service/model"
+	"go-ecommerce-service/service/validation"
 )
 
 type IProductService interface {
@@ -39,9 +39,8 @@ func (productService *ProductService) GetProductById(productId int64) (domain.Pr
 }
 
 func (productService *ProductService) AddProduct(productCreate model.ProductCreate) error {
-	validateError := validateProductCreate(productCreate)
-	if validateError != nil {
-		return validateError
+	if validationError := validation.ValidateProductCreate(productCreate); validationError != nil {
+		return validationError
 	}
 	return productService.productRepository.AddProduct(domain.Product{
 		Name:     productCreate.Name,
@@ -57,17 +56,4 @@ func (productService *ProductService) DeleteProductById(productId int64) error {
 
 func (productService *ProductService) UpdatePrice(productId int64, newPrice float32) error {
 	return productService.productRepository.UpdatePrice(productId, newPrice)
-}
-
-func validateProductCreate(productCreate model.ProductCreate) error {
-	if productCreate.Name == "" {
-		return errors.New("product name is required")
-	}
-	if productCreate.Price <= 0 {
-		return errors.New("product price must be greater than 0")
-	}
-	if productCreate.Discount < 0 {
-		return errors.New("the discount rate must be at least 0")
-	}
-	return nil
 }

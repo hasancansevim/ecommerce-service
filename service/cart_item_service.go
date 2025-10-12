@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/persistence"
 	"go-ecommerce-service/service/model"
+	"go-ecommerce-service/service/validation"
 )
 
 type ICartItemService interface {
@@ -27,6 +28,10 @@ func NewCartItemService(cartItemRepository persistence.ICartItemRepository) ICar
 }
 
 func (cartItemService *CartItemService) AddItemToCart(cartItem model.CartItemCreate) error {
+	if validationErr := validation.ValidateCartItemCreate(cartItem); validationErr != nil {
+		return validationErr
+	}
+
 	err := cartItemService.cartItemRepository.AddItemToCart(domain.CartItem{
 		CartId:    cartItem.CartId,
 		ProductId: cartItem.ProductId,
