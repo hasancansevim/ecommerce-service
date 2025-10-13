@@ -2,15 +2,14 @@ package controller
 
 import (
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/controller/response"
 	"go-ecommerce-service/service"
-	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 type UserController struct {
 	userService service.IUserService
+	BaseController
 }
 
 func NewUserController(userService service.IUserService) *UserController {
@@ -27,7 +26,7 @@ func (userController *UserController) RegisterRoutes(e *echo.Echo) {
 func (userController *UserController) GetAllProducts(c echo.Context) error {
 	allUsers := userController.userService.GetAllUsers()
 
-	return c.JSON(http.StatusOK, allUsers)
+	return userController.Success(c, allUsers)
 }
 
 func (userController *UserController) AddProduct(c echo.Context) error {
@@ -35,17 +34,11 @@ func (userController *UserController) AddProduct(c echo.Context) error {
 	bindErr := c.Bind(&addUserRequest)
 
 	if bindErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: bindErr.Error(),
-		})
+		return userController.BadRequest(c, bindErr)
 	}
 
-	addUserErr := userController.userService.AddUser(addUserRequest.ToModel())
-	if addUserErr != nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse{
-			ErrorDescription: addUserErr.Error(),
-		})
+	if addUserErr := userController.userService.AddUser(addUserRequest.ToModel()); addUserErr != nil {
+		return userController.BadRequest(c, addUserErr)
 	}
-
-	return c.NoContent(http.StatusCreated)
+	return userController.Created(c)
 }

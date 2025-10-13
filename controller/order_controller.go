@@ -4,15 +4,14 @@ import (
 	"go-ecommerce-service/controller/request"
 	"go-ecommerce-service/controller/response"
 	"go-ecommerce-service/service"
-	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 type OrderController struct {
 	orderService service.IOrderService
+	BaseController
 }
 
 func NewOrderController(orderService service.IOrderService) *OrderController {
@@ -34,126 +33,89 @@ func (orderController *OrderController) CreateOrder(c echo.Context) error {
 	var addOrderRequest request.AddOrderRequest
 	bindErr := c.Bind(&addOrderRequest)
 	if bindErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: bindErr.Error(),
-		})
+		return orderController.BadRequest(c, bindErr)
 	}
-	createOrderErr := orderController.orderService.CreateOrder(addOrderRequest.ToModel())
-	if createOrderErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: createOrderErr.Error(),
-		})
+	if createOrderErr := orderController.orderService.CreateOrder(addOrderRequest.ToModel()); createOrderErr != nil {
+		return orderController.BadRequest(c, createOrderErr)
 	}
-	return c.NoContent(http.StatusCreated)
+	return orderController.Created(c)
 }
 
 func (orderController *OrderController) GetOrderById(c echo.Context) error {
-	param := c.Param("id")
-	id, convertErr := strconv.Atoi(param)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	id, err := orderController.ParseIdParam(c, "id")
+	if err != nil {
+		return orderController.BadRequest(c, err)
 	}
-	getOrderById := orderController.orderService.GetOrderById(int64(id))
-	return c.JSON(http.StatusOK, response.ToResponseOrderData(getOrderById))
+	getOrderById := orderController.orderService.GetOrderById(id)
+	return orderController.Success(c, getOrderById)
 }
 
 func (orderController *OrderController) GetOrdersByUserId(c echo.Context) error {
-	queryParam := c.QueryParam("user_id")
-	user_id, convertErr := strconv.Atoi(queryParam)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	userId, err := orderController.ParseIdParam(c, "user_id")
+	if err != nil {
+		return orderController.BadRequest(c, err)
 	}
-	getOrdersByUserId, getOrdersByUserIdErr := orderController.orderService.GetOrdersByUserId(int64(user_id))
+	getOrdersByUserId, getOrdersByUserIdErr := orderController.orderService.GetOrdersByUserId(userId)
 	if getOrdersByUserIdErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: getOrdersByUserIdErr.Error(),
-		})
+		return orderController.BadRequest(c, getOrdersByUserIdErr)
 	}
-	return c.JSON(http.StatusOK, response.ToResponseListOrders(getOrdersByUserId))
+	return orderController.Success(c, response.ToResponseListOrders(getOrdersByUserId))
 }
 
 func (orderController *OrderController) GetAllOrders(c echo.Context) error {
 	orders, getAllOrdersErr := orderController.orderService.GetAllOrders()
 	if getAllOrdersErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: getAllOrdersErr.Error(),
-		})
+		return orderController.BadRequest(c, getAllOrdersErr)
 	}
-	return c.JSON(http.StatusOK, response.ToResponseListOrders(orders))
+	return orderController.Success(c, response.ToResponseListOrders(orders))
 }
 
 func (orderController *OrderController) UpdateOrderStatus(c echo.Context) error {
-	param := c.Param("id")
-	id, convertErr := strconv.Atoi(param)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	id, err := orderController.ParseIdParam(c, "id")
+	if err != nil {
+		return orderController.BadRequest(c, err)
 	}
-	queryParam := c.QueryParam("status")
+	queryParam := orderController.StringQueryParam(c, "status")
 	status := strconv.CanBackquote(queryParam)
-	updateOrderStatusErr := orderController.orderService.UpdateOrderStatus(int64(id), status)
-	if updateOrderStatusErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: updateOrderStatusErr.Error(),
-		})
+	if updateOrderStatusErr := orderController.orderService.UpdateOrderStatus(id, status); updateOrderStatusErr != nil {
+		return orderController.BadRequest(c, updateOrderStatusErr)
 	}
-	return c.NoContent(http.StatusNoContent)
+	return orderController.Created(c)
 }
 
 func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
-	param := c.Param("id")
-	id, convertErr := strconv.Atoi(param)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	id, err := orderController.ParseIdParam(c, "id")
+	if err != nil {
+		return orderController.BadRequest(c, err)
 	}
-	deleteOrderByIdErr := orderController.orderService.DeleteOrderById(int64(id))
-	if deleteOrderByIdErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: deleteOrderByIdErr.Error(),
-		})
+	if deleteOrderByIdErr := orderController.orderService.DeleteOrderById(id); deleteOrderByIdErr != nil {
+		return orderController.BadRequest(c, deleteOrderByIdErr)
 	}
-	return c.NoContent(http.StatusNoContent)
+	return orderController.Created(c)
 }
 
 func (orderController *OrderController) UpdateOrderTotalPrice(c echo.Context) error {
-	param := c.Param("id")
-	id, convertErr := strconv.Atoi(param)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	id, err := orderController.ParseIdParam(c, "id")
+	if err != nil {
+		return orderController.BadRequest(c, err)
 	}
-	queryParam := c.QueryParam("total_price")
+	queryParam := orderController.StringQueryParam(c, "total_price")
 	totalPrice, parseFloatErr := strconv.ParseFloat(queryParam, 64)
 	if parseFloatErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: parseFloatErr.Error(),
-		})
+		return orderController.BadRequest(c, parseFloatErr)
 	}
-	updateOrderTotalPriceErr := orderController.orderService.UpdateOrderTotalPrice(int64(id), float32(totalPrice))
+	updateOrderTotalPriceErr := orderController.orderService.UpdateOrderTotalPrice(id, float32(totalPrice))
 	if updateOrderTotalPriceErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: updateOrderTotalPriceErr.Error(),
-		})
+		return orderController.BadRequest(c, updateOrderTotalPriceErr)
 	}
-	return c.NoContent(http.StatusNoContent)
+	return orderController.Created(c)
 }
 
 func (orderController *OrderController) GetOrdersByStatus(c echo.Context) error {
-	status := c.QueryParam("status")
-	log.Info(status)
+	status := orderController.StringQueryParam(c, "status")
 	ordersByStatus, ordersByStatusErr := orderController.orderService.GetOrdersByStatus(status)
 	if ordersByStatusErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: ordersByStatusErr.Error(),
-		})
+		return orderController.BadRequest(c, ordersByStatusErr)
 	}
-	return c.JSON(http.StatusOK, response.ToResponseListOrders(ordersByStatus))
+	return orderController.Success(c, response.ToResponseListOrders(ordersByStatus))
 }

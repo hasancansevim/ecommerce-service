@@ -2,17 +2,15 @@ package controller
 
 import (
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/controller/response"
 	"go-ecommerce-service/service"
-	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 type CartItemController struct {
 	cartItemService service.ICartItemService
+	BaseController
 }
 
 func NewCartItemController(cartItemService service.ICartItemService) *CartItemController {
@@ -30,16 +28,12 @@ func (cartItemController *CartItemController) RegiesterRoutes(e *echo.Echo) {
 }
 
 func (cartItemController *CartItemController) GetItemsByCartId(c echo.Context) error {
-	param := c.Param("id")
-	cartId, convertIdErr := strconv.Atoi(param)
-
-	if convertIdErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertIdErr.Error(),
-		})
+	cartId, err := cartItemController.BaseController.ParseIdParam(c, "cart_id")
+	if err != nil {
+		return cartItemController.BadRequest(c, err)
 	}
-	cart_items := cartItemController.cartItemService.GetItemsByCartId(int64(cartId))
-	return c.JSON(http.StatusOK, response.ToResponseListCartItems(cart_items))
+	cartItems := cartItemController.cartItemService.GetItemsByCartId(cartId)
+	return cartItemController.Success(c, cartItems)
 }
 
 func (cartItemController *CartItemController) AddItemToCart(c echo.Context) error {
@@ -47,129 +41,82 @@ func (cartItemController *CartItemController) AddItemToCart(c echo.Context) erro
 	bindErr := c.Bind(&addCartItemRequest)
 
 	if bindErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: bindErr.Error(),
-		})
+		return cartItemController.BadRequest(c, bindErr)
 	}
-	addCartItemErr := cartItemController.cartItemService.AddItemToCart(addCartItemRequest.ToModel())
-	if addCartItemErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: addCartItemErr.Error(),
-		})
+	if addCartItemErr := cartItemController.cartItemService.AddItemToCart(addCartItemRequest.ToModel()); addCartItemErr != nil {
+		return cartItemController.BadRequest(c, addCartItemErr)
 	}
-	return c.NoContent(http.StatusCreated)
+	return cartItemController.Created(c)
 }
 
 func (cartItemController *CartItemController) UpdateItemQuantity(c echo.Context) error {
-	param := c.Param("id")
-	id, paramConvertErr := strconv.Atoi(param)
-
-	if paramConvertErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: paramConvertErr.Error(),
-		})
+	id, err := cartItemController.ParseIdParam(c, "id")
+	if err != nil {
+		return cartItemController.BadRequest(c, err)
 	}
-
-	queryParam := c.QueryParam("newQuantity")
+	queryParam := cartItemController.StringQueryParam(c, "newQuantity")
 	newQuantity, queryParamConvertErr := strconv.Atoi(queryParam)
-	log.Info(int64(id))
-	log.Info(newQuantity)
 	if queryParamConvertErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: queryParamConvertErr.Error(),
-		})
+		return cartItemController.BadRequest(c, queryParamConvertErr)
 	}
-	updateQuantityErr := cartItemController.cartItemService.UpdateItemQuantity(int64(id), newQuantity)
-	if updateQuantityErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: updateQuantityErr.Error(),
-		})
+	if updateQuantityErr := cartItemController.cartItemService.UpdateItemQuantity(id, newQuantity); updateQuantityErr != nil {
+		return cartItemController.BadRequest(c, updateQuantityErr)
 	}
-	return c.NoContent(http.StatusCreated)
+	return cartItemController.Created(c)
 }
 
 func (cartItemController *CartItemController) RemoveItemFromCart(c echo.Context) error {
-	param := c.Param("id")
-	id, convertErr := strconv.Atoi(param)
-	if convertErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	id, err := cartItemController.ParseIdParam(c, "id")
+	if err != nil {
+		return cartItemController.BadRequest(c, err)
 	}
-	removeItemFromCartErr := cartItemController.cartItemService.RemoveItemFromCart(int64(id))
-	if removeItemFromCartErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: removeItemFromCartErr.Error(),
-		})
+	if removeItemFromCartErr := cartItemController.cartItemService.RemoveItemFromCart(id); removeItemFromCartErr != nil {
+		return cartItemController.BadRequest(c, removeItemFromCartErr)
 	}
-	return c.NoContent(http.StatusNoContent)
+	return cartItemController.Created(c)
 }
 
 func (cartItemController *CartItemController) ClearCartItems(c echo.Context) error {
-	param := c.QueryParam("cart_id")
-	cart_id, convertErr := strconv.Atoi(param)
-	if convertErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	cartId, err := cartItemController.ParseIdParam(c, "cart_id")
+	if err != nil {
+		return cartItemController.BadRequest(c, err)
 	}
-	clearCartItemsErr := cartItemController.cartItemService.ClearCartItems(int64(cart_id))
-	if clearCartItemsErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: clearCartItemsErr.Error(),
-		})
+	if clearCartItemsErr := cartItemController.cartItemService.ClearCartItems(cartId); clearCartItemsErr != nil {
+		return cartItemController.BadRequest(c, clearCartItemsErr)
 	}
-	return c.NoContent(http.StatusNoContent)
+	return cartItemController.Created(c)
 }
 
 func (cartItemController *CartItemController) IncreaseItemQuantity(c echo.Context) error {
-	param := c.Param("id")
-	id, paramConvertErr := strconv.Atoi(param)
-	if paramConvertErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: paramConvertErr.Error(),
-		})
+	id, err := cartItemController.ParseIdParam(c, "id")
+	if err != nil {
+		return cartItemController.BadRequest(c, err)
 	}
-
-	queryParam := c.QueryParam("amount")
+	queryParam := cartItemController.StringQueryParam(c, "amount")
 	amount, queryParamErr := strconv.Atoi(queryParam)
 	if queryParamErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: queryParamErr.Error(),
-		})
+		return cartItemController.BadRequest(c, queryParamErr)
 	}
 
-	increaseItemQuantityErr := cartItemController.cartItemService.IncreaseItemQuantity(int64(id), amount)
-	if increaseItemQuantityErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: increaseItemQuantityErr.Error(),
-		})
+	if increaseItemQuantityErr := cartItemController.cartItemService.IncreaseItemQuantity(id, amount); increaseItemQuantityErr != nil {
+		return cartItemController.BadRequest(c, increaseItemQuantityErr)
 	}
-	return c.NoContent(http.StatusCreated)
+	return cartItemController.Created(c)
 }
 
 func (cartItemController *CartItemController) DecreaseItemQuantity(c echo.Context) error {
-	param := c.Param("id")
-	id, paramConvertErr := strconv.Atoi(param)
-	if paramConvertErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: paramConvertErr.Error(),
-		})
+	id, err := cartItemController.ParseIdParam(c, "id")
+	if err != nil {
+		return cartItemController.BadRequest(c, err)
 	}
-
-	queryParam := c.QueryParam("amount")
+	queryParam := cartItemController.StringQueryParam(c, "amount")
 	amount, queryParamErr := strconv.Atoi(queryParam)
 	if queryParamErr != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: queryParamErr.Error(),
-		})
+		return cartItemController.BadRequest(c, queryParamErr)
 	}
 
-	increaseItemQuantityErr := cartItemController.cartItemService.DecreaseItemQuantity(int64(id), amount)
-	if increaseItemQuantityErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: increaseItemQuantityErr.Error(),
-		})
+	if increaseItemQuantityErr := cartItemController.cartItemService.DecreaseItemQuantity(id, amount); increaseItemQuantityErr != nil {
+		return cartItemController.BadRequest(c, increaseItemQuantityErr)
 	}
-	return c.NoContent(http.StatusCreated)
+	return cartItemController.Created(c)
 }

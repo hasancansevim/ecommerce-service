@@ -1,11 +1,8 @@
 package controller
 
 import (
-	"fmt"
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/controller/response"
 	"go-ecommerce-service/service"
-	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -13,6 +10,7 @@ import (
 
 type ProductController struct {
 	productService service.IProductService
+	BaseController
 }
 
 func NewProductController(productService service.IProductService) *ProductController {
@@ -23,7 +21,7 @@ func NewProductController(productService service.IProductService) *ProductContro
 
 func (productController *ProductController) RegisterRoutes(e *echo.Echo) {
 	e.GET("/api/v1/products", productController.GetAllProducts)
-	e.GET("/api/v1/products/:productId", productController.GetProductById)
+	e.GET("/api/v1/products/:id", productController.GetProductById)
 	e.POST("/api/v1/products", productController.AddProduct)
 	e.PUT("/api/v1/products/:id", productController.UpdatePrice)
 	e.DELETE("/api/v1/products/:id", productController.DeleteProduct)
@@ -33,94 +31,65 @@ func (productController *ProductController) GetAllProducts(c echo.Context) error
 	queryParam := c.QueryParam("storeName")
 	if queryParam != "" {
 		allProductsByStoreName := productController.productService.GetAllProductsByStoreName(queryParam)
-		return c.JSON(http.StatusOK, response.ToResponseList(allProductsByStoreName))
-	} else {
-		allProducts := productController.productService.GetAllProducts()
-		return c.JSON(http.StatusOK, allProducts)
+		return productController.Success(c, allProductsByStoreName)
 	}
+	allProducts := productController.productService.GetAllProducts()
+	return productController.Success(c, allProducts)
 }
 
 func (productController *ProductController) GetProductById(c echo.Context) error {
-	param := c.Param("productId")
-	id, convertErr := strconv.Atoi(param)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	productId, err := productController.ParseIdParam(c, "id")
+	if err != nil {
+		return productController.BadRequest(c, err)
 	}
 
-	productById, productByIdErr := productController.productService.GetProductById(int64(id))
+	productById, productByIdErr := productController.productService.GetProductById(productId)
 	if productByIdErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: productByIdErr.Error(),
-		})
+		return productController.BadRequest(c, productByIdErr)
 	}
-	return c.JSON(http.StatusOK, response.ToResponse(productById))
+	return productController.Success(c, productById)
 }
 
 func (productController *ProductController) AddProduct(c echo.Context) error {
 	var addProductRequest request.AddProductRequest
-	bindErr := c.Bind(&addProductRequest)
-
-	if bindErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: bindErr.Error(),
-		})
+	if bindErr := c.Bind(&addProductRequest); bindErr != nil {
+		return productController.BadRequest(c, bindErr)
 	}
 
-	addProductErr := productController.productService.AddProduct(addProductRequest.ToModel())
-
-	if addProductErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: addProductErr.Error(),
-		})
+	if addProductErr := productController.productService.AddProduct(addProductRequest.ToModel()); addProductErr != nil {
+		return productController.BadRequest(c, addProductErr)
 	}
 
-	return c.NoContent(http.StatusCreated)
+	return productController.Created(c)
 }
 
 func (productController *ProductController) UpdatePrice(c echo.Context) error {
-	param := c.Param("id")
-	productId, convertErr := strconv.Atoi(param)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	productID, err := productController.ParseIdParam(c, "id")
+	if err != nil {
+		return productController.BadRequest(c, err)
 	}
 
-	queryParam := c.QueryParam("newPrice")
-	fmt.Printf("Gelen newPrice: %s\n", queryParam)
+	newPrice, err := strconv.ParseFloat(c.QueryParam("newPrice"), 32)
+	if err != nil {
+		return productController.BadRequest(c, err)
+	}
 
-	if queryParam == "" {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: "newPrice parameter is required",
-		})
+	if err := productController.productService.UpdatePrice(productID, float32(newPrice)); err != nil {
+		return productController.BadRequest(c, err)
 	}
-	newPrice, _ := strconv.ParseFloat(queryParam, 32)
-	updatePriceErr := productController.productService.UpdatePrice(int64(productId), float32(newPrice))
-	if updatePriceErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: updatePriceErr.Error(),
-		})
-	}
-	return c.NoContent(http.StatusOK)
+
+	return productController.Created(c)
 }
 
 func (productController *ProductController) DeleteProduct(c echo.Context) error {
-	param := c.Param("id")
-	id, convertErr := strconv.Atoi(param)
-
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	productID, err := productController.ParseIdParam(c, "id")
+	if err != nil {
+		return productController.BadRequest(c, err)
 	}
 
-	productDeleteErr := productController.productService.DeleteProductById(int64(id))
-	if productDeleteErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: productDeleteErr.Error(),
-		})
+	if err := productController.productService.DeleteProductById(productID); err != nil {
+		return productController.BadRequest(c, err)
 	}
-	return c.NoContent(http.StatusOK)
+
+	return productController.Created(c)
 }

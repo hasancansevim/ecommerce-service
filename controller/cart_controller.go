@@ -2,16 +2,14 @@ package controller
 
 import (
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/controller/response"
 	"go-ecommerce-service/service"
-	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 type CartController struct {
 	cartService service.ICartService
+	BaseController
 }
 
 func NewCartController(cartService service.ICartService) *CartController {
@@ -27,79 +25,59 @@ func (cartController *CartController) RegisterRoutes(e *echo.Echo) {
 }
 
 func (cartController *CartController) GetCartById(c echo.Context) error {
-	queryParam := c.Param("id")
-	id, convertErr := strconv.Atoi(queryParam)
-	if convertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: convertErr.Error(),
-		})
+	id, err := cartController.BaseController.ParseIdParam(c, "id")
+	if err != nil {
+		return cartController.BadRequest(c, err)
 	}
 
-	getCartById := cartController.cartService.GetCartById(int64(id))
-	return c.JSON(http.StatusOK, response.ToResponseCartData(getCartById))
+	getCartById := cartController.cartService.GetCartById(id)
+	return cartController.Success(c, getCartById)
 }
 
 func (cartController *CartController) CreateCart(c echo.Context) error {
 	var addCartRequest request.AddCartRequest
 	bindErr := c.Bind(&addCartRequest)
 	if bindErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: bindErr.Error(),
-		})
+		return cartController.BadRequest(c, bindErr)
 	}
 
-	toModelErr := cartController.cartService.CreateCart(addCartRequest.ToModel())
-	if toModelErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: toModelErr.Error(),
-		})
+	if toModelErr := cartController.cartService.CreateCart(addCartRequest.ToModel()); toModelErr != nil {
+		return cartController.BadRequest(c, toModelErr)
 	}
-	return c.NoContent(http.StatusCreated)
+
+	return cartController.Created(c)
 }
 
 func (cartController *CartController) GetCartsByUserId(c echo.Context) error {
-	queryParam := c.QueryParam("user_id")
-	user_id, queryParamErr := strconv.Atoi(queryParam)
-	if queryParamErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: queryParamErr.Error(),
-		})
+	userId, err := cartController.ParseIdParam(c, "user_id")
+	if err != nil {
+		return cartController.BadRequest(c, err)
 	}
 
-	getCartByUserId := cartController.cartService.GetCartsByUserId(int64(user_id))
-	return c.JSON(http.StatusOK, response.ToResponseListCarts(getCartByUserId))
+	getCartByUserId := cartController.cartService.GetCartsByUserId(userId)
+	return cartController.Success(c, getCartByUserId)
 }
 
 func (cartController *CartController) DeleteCartById(c echo.Context) error {
-	param := c.Param("id")
-	id, paramConvertErr := strconv.Atoi(param)
-	if paramConvertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: paramConvertErr.Error(),
-		})
+	id, err := cartController.ParseIdParam(c, "id")
+	if err != nil {
+		return cartController.BadRequest(c, err)
 	}
-	deleteCartByIdErr := cartController.cartService.DeleteCartById(int64(id))
-	if deleteCartByIdErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: deleteCartByIdErr.Error(),
-		})
+	if deleteCartByIdErr := cartController.cartService.DeleteCartById(id); deleteCartByIdErr != nil {
+		return cartController.BadRequest(c, deleteCartByIdErr)
 	}
-	return c.NoContent(http.StatusNoContent)
+
+	return cartController.Created(c)
 }
 
 func (cartController *CartController) ClearUserCarts(c echo.Context) error {
-	queryParam := c.QueryParam("user_id")
-	user_id, queryParamConvertErr := strconv.Atoi(queryParam)
-	if queryParamConvertErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: queryParamConvertErr.Error(),
-		})
+	userId, err := cartController.ParseIdParam(c, "user_id")
+	if err != nil {
+		return cartController.BadRequest(c, err)
 	}
-	clearUserCartErr := cartController.cartService.ClearUserCart(int64(user_id))
-	if clearUserCartErr != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse{
-			ErrorDescription: clearUserCartErr.Error(),
-		})
+	if clearUserCartErr := cartController.cartService.ClearUserCart(userId); clearUserCartErr != nil {
+		return cartController.BadRequest(c, clearUserCartErr)
 	}
-	return c.NoContent(http.StatusNoContent)
+
+	return cartController.Created(c)
 }
