@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"go-ecommerce-service/controller/request"
 	"go-ecommerce-service/service"
 
 	"github.com/labstack/echo/v4"
@@ -19,26 +18,11 @@ func NewUserController(userService service.IUserService) *UserController {
 }
 
 func (userController *UserController) RegisterRoutes(e *echo.Echo) {
-	e.GET("/api/v1/users", userController.GetAllProducts)
-	e.POST("/api/v1/users", userController.AddProduct)
+	e.GET("/api/v1/users", userController.GetAllUsers)
 }
 
-func (userController *UserController) GetAllProducts(c echo.Context) error {
+func (userController *UserController) GetAllUsers(c echo.Context) error {
 	allUsers := userController.userService.GetAllUsers()
 
 	return userController.Success(c, allUsers)
-}
-
-func (userController *UserController) AddProduct(c echo.Context) error {
-	var addUserRequest request.AddUserRequest
-	bindErr := c.Bind(&addUserRequest)
-
-	if bindErr != nil {
-		return userController.BadRequest(c, bindErr)
-	}
-
-	if addUserErr := userController.userService.AddUser(addUserRequest.ToModel()); addUserErr != nil {
-		return userController.BadRequest(c, addUserErr)
-	}
-	return userController.Created(c)
 }

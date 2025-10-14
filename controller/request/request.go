@@ -12,12 +12,16 @@ type AddProductRequest struct {
 	Store    string  `json:"store"`
 }
 
-type AddUserRequest struct {
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"created_at"`
+type RegisterRequest struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type AddCartRequest struct {
@@ -58,16 +62,6 @@ func (addProductRequest AddProductRequest) ToModel() model.ProductCreate {
 		Price:    addProductRequest.Price,
 		Discount: addProductRequest.Discount,
 		Store:    addProductRequest.Store,
-	}
-}
-
-func (addUserRequest AddUserRequest) ToModel() model.UserCreate {
-	return model.UserCreate{
-		FirstName: addUserRequest.FirstName,
-		LastName:  addUserRequest.LastName,
-		Email:     addUserRequest.Email,
-		Password:  addUserRequest.Password,
-		CreatedAt: addUserRequest.CreatedAt,
 	}
 }
 

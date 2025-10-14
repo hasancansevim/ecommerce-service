@@ -11,7 +11,9 @@ import (
 
 type IUserRepository interface {
 	GetAllUser() []domain.User
-	AddUser(user domain.User) error
+	CreateUser(user domain.User) error
+	GetUserByEmail(email string) (domain.User, error)
+	GetUserById(id int64) (domain.User, error)
 }
 
 type UserRepository struct {
@@ -31,15 +33,35 @@ func (userRepository *UserRepository) GetAllUser() []domain.User {
 	users, err := userRepository.scanner.QueryAndScan(ctx, "SELECT * FROM users")
 	if err != nil {
 		log.Error(err)
-		return nil
+		return []domain.User{}
 	}
 	return users
 }
 
-func (userRepository *UserRepository) AddUser(user domain.User) error {
+func (userRepository *UserRepository) GetUserById(id int64) (domain.User, error) {
 	ctx := context.Background()
-	err := userRepository.scanner.ExecuteExec(ctx, "insert into users (first_name,last_name,email,password,created_at) values ($1,$2,$3,$4,$5)",
-		user.FirstName, user.LastName, user.Email, user.Password, user.CreatedAt)
+	user, err := userRepository.scanner.QueryRowAndScan(ctx, "select * from users where id=$1", id)
+	if err != nil {
+		log.Error(err)
+		return domain.User{}, err
+	}
+	return user, nil
+}
+
+func (userRepository *UserRepository) GetUserByEmail(email string) (domain.User, error) {
+	ctx := context.Background()
+	user, err := userRepository.scanner.QueryRowAndScan(ctx, "select * from users where email=$1", email)
+	if err != nil {
+		log.Error(err)
+		return domain.User{}, err
+	}
+	return user, nil
+}
+
+func (userRepository *UserRepository) CreateUser(user domain.User) error {
+	ctx := context.Background()
+	err := userRepository.scanner.ExecuteExec(ctx, "insert into users (first_name,last_name,email,password_hash,created_at) values ($1,$2,$3,$4,$5)",
+		user.FirstName, user.LastName, user.Email, user.PasswordHash, user.CreatedAt)
 	if err != nil {
 		log.Error(err)
 		return err

@@ -9,6 +9,21 @@ type FakeUserRepository struct {
 	users []domain.User
 }
 
+func (fakeUserRepository FakeUserRepository) GetUserByID(id int64) (domain.User, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (fakeUserRepository FakeUserRepository) GetUserByEmail(email string) (domain.User, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (fakeUserRepository FakeUserRepository) CreateUser(firstName, lastName, email, passwordHash string) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewFakeUserRepository(initialUsers []domain.User) persistence.IUserRepository {
 	return &FakeUserRepository{
 		users: initialUsers,

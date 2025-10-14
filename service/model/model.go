@@ -10,11 +10,23 @@ type ProductCreate struct {
 }
 
 type UserCreate struct {
+	FirstName    string
+	LastName     string
+	Email        string
+	PasswordHash string
+	CreatedAt    time.Time
+}
+
+type RegisterCreate struct {
 	FirstName string
 	LastName  string
 	Email     string
 	Password  string
-	CreatedAt time.Time
+}
+
+type LoginCreate struct {
+	Email    string
+	Password string
 }
 
 type CartCreate struct {

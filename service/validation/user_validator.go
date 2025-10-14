@@ -10,7 +10,7 @@ func ValidateUserCreate(userCreate model.UserCreate) error {
 		MinLength(userCreate.LastName, "last_name", 2).
 		RequiredString(userCreate.Email, "email").
 		MinLength(userCreate.Email, "e_mail", 11).
-		RequiredString(userCreate.Password, "password").
-		MinLength(userCreate.Password, "password", 6).
+		RequiredString(userCreate.PasswordHash, "password").
+		MinLength(userCreate.PasswordHash, "password", 6).
 		Error()
 }

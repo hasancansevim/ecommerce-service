@@ -21,7 +21,7 @@ func ScanProduct(row pgx.Row) (domain.Product, error) {
 
 func ScanUser(row pgx.Row) (domain.User, error) {
 	var user domain.User
-	err := row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Password, &user.CreatedAt)
+	err := row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.PasswordHash, &user.CreatedAt)
 	if err != nil {
 		if err.Error() == common.NOT_FOUND {
 			return domain.User{}, common.ErrUserNotFound

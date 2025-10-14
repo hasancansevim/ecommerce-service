@@ -51,5 +51,9 @@ func main() {
 	orderItemController := controller.NewOrderItemController(orderItemService)
 	orderItemController.RegisterRoutes(e)
 
+	authService := service.NewAuthService(userRepository)
+	authController := controller.NewAuthController(authService)
+	authController.RegisterRoutes(e)
+
 	e.Start("localhost:8080")
 }

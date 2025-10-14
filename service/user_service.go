@@ -10,7 +10,9 @@ import (
 
 type IUserService interface {
 	GetAllUsers() []domain.User
-	AddUser(userCreate model.UserCreate) error
+	CreateUser(userCreate model.UserCreate) error
+	GetUserByEmail(email string) (domain.User, error)
+	GetUserById(id int64) (domain.User, error)
 }
 
 type UserService struct {
@@ -27,16 +29,32 @@ func (userService *UserService) GetAllUsers() []domain.User {
 	return userService.userRepository.GetAllUser()
 }
 
-func (userService *UserService) AddUser(userCreate model.UserCreate) error {
+func (userService *UserService) CreateUser(userCreate model.UserCreate) error {
 	if validationError := validation.ValidateUserCreate(userCreate); validationError != nil {
 		return validationError
 	}
 
-	return userService.userRepository.AddUser(domain.User{
-		FirstName: userCreate.FirstName,
-		LastName:  userCreate.LastName,
-		Email:     userCreate.Email,
-		Password:  userCreate.Password,
-		CreatedAt: time.Now(),
+	return userService.userRepository.CreateUser(domain.User{
+		FirstName:    userCreate.FirstName,
+		LastName:     userCreate.LastName,
+		Email:        userCreate.Email,
+		PasswordHash: userCreate.PasswordHash,
+		CreatedAt:    time.Now(),
 	})
+}
+
+func (userService *UserService) GetUserById(id int64) (domain.User, error) {
+	getUserById, err := userService.userRepository.GetUserById(id)
+	if err != nil {
+		return domain.User{}, err
+	}
+	return getUserById, nil
+}
+
+func (userService *UserService) GetUserByEmail(email string) (domain.User, error) {
+	getUserByEmail, err := userService.userRepository.GetUserByEmail(email)
+	if err != nil {
+		return domain.User{}, err
+	}
+	return getUserByEmail, nil
 }

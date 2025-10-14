@@ -55,16 +55,6 @@ func ToResponse(product domain.Product) ProductResponse {
 	}
 }
 
-func ToResponseUserData(user domain.User) UserResponse {
-	return UserResponse{
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-		Password:  user.Password,
-		CreatedAt: user.CreatedAt.String(),
-	}
-}
-
 func ToResponseCartData(cart domain.Cart) CartResponse {
 	return CartResponse{
 		UserId:    cart.UserId,
