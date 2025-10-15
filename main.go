@@ -2,58 +2,65 @@ package main
 
 import (
 	"context"
-	"go-ecommerce-service/common/app"
 	"go-ecommerce-service/common/postgresql"
+	"go-ecommerce-service/config"
 	"go-ecommerce-service/controller"
+	"go-ecommerce-service/internal/jwt"
 	"go-ecommerce-service/persistence"
 	"go-ecommerce-service/service"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 //TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
 // the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
 
 func main() {
-	e := echo.New()
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal("Failed to load config", err)
+	}
+	jwt.Initialize(cfg.Auth.JWTSecret)
+
 	ctx := context.Background()
 
-	configurationManager := app.NewConfigurationManager()
+	dbPool := postgresql.GetConnectionPool(ctx, cfg.Database)
+	defer dbPool.Close()
 
-	dbPool := postgresql.GetConnectionPool(ctx, configurationManager.PostgreSQLConfig)
+	// Dependency Injection
+
 	productRepository := persistence.NewProductRepository(dbPool)
-	productService := service.NewProductService(productRepository)
-	productController := controller.NewProductController(productService)
-	productController.RegisterRoutes(e)
-
 	userRepository := persistence.NewUserRepository(dbPool)
-	userService := service.NewUserService(userRepository)
-	userController := controller.NewUserController(userService)
-	userController.RegisterRoutes(e)
-
 	cartRepository := persistence.NewCartRepository(dbPool)
-	cartService := service.NewCartService(cartRepository)
-	cartController := controller.NewCartController(cartService)
-	cartController.RegisterRoutes(e)
-
 	carItemRepository := persistence.NewCartItemRepository(dbPool)
-	carItemService := service.NewCartItemService(carItemRepository)
-	cartItemController := controller.NewCartItemController(carItemService)
-	cartItemController.RegiesterRoutes(e)
-
 	orderRepository := persistence.NewOrderRepository(dbPool)
-	orderService := service.NewOrderService(orderRepository)
-	orderController := controller.NewOrderController(orderService)
-	orderController.RegisterRoutes(e)
-
 	orderItemRepository := persistence.NewOrderItemRepository(dbPool)
+
+	productService := service.NewProductService(productRepository)
+	userService := service.NewUserService(userRepository)
+	cartService := service.NewCartService(cartRepository)
+	carItemService := service.NewCartItemService(carItemRepository)
+	orderService := service.NewOrderService(orderRepository)
 	orderItemService := service.NewOrderItemService(orderItemRepository)
-	orderItemController := controller.NewOrderItemController(orderItemService)
-	orderItemController.RegisterRoutes(e)
-
 	authService := service.NewAuthService(userRepository)
-	authController := controller.NewAuthController(authService)
-	authController.RegisterRoutes(e)
 
+	productController := controller.NewProductController(productService)
+	userController := controller.NewUserController(userService)
+	cartController := controller.NewCartController(cartService)
+	cartItemController := controller.NewCartItemController(carItemService)
+	orderController := controller.NewOrderController(orderService)
+	orderItemController := controller.NewOrderItemController(orderItemService)
+	authController := controller.NewAuthController(authService)
+
+	e := echo.New()
+
+	productController.RegisterRoutes(e)
+	userController.RegisterRoutes(e)
+	cartController.RegisterRoutes(e)
+	cartItemController.RegiesterRoutes(e)
+	orderController.RegisterRoutes(e)
+	orderItemController.RegisterRoutes(e)
+	authController.RegisterRoutes(e)
 	e.Start("localhost:8080")
 }

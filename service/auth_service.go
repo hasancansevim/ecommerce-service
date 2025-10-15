@@ -1,11 +1,11 @@
 package service
 
 import (
-	"errors"
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/auth"
 	"go-ecommerce-service/internal/jwt"
 	"go-ecommerce-service/persistence"
+	_errors "go-ecommerce-service/pkg/errors"
 	_interface "go-ecommerce-service/service/interface"
 	"go-ecommerce-service/service/model"
 	"go-ecommerce-service/service/validation"
@@ -26,9 +26,14 @@ func (authService *AuthService) Register(registerModel model.RegisterCreate) err
 		return validationErr
 	}
 
+	existingUser, getUserByEmailErr := authService.userRepository.GetUserByEmail(registerModel.Email)
+	if getUserByEmailErr == nil && existingUser.Email != "" {
+		return _errors.UserAlreadyExists
+	}
+
 	passwordHash, err := auth.HashPassword(registerModel.Password)
 	if err != nil {
-		return err
+		return _errors.InternalServerError
 	}
 	return authService.userRepository.CreateUser(domain.User{
 		FirstName:    registerModel.FirstName,
@@ -41,15 +46,15 @@ func (authService *AuthService) Register(registerModel model.RegisterCreate) err
 func (authService *AuthService) Login(loginModel model.LoginCreate) (string, error) {
 	userByEmail, userByEmailErr := authService.userRepository.GetUserByEmail(loginModel.Email)
 	if userByEmailErr != nil {
-		return "", userByEmailErr
+		return "", _errors.InternalServerError
 	}
 	checkPasswordHash := auth.CheckPasswordHash(loginModel.Password, userByEmail.PasswordHash)
 	if checkPasswordHash == false {
-		return "", errors.New("invalid password")
+		return "", _errors.InvalidCredentials
 	}
 	token, userByEmailErr := jwt.GenerateToken(userByEmail.Id, userByEmail.Email)
 	if userByEmailErr != nil {
-		return "", userByEmailErr
+		return "", _errors.InternalServerError
 	}
 	return token, nil
 }
@@ -59,5 +64,5 @@ func (authService *AuthService) ValidateToken(token string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return claim.UserId, nil
+	return claim.UserId, _errors.InternalServerError
 }

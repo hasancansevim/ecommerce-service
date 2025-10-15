@@ -6,7 +6,11 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var jwtSecret = []byte("akaimpkminik3")
+var jwtSecret []byte
+
+func Initialize(secret string) {
+	jwtSecret = []byte(secret)
+}
 
 type Claim struct {
 	UserId int64  `json:"user_id"`

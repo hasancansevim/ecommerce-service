@@ -11,6 +11,10 @@ type ValidationError struct {
 	Message string `json:"message"`
 }
 
+func (v ValidationError) Error() string {
+	return fmt.Sprintf("%s: %s", v.Field, v.Message)
+}
+
 type Validator struct {
 	errors []ValidationError
 }
@@ -83,7 +87,16 @@ func (v *Validator) Range(value int, field string, min, max int) *Validator {
 
 func (v *Validator) Error() error {
 	if len(v.errors) > 0 {
-		return fmt.Errorf("validation failed: %v", v.errors)
+		return ValidationErrors(v.errors)
 	}
 	return nil
+}
+
+type ValidationErrors []ValidationError
+
+func (v ValidationErrors) Error() string {
+	if len(v) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("validation failed with %d errors", len(v))
 }
