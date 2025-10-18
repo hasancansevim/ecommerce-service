@@ -31,7 +31,7 @@ func (productService *ProductService) GetAllProducts() []domain.Product {
 }
 
 func (productService *ProductService) GetAllProductsByStoreName(storeName string) []domain.Product {
-	return productService.productRepository.GetAllByStoreName(storeName)
+	return productService.productRepository.GetAllProductsByStoreName(storeName)
 }
 
 func (productService *ProductService) GetProductById(productId int64) (domain.Product, error) {

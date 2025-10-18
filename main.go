@@ -25,7 +25,10 @@ func main() {
 
 	ctx := context.Background()
 
-	dbPool := postgresql.GetConnectionPool(ctx, cfg.Database)
+	dbPool, dbPoolErr := postgresql.GetConnectionPool(ctx, cfg.Database)
+	if dbPoolErr != nil {
+		log.Fatal("Failed to connect to database", err)
+	}
 	defer dbPool.Close()
 
 	// Dependency Injection
@@ -62,5 +65,9 @@ func main() {
 	orderController.RegisterRoutes(e)
 	orderItemController.RegisterRoutes(e)
 	authController.RegisterRoutes(e)
-	e.Start("localhost:8080")
+
+	log.Printf("Server starting on %s", cfg.Server.Port)
+	if err := e.Start("localhost:" + cfg.Server.Port); err != nil {
+		log.Fatal("Failed to start server", err)
+	}
 }

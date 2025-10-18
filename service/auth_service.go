@@ -3,21 +3,24 @@ package service
 import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/auth"
-	"go-ecommerce-service/internal/jwt"
 	"go-ecommerce-service/persistence"
 	_errors "go-ecommerce-service/pkg/errors"
 	_interface "go-ecommerce-service/service/interface"
 	"go-ecommerce-service/service/model"
 	"go-ecommerce-service/service/validation"
+
+	jwt2 "github.com/golang-jwt/jwt/v4"
 )
 
 type AuthService struct {
 	userRepository persistence.IUserRepository
+	jwtManager     _interface.JWTManager
 }
 
-func NewAuthService(userRepository persistence.IUserRepository) _interface.AuthService {
+func NewAuthService(userRepository persistence.IUserRepository, jwtManager _interface.JWTManager) _interface.AuthService {
 	return &AuthService{
 		userRepository: userRepository,
+		jwtManager:     jwtManager,
 	}
 }
 
@@ -46,23 +49,23 @@ func (authService *AuthService) Register(registerModel model.RegisterCreate) err
 func (authService *AuthService) Login(loginModel model.LoginCreate) (string, error) {
 	userByEmail, userByEmailErr := authService.userRepository.GetUserByEmail(loginModel.Email)
 	if userByEmailErr != nil {
-		return "", _errors.InternalServerError
+		return "", _errors.UserNotFound
 	}
 	checkPasswordHash := auth.CheckPasswordHash(loginModel.Password, userByEmail.PasswordHash)
 	if checkPasswordHash == false {
 		return "", _errors.InvalidCredentials
 	}
-	token, userByEmailErr := jwt.GenerateToken(userByEmail.Id, userByEmail.Email)
-	if userByEmailErr != nil {
-		return "", _errors.InternalServerError
+	token, tokenErr := authService.jwtManager.GenerateToken(userByEmail.Id, userByEmail.Email)
+	if tokenErr != nil {
+		return "", _errors.ErrInvalidToken
 	}
 	return token, nil
 }
 
-func (authService *AuthService) ValidateToken(token string) (int64, error) {
-	claim, err := jwt.ValidateToken(token)
+func (authService *AuthService) ValidateToken(token string) (jwt2.Claims, error) {
+	claim, err := authService.jwtManager.ValidateToken(token)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return claim.UserId, _errors.InternalServerError
+	return claim, nil
 }

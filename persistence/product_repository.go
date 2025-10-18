@@ -11,7 +11,7 @@ import (
 
 type IProductRepository interface {
 	GetAllProducts() []domain.Product
-	GetAllByStoreName(storeName string) []domain.Product
+	GetAllProductsByStoreName(storeName string) []domain.Product
 	GetProductById(productId int64) (domain.Product, error)
 	AddProduct(product domain.Product) error
 	DeleteProductById(productId int64) error
@@ -40,7 +40,7 @@ func (productRepository *ProductRepository) GetAllProducts() []domain.Product {
 	return products
 }
 
-func (productRepository *ProductRepository) GetAllByStoreName(storeName string) []domain.Product {
+func (productRepository *ProductRepository) GetAllProductsByStoreName(storeName string) []domain.Product {
 	ctx := context.Background()
 	products, err := productRepository.scannner.QueryAndScan(ctx, "SELECT * FROM products WHERE store = $1", storeName)
 	if err != nil {
