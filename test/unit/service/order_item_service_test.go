@@ -5,7 +5,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/service"
 	"go-ecommerce-service/test/fixture"
-	mock2 "go-ecommerce-service/test/mock"
+	mock2 "go-ecommerce-service/test/mock/repository"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

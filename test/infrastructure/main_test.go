@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go-ecommerce-service/common/postgresql"
+	"go-ecommerce-service/config"
 	"go-ecommerce-service/persistence"
 	"go-ecommerce-service/test/infrastructure/testdata"
 	"os"
@@ -22,15 +23,7 @@ var (
 
 func TestMain(m *testing.M) {
 	ctx = context.Background()
-	dbPool = postgresql.GetConnectionPool(ctx, postgresql.Config{
-		Host:                  "localhost",
-		Port:                  "6432",
-		Username:              "postgres",
-		Password:              "123456",
-		DbName:                "ecommerce",
-		MaxConnections:        "10",
-		MaxConnectionIdleTime: "10s",
-	})
+	dbPool, _ := postgresql.GetConnectionPool(ctx, config.DatabaseConfig{})
 	productRepository = persistence.NewProductRepository(dbPool)
 
 	testDataRegistry = testdata.NewTestDataRegistry()

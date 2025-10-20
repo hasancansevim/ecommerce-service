@@ -1,4 +1,4 @@
-package mock
+package repository
 
 import (
 	"go-ecommerce-service/domain"

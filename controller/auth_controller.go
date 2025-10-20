@@ -2,6 +2,7 @@ package controller
 
 import (
 	"go-ecommerce-service/controller/request"
+	"go-ecommerce-service/pkg/validation"
 	_interface "go-ecommerce-service/service/interface"
 	"go-ecommerce-service/service/model"
 
@@ -29,12 +30,19 @@ func (authController *AuthController) Register(c echo.Context) error {
 	if bindErr := c.Bind(&registerRequest); bindErr != nil {
 		return authController.BadRequest(c, bindErr)
 	}
-	err := authController.authService.Register(model.RegisterCreate{
+
+	registerRequestModel := model.RegisterCreate{
 		FirstName: registerRequest.FirstName,
 		LastName:  registerRequest.LastName,
 		Email:     registerRequest.Email,
 		Password:  registerRequest.Password,
-	})
+	}
+
+	if validationErr := validation.ValidateRegisterRequest(registerRequestModel); validationErr != nil {
+		return authController.BadRequest(c, validationErr)
+	}
+
+	err := authController.authService.Register(registerRequestModel)
 	if err != nil {
 		return authController.BadRequest(c, err)
 	}

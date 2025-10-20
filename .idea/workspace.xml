@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/pkg/validation/validator.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/controller/auth_controller_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/mock/service/auth_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/go-ecommerce-service.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/auth_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middleware/auth_middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/auth_middleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/errors/error_codes.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/errors/error_codes.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/cart_item_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/mock/repository/cart_item_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/cart_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/mock/repository/cart_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/order_item_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/mock/repository/order_item_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/order_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/mock/repository/order_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/mock/repository/product_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/user_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/mock/repository/user_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/auth_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/auth_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/cart_item_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/cart_item_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/cart_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/cart_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/order_item_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/order_item_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/order_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/order_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/product_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/product_service_test.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../Program Files/Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "hasancansevim"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/hasancansevim/ecommerce-service",
+    "accountId": "ee85aff7-4907-40b6-a13d-fe9c55e9e611"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="34LTBmwNvEOtN33L5za951WLchG" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboarding": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "master",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "C:/Users/Hasan Can"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-f466f9b0953e-3d2cccfc42a2-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-252.26199.158" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-GO-252.26199.158" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="" />
+      <created>1760991723911</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1760991723911</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <settings-migrated>true</settings-migrated>
+  </component>
+</project>

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"go-ecommerce-service/internal/jwt"
 	_errors "go-ecommerce-service/pkg/errors"
 	_interface "go-ecommerce-service/service/interface"
 	"net/http"
@@ -21,7 +22,7 @@ func AuthMiddleware(authService _interface.AuthService) echo.MiddlewareFunc {
 				return c.JSON(http.StatusUnauthorized, _errors.ErrInvalidToken)
 			}
 			token := tokenParts[1]
-			userId, err := authService.ValidateToken(token)
+			userId, err := jwt.ValidateToken(token)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, _errors.ErrInvalidToken)
 			}

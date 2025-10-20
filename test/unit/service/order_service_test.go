@@ -5,7 +5,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/service"
 	"go-ecommerce-service/test/fixture"
-	"go-ecommerce-service/test/mock"
+	"go-ecommerce-service/test/mock/repository"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,12 +14,12 @@ import (
 
 type OrderServiceTestSuite struct {
 	suite.Suite
-	mockOrderRepo *mock.MockOrderRepository
+	mockOrderRepo *repository.MockOrderRepository
 	orderService  service.IOrderService
 }
 
 func (suite *OrderServiceTestSuite) SetupTest() {
-	suite.mockOrderRepo = new(mock.MockOrderRepository)
+	suite.mockOrderRepo = new(repository.MockOrderRepository)
 	suite.orderService = service.NewOrderService(suite.mockOrderRepo)
 }
 

@@ -46,7 +46,8 @@ func main() {
 	carItemService := service.NewCartItemService(carItemRepository)
 	orderService := service.NewOrderService(orderRepository)
 	orderItemService := service.NewOrderItemService(orderItemRepository)
-	authService := service.NewAuthService(userRepository)
+	jwtManager := service.NewJWTService()
+	authService := service.NewAuthService(userRepository, jwtManager)
 
 	productController := controller.NewProductController(productService)
 	userController := controller.NewUserController(userService)

@@ -9,6 +9,7 @@ import (
 	"go-ecommerce-service/service/model"
 	"go-ecommerce-service/test/fixture"
 	"go-ecommerce-service/test/mock"
+	"go-ecommerce-service/test/mock/repository"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,13 +19,13 @@ import (
 
 type AuthServiceTestSuite struct {
 	suite.Suite
-	mockUserRepo   *mock.MockUserRepository
+	mockUserRepo   *repository.MockUserRepository
 	mockJWTManager *mock.MockJWTManager
 	authService    _interface.AuthService
 }
 
 func (suite *AuthServiceTestSuite) SetupTest() {
-	suite.mockUserRepo = new(mock.MockUserRepository)
+	suite.mockUserRepo = new(repository.MockUserRepository)
 	suite.mockJWTManager = new(mock.MockJWTManager)
 	suite.authService = service.NewAuthService(suite.mockUserRepo, suite.mockJWTManager)
 }

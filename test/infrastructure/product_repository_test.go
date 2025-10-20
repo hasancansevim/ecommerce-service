@@ -34,7 +34,7 @@ func TestGetAllProductsByStoreName(t *testing.T) {
 	defer cleanupProductTestData()
 
 	t.Run("Get All Products by Store Name", func(t *testing.T) {
-		actualProducts := productRepository.GetAllByStoreName("Teknosa")
+		actualProducts := productRepository.GetAllProductsByStoreName("Teknosa")
 		expectedProducts := []domain.Product{
 			{Name: "Laptop", Price: 20000.0, Discount: 10.0, Store: "Teknosa"},
 			{Name: "Klavye", Price: 800.0, Discount: 0.0, Store: "Teknosa"},
