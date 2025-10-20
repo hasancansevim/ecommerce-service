@@ -2,7 +2,9 @@ package controller
 
 import (
 	"go-ecommerce-service/controller/request"
+	"go-ecommerce-service/pkg/validation"
 	"go-ecommerce-service/service"
+	"go-ecommerce-service/service/model"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -54,6 +56,17 @@ func (productController *ProductController) AddProduct(c echo.Context) error {
 	var addProductRequest request.AddProductRequest
 	if bindErr := c.Bind(&addProductRequest); bindErr != nil {
 		return productController.BadRequest(c, bindErr)
+	}
+
+	validator := validation.ProductCreateValidator{ProductReq: model.ProductCreate{
+		Name:     addProductRequest.Name,
+		Price:    addProductRequest.Price,
+		Discount: addProductRequest.Discount,
+		Store:    addProductRequest.Store,
+	}}
+
+	if validationErr := validator.Validate(); validationErr != nil {
+		return productController.BadRequest(c, validationErr)
 	}
 
 	if addProductErr := productController.productService.AddProduct(addProductRequest.ToModel()); addProductErr != nil {

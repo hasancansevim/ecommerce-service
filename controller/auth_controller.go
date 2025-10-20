@@ -38,7 +38,8 @@ func (authController *AuthController) Register(c echo.Context) error {
 		Password:  registerRequest.Password,
 	}
 
-	if validationErr := validation.ValidateRegisterRequest(registerRequestModel); validationErr != nil {
+	validator := validation.RegisterValidator{RegisterReq: registerRequestModel}
+	if validationErr := validator.Validate(); validationErr != nil {
 		return authController.BadRequest(c, validationErr)
 	}
 
