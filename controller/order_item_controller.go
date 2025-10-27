@@ -39,6 +39,7 @@ func (orderItemController *OrderItemController) AddOrderItem(c echo.Context) err
 	if bindErr != nil {
 		return orderItemController.BadRequest(c, bindErr)
 	}
+
 	if addOrderItemErr := orderItemController.orderItemService.AddOrderItem(model.OrderItemCreate{
 		OrderId:   addOrderItemRequest.OrderId,
 		ProductId: addOrderItemRequest.ProductId,

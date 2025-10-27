@@ -3,7 +3,9 @@ package controller
 import (
 	"go-ecommerce-service/controller/request"
 	"go-ecommerce-service/controller/response"
+	"go-ecommerce-service/pkg/validation"
 	"go-ecommerce-service/service"
+	"go-ecommerce-service/service/model"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -34,6 +36,16 @@ func (orderController *OrderController) CreateOrder(c echo.Context) error {
 	bindErr := c.Bind(&addOrderRequest)
 	if bindErr != nil {
 		return orderController.BadRequest(c, bindErr)
+	}
+
+	validator := validation.OrderCreateValidator{OrderReq: model.OrderCreate{
+		UserId:     addOrderRequest.UserId,
+		TotalPrice: addOrderRequest.TotalPrice,
+		Status:     addOrderRequest.Status,
+		CreatedAt:  addOrderRequest.CreatedAt,
+	}}
+	if validationErr := validator.Validate(); validationErr != nil {
+		return orderController.BadRequest(c, validationErr)
 	}
 	if createOrderErr := orderController.orderService.CreateOrder(addOrderRequest.ToModel()); createOrderErr != nil {
 		return orderController.BadRequest(c, createOrderErr)
@@ -76,7 +88,7 @@ func (orderController *OrderController) UpdateOrderStatus(c echo.Context) error 
 		return orderController.BadRequest(c, err)
 	}
 	queryParam := orderController.StringQueryParam(c, "status")
-	status := strconv.CanBackquote(queryParam)
+	status := queryParam == "true"
 	if updateOrderStatusErr := orderController.orderService.UpdateOrderStatus(id, status); updateOrderStatusErr != nil {
 		return orderController.BadRequest(c, updateOrderStatusErr)
 	}
