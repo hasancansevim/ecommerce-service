@@ -45,7 +45,7 @@ func (v *Validator) RequiredInt(value int, field string) *Validator {
 	return v
 }
 
-func (v *Validator) RequiredFloat(value float32, field string) *Validator {
+func (v *Validator) RequiredFloat(value float64, field string) *Validator {
 	if value == 0 {
 		v.errors = append(v.errors, ValidationError{
 			Field:   field,
@@ -80,6 +80,16 @@ func (v *Validator) Range(value int, field string, min, max int) *Validator {
 		v.errors = append(v.errors, ValidationError{
 			Field:   field,
 			Message: fmt.Sprintf("%s must be in range [%d,%d]", field, min, max),
+		})
+	}
+	return v
+}
+
+func (v *Validator) RangeFloat64(value float64, field string, min, max float64) *Validator {
+	if value < min || value > max {
+		v.errors = append(v.errors, ValidationError{
+			Field:   field,
+			Message: fmt.Sprintf("%s must be in range [%f,%f]", field, min, max),
 		})
 	}
 	return v

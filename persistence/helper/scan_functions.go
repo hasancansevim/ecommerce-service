@@ -9,7 +9,24 @@ import (
 
 func ScanProduct(row pgx.Row) (domain.Product, error) {
 	var product domain.Product
-	err := row.Scan(&product.Id, &product.Name, &product.Price, &product.Discount, &product.Store)
+	err := row.Scan(
+		&product.Id,
+		&product.Name,
+		&product.Slug,
+		&product.Description,
+		&product.Price,
+		&product.BasePrice,
+		&product.Discount,
+		&product.ImageUrl,
+		&product.MetaDescription,
+		&product.StockQuantity,
+		&product.IsActive,
+		&product.IsFeatured,
+		&product.CategoryId,
+		&product.StoreId,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+	)
 	if err != nil {
 		if err.Error() == common.NOT_FOUND {
 			return domain.Product{}, common.ErrProductNotFound
@@ -17,6 +34,29 @@ func ScanProduct(row pgx.Row) (domain.Product, error) {
 		return product, common.WrapError("scan product", err)
 	}
 	return product, nil
+}
+
+func ScanStore(row pgx.Row) (domain.Store, error) {
+	var store domain.Store
+	err := row.Scan(
+		&store.Id,
+		&store.Name,
+		&store.Slug,
+		&store.Description,
+		&store.LogoUrl,
+		&store.ContactEmail,
+		&store.ContactPhone,
+		&store.ContactAddress,
+		&store.IsActive,
+		&store.CreatedAt,
+		&store.UpdatedAt)
+	if err != nil {
+		if err.Error() == common.NOT_FOUND {
+			return domain.Store{}, common.ErrStoreNotFound
+		}
+		return store, common.WrapError("scan store", err)
+	}
+	return store, nil
 }
 
 func ScanUser(row pgx.Row) (domain.User, error) {
@@ -77,4 +117,16 @@ func ScanOrderItem(row pgx.Row) (domain.OrderItem, error) {
 		return orderItem, common.WrapError("scan order item", err)
 	}
 	return orderItem, nil
+}
+
+func ScanCategory(row pgx.Row) (domain.Category, error) {
+	var category domain.Category
+	err := row.Scan(&category.Id, &category.Name, &category.Description, &category.IsActive)
+	if err != nil {
+		if err.Error() == common.NOT_FOUND {
+			return domain.Category{}, common.ErrCategoryNotFound
+		}
+		return category, common.WrapError("scan category", err)
+	}
+	return category, nil
 }

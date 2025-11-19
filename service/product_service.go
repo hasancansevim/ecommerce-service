@@ -9,7 +9,6 @@ import (
 
 type IProductService interface {
 	GetAllProducts() []domain.Product
-	GetAllProductsByStoreName(storeName string) []domain.Product
 	GetProductById(productId int64) (domain.Product, error)
 	AddProduct(productCreate model.ProductCreate) error
 	DeleteProductById(productId int64) error
@@ -30,10 +29,6 @@ func (productService *ProductService) GetAllProducts() []domain.Product {
 	return productService.productRepository.GetAllProducts()
 }
 
-func (productService *ProductService) GetAllProductsByStoreName(storeName string) []domain.Product {
-	return productService.productRepository.GetAllProductsByStoreName(storeName)
-}
-
 func (productService *ProductService) GetProductById(productId int64) (domain.Product, error) {
 	return productService.productRepository.GetProductById(productId)
 }
@@ -43,10 +38,19 @@ func (productService *ProductService) AddProduct(productCreate model.ProductCrea
 		return validationError
 	}
 	return productService.productRepository.AddProduct(domain.Product{
-		Name:     productCreate.Name,
-		Price:    productCreate.Price,
-		Discount: productCreate.Discount,
-		Store:    productCreate.Store,
+		Name:            productCreate.Name,
+		Slug:            productCreate.Slug,
+		Description:     productCreate.Description,
+		Price:           productCreate.Price,
+		BasePrice:       productCreate.BasePrice,
+		Discount:        productCreate.Discount,
+		ImageUrl:        productCreate.ImageUrl,
+		MetaDescription: productCreate.MetaDescription,
+		StockQuantity:   productCreate.StockQuantity,
+		IsActive:        productCreate.IsActive,
+		IsFeatured:      productCreate.IsFeatured,
+		CategoryId:      productCreate.CategoryId,
+		StoreId:         productCreate.StoreId,
 	})
 }
 

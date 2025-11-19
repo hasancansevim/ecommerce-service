@@ -3,10 +3,19 @@ package model
 import "time"
 
 type ProductCreate struct {
-	Name     string
-	Price    float32
-	Discount float32
-	Store    string
+	Name            string
+	Slug            string
+	Description     string
+	Price           float64
+	BasePrice       float64
+	Discount        float64
+	ImageUrl        string
+	MetaDescription string
+	StockQuantity   int
+	IsActive        bool
+	IsFeatured      bool
+	CategoryId      *uint
+	StoreId         uint
 }
 
 type UserCreate struct {
@@ -51,4 +60,23 @@ type OrderItemCreate struct {
 	ProductId int64
 	Quantity  int
 	Price     float32
+}
+
+type CategoryCreate struct {
+	Name        string
+	Description string
+	IsActive    bool
+}
+
+type StoreCreate struct {
+	Name           string
+	Slug           string
+	Description    string
+	LogoUrl        string
+	ContactEmail   string
+	ContactPhone   string
+	ContactAddress string
+	IsActive       bool
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }

@@ -1,16 +1,31 @@
 package response
 
-import "go-ecommerce-service/domain"
+import (
+	"go-ecommerce-service/domain"
+	"time"
+)
 
 type ErrorResponse struct {
 	ErrorDescription string `json:"error_description"`
 }
 
 type ProductResponse struct {
-	Name     string  `json:"name"`
-	Price    float32 `json:"price"`
-	Discount float32 `json:"discount"`
-	Store    string  `json:"store"`
+	Id              uint      `json:"id"`
+	Name            string    `json:"name"`
+	Slug            string    `json:"slug"`
+	Description     string    `json:"description"`
+	Price           float64   `json:"price"`
+	BasePrice       float64   `json:"base_price"`
+	Discount        float64   `json:"discount"`
+	ImageUrl        string    `json:"image_url"`
+	MetaDescription string    `json:"meta_description"`
+	StockQuantity   int       `json:"stock_quantity"`
+	IsActive        bool      `json:"is_active"`
+	IsFeatured      bool      `json:"is_featured"`
+	CategoryId      *uint     `json:"category_id"`
+	StoreId         uint      `json:"store_id"`
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
 }
 
 type UserResponse struct {
@@ -46,12 +61,30 @@ type OrderItemResponse struct {
 	Price     float32 `json:"price"`
 }
 
+type CategoryResponse struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	IsActive    bool   `json:"is_active"`
+}
+
 func ToResponse(product domain.Product) ProductResponse {
 	return ProductResponse{
-		Name:     product.Name,
-		Price:    product.Price,
-		Discount: product.Discount,
-		Store:    product.Store,
+		Id:              product.Id,
+		Name:            product.Name,
+		Slug:            product.Slug,
+		Description:     product.Description,
+		Price:           product.Price,
+		BasePrice:       product.BasePrice,
+		Discount:        product.Discount,
+		ImageUrl:        product.ImageUrl,
+		MetaDescription: product.MetaDescription,
+		StockQuantity:   product.StockQuantity,
+		IsActive:        product.IsActive,
+		IsFeatured:      product.IsFeatured,
+		CategoryId:      product.CategoryId,
+		StoreId:         product.StoreId,
+		CreatedAt:       product.CreatedAt,
+		UpdatedAt:       product.UpdatedAt,
 	}
 }
 

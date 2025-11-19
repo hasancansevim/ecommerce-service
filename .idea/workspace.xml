@@ -4,19 +4,33 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/pkg/validation/order_item_validator.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/validation/order_validator.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/controller/order_controller_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/mock/service/cart_item_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/mock/service/cart_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/mock/service/order_item_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/mock/service/order_service.go" afterDir="false" />
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat(tests): complete comprehensive controller test suite&#10;&#10;✅ Implement full controller test coverage for all modules&#10;✅ Auth, Product, Order, Cart, CartItem, OrderItem controllers&#10;✅ Comprehensive test scenarios including success/error cases&#10;✅ Mock-based unit testing with proper service isolation&#10;✅ Validation error handling and edge case coverage&#10;✅ 100% test pass rate with enterprise-level quality standards">
+      <change afterPath="$PROJECT_DIR$/controller/category_controller.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/store_controller.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/domain/category.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/domain/store.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/persistence/category_repository.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/persistence/store_repository.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/category_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/store_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/order_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_item_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/validation/auth_validator.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/controller/product_controller_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/controller/product_controller_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/request/request.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/request/request.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/response/response.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/response/response.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/product.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/product.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/common/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/common/errors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/helper/interfaces/scanner.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/helper/interfaces/scanner.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/helper/scan_functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/helper/scan_functions.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/product_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/validation/product_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/validation/product_validator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/model/model.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/product_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/product_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/validation/order_item_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/order_item_validator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/validation/order_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/order_validator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/validation/product_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/product_validator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/validation/validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/validator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/scripts/test_db.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/test/scripts/test_db.ps1" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +40,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="PowerShell File" />
         <option value="Go File" />
       </list>
     </option>
@@ -58,47 +73,45 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Go Test.TestCreateOrder_InvalidInput in go-ecommerce-service/test/controller.executor": "Run",
-    "Go Test.TestCreateOrder_Success in go-ecommerce-service/test/controller.executor": "Run",
-    "Go Test.TestCreateOrder_ValidationError in go-ecommerce-service/test/controller.executor": "Run",
-    "Go Test.TestGetOrderById_InvalidID in go-ecommerce-service/test/controller.executor": "Run",
-    "Go Test.TestGetOrderById_Success in go-ecommerce-service/test/controller.executor": "Run",
-    "Go Test.TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller.executor": "Run",
-    "Go Test.TestOrderControllerTestSuite in go-ecommerce-service/test/controller.executor": "Debug",
-    "Go Test.go test go-ecommerce-service/test/controller.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.GoLinterPluginOnboarding": "true",
-    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "git-widget-placeholder": "master",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Hasan Can",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Go Build.go build main.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestCreateOrder_InvalidInput in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestCreateOrder_Success in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestCreateOrder_ValidationError in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetOrderById_InvalidID in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetOrderById_Success in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestOrderControllerTestSuite in go-ecommerce-service/test/controller.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.go test go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Hasan Can&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="Go Test.go test go-ecommerce-service/test/controller">
-    <configuration name="TestCreateOrder_InvalidInput in go-ecommerce-service/test/controller" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+}</component>
+  <component name="RunManager" selected="Go Build.go build main.go">
+    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go-ecommerce-service" />
-      <working_directory value="$PROJECT_DIR$/test/controller" />
-      <parameters value=" -testify.m ^TestCreateOrder_InvalidInput$" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="go-ecommerce-service/test/controller" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="go-ecommerce-service" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestOrderControllerTestSuite\E$/^\QTestCreateOrder_InvalidInput\E$" />
+      <filePath value="$PROJECT_DIR$/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="TestGetOrderById_InvalidID in go-ecommerce-service/test/controller" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -153,11 +166,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build main.go" />
         <item itemvalue="Go Test.go test go-ecommerce-service/test/controller" />
         <item itemvalue="Go Test.TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller" />
         <item itemvalue="Go Test.TestGetOrderById_InvalidID in go-ecommerce-service/test/controller" />
         <item itemvalue="Go Test.TestGetOrderById_Success in go-ecommerce-service/test/controller" />
-        <item itemvalue="Go Test.TestCreateOrder_InvalidInput in go-ecommerce-service/test/controller" />
       </list>
     </recent_temporary>
   </component>
@@ -181,6 +194,10 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat(tests): complete comprehensive controller test suite&#10;&#10;✅ Implement full controller test coverage for all modules&#10;✅ Auth, Product, Order, Cart, CartItem, OrderItem controllers&#10;✅ Comprehensive test scenarios including success/error cases&#10;✅ Mock-based unit testing with proper service isolation&#10;✅ Validation error handling and edge case coverage&#10;✅ 100% test pass rate with enterprise-level quality standards" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(tests): complete comprehensive controller test suite&#10;&#10;✅ Implement full controller test coverage for all modules&#10;✅ Auth, Product, Order, Cart, CartItem, OrderItem controllers&#10;✅ Comprehensive test scenarios including success/error cases&#10;✅ Mock-based unit testing with proper service isolation&#10;✅ Validation error handling and edge case coverage&#10;✅ 100% test pass rate with enterprise-level quality standards" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

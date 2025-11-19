@@ -6,10 +6,12 @@ func ValidateProductCreate(productCreate model.ProductCreate) error {
 	return NewValidator().
 		RequiredString(productCreate.Name, "name").
 		MinLength(productCreate.Name, "name", 2).
+		MaxLength(productCreate.Name, "name", 255).
+		RequiredString(productCreate.Slug, "slug").
+		MinLength(productCreate.Slug, "slug", 2).
+		MaxLength(productCreate.Slug, "slug", 255).
 		RequiredFloat(productCreate.Price, "price").
-		Range(int(productCreate.Price), "price", 1, 1_000_000).
-		Range(int(productCreate.Discount), "discount", 1, 90).
-		RequiredString(productCreate.Store, "store").
-		MinLength(productCreate.Store, "store", 2).
+		RangeFloat64(productCreate.Price, "price", 0.01, 1_000_000).
+		RangeFloat64(productCreate.Discount, "discount", 0, 100).
 		Error()
 }

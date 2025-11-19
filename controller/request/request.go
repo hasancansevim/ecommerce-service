@@ -6,10 +6,19 @@ import (
 )
 
 type AddProductRequest struct {
-	Name     string  `json:"name"`
-	Price    float32 `json:"price"`
-	Discount float32 `json:"discount"`
-	Store    string  `json:"store"`
+	Name            string  `json:"name"`
+	Slug            string  `json:"slug"`
+	Description     string  `json:"description"`
+	Price           float64 `json:"price"`
+	BasePrice       float64 `json:"base_price"`
+	Discount        float64 `json:"discount"`
+	ImageUrl        string  `json:"image_url"`
+	MetaDescription string  `json:"meta_description"`
+	StockQuantity   int     `json:"stock_quantity"`
+	IsActive        bool    `json:"is_active"`
+	IsFeatured      bool    `json:"is_featured"`
+	CategoryId      *uint   `json:"category_id"`
+	StoreId         uint    `json:"store_id"`
 }
 
 type RegisterRequest struct {
@@ -56,12 +65,40 @@ type UpdateOrderItemRequest struct {
 	Price     float32 `json:"price"`
 }
 
+type AddCategoryRequest struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	IsActive    bool   `json:"is_active"`
+}
+
+type AddStoreRequest struct {
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	Description    string    `json:"description"`
+	LogoUrl        string    `json:"logo_url"`
+	ContactEmail   string    `json:"contact_email"`
+	ContactPhone   string    `json:"contact_phone"`
+	ContactAddress string    `json:"contact_address"`
+	IsActive       bool      `json:"is_active"`
+	CreatedAt      time.Time `json:"created-at"`
+	UpdatedAt      time.Time `json:"updated-at"`
+}
+
 func (addProductRequest AddProductRequest) ToModel() model.ProductCreate {
 	return model.ProductCreate{
-		Name:     addProductRequest.Name,
-		Price:    addProductRequest.Price,
-		Discount: addProductRequest.Discount,
-		Store:    addProductRequest.Store,
+		Name:            addProductRequest.Name,
+		Slug:            addProductRequest.Slug,
+		Description:     addProductRequest.Description,
+		Price:           addProductRequest.Price,
+		BasePrice:       addProductRequest.BasePrice,
+		Discount:        addProductRequest.Discount,
+		ImageUrl:        addProductRequest.ImageUrl,
+		MetaDescription: addProductRequest.MetaDescription,
+		StockQuantity:   addProductRequest.StockQuantity,
+		IsActive:        addProductRequest.IsActive,
+		IsFeatured:      addProductRequest.IsFeatured,
+		CategoryId:      addProductRequest.CategoryId,
+		StoreId:         addProductRequest.StoreId,
 	}
 }
 
@@ -95,5 +132,27 @@ func (addOrderItemRequest AddOrderItemRequest) ToModel() model.OrderItemCreate {
 		ProductId: addOrderItemRequest.ProductId,
 		Quantity:  addOrderItemRequest.Quantity,
 		Price:     addOrderItemRequest.Price,
+	}
+}
+
+func (addCategoryRequest AddCategoryRequest) ToModel() model.CategoryCreate {
+	return model.CategoryCreate{
+		Name:        addCategoryRequest.Name,
+		Description: addCategoryRequest.Description,
+		IsActive:    addCategoryRequest.IsActive,
+	}
+}
+
+func (addStoreRequest AddStoreRequest) ToModel() model.StoreCreate {
+	return model.StoreCreate{
+		Name:         addStoreRequest.Name,
+		Slug:         addStoreRequest.Slug,
+		Description:  addStoreRequest.Description,
+		LogoUrl:      addStoreRequest.LogoUrl,
+		ContactEmail: addStoreRequest.ContactEmail,
+		ContactPhone: addStoreRequest.ContactPhone,
+		IsActive:     addStoreRequest.IsActive,
+		CreatedAt:    addStoreRequest.CreatedAt,
+		UpdatedAt:    addStoreRequest.UpdatedAt,
 	}
 }

@@ -26,10 +26,6 @@ func (v ProductCreateValidator) Validate() *_errors.AppError {
 		errors = append(errors, ValidationError{Field: "discount", Message: "Discount must be between 0 and 100"})
 	}
 
-	if strings.TrimSpace(v.ProductReq.Store) == "" {
-		errors = append(errors, ValidationError{Field: "store", Message: "Store is required"})
-	}
-
 	if len(errors) > 0 {
 		return _errors.NewValidationError(errors)
 	}

@@ -30,13 +30,8 @@ func (productController *ProductController) RegisterRoutes(e *echo.Echo) {
 }
 
 func (productController *ProductController) GetAllProducts(c echo.Context) error {
-	queryParam := c.QueryParam("storeName")
-	if queryParam != "" {
-		allProductsByStoreName := productController.productService.GetAllProductsByStoreName(queryParam)
-		return productController.Success(c, allProductsByStoreName)
-	}
-	allProducts := productController.productService.GetAllProducts()
-	return productController.Success(c, allProducts)
+	products := productController.productService.GetAllProducts()
+	return productController.Success(c, products)
 }
 
 func (productController *ProductController) GetProductById(c echo.Context) error {
@@ -59,10 +54,19 @@ func (productController *ProductController) AddProduct(c echo.Context) error {
 	}
 
 	validator := validation.ProductCreateValidator{ProductReq: model.ProductCreate{
-		Name:     addProductRequest.Name,
-		Price:    addProductRequest.Price,
-		Discount: addProductRequest.Discount,
-		Store:    addProductRequest.Store,
+		Name:            addProductRequest.Name,
+		Description:     addProductRequest.Description,
+		BasePrice:       addProductRequest.BasePrice,
+		StockQuantity:   addProductRequest.StockQuantity,
+		ImageUrl:        addProductRequest.ImageUrl,
+		CategoryId:      addProductRequest.CategoryId,
+		IsActive:        addProductRequest.IsActive,
+		IsFeatured:      addProductRequest.IsFeatured,
+		MetaDescription: addProductRequest.MetaDescription,
+		Slug:            addProductRequest.Slug,
+		Price:           addProductRequest.Price,
+		Discount:        addProductRequest.Discount,
+		StoreId:         addProductRequest.StoreId,
 	}}
 
 	if validationErr := validator.Validate(); validationErr != nil {

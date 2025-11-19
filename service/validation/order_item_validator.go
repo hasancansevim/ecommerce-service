@@ -7,6 +7,5 @@ func ValidateOrderItemCreate(orderItemCreate model.OrderItemCreate) error {
 		RequiredInt(int(orderItemCreate.OrderId), "order_id").
 		RequiredInt(int(orderItemCreate.ProductId), "product_id").
 		RequiredInt(orderItemCreate.Quantity, "quantity").
-		RequiredFloat(orderItemCreate.Price, "price").
 		Error()
 }

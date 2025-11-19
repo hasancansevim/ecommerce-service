@@ -39,6 +39,8 @@ func main() {
 	carItemRepository := persistence.NewCartItemRepository(dbPool)
 	orderRepository := persistence.NewOrderRepository(dbPool)
 	orderItemRepository := persistence.NewOrderItemRepository(dbPool)
+	categoryRepository := persistence.NewCategoryRepository(dbPool)
+	storeRepository := persistence.NewStoreRepository(dbPool)
 
 	productService := service.NewProductService(productRepository)
 	userService := service.NewUserService(userRepository)
@@ -48,6 +50,8 @@ func main() {
 	orderItemService := service.NewOrderItemService(orderItemRepository)
 	jwtManager := service.NewJWTService()
 	authService := service.NewAuthService(userRepository, jwtManager)
+	categoryService := service.NewCategoryService(categoryRepository)
+	storeService := service.NewStoreService(storeRepository)
 
 	productController := controller.NewProductController(productService)
 	userController := controller.NewUserController(userService)
@@ -56,6 +60,8 @@ func main() {
 	orderController := controller.NewOrderController(orderService)
 	orderItemController := controller.NewOrderItemController(orderItemService)
 	authController := controller.NewAuthController(authService)
+	categoryController := controller.NewCategoryController(categoryService)
+	storeController := controller.NewStoreController(storeService)
 
 	e := echo.New()
 
@@ -66,6 +72,8 @@ func main() {
 	orderController.RegisterRoutes(e)
 	orderItemController.RegisterRoutes(e)
 	authController.RegisterRoutes(e)
+	categoryController.RegisterRoutes(e)
+	storeController.RegisterRoutes(e)
 
 	log.Printf("Server starting on %s", cfg.Server.Port)
 	if err := e.Start("localhost:" + cfg.Server.Port); err != nil {

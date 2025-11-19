@@ -12,6 +12,8 @@ var (
 	ErrOrderItemNotFound = errors.New("Order item not found")
 	ErrCartNotFound      = errors.New("Cart not found")
 	ErrCartItemNotFound  = errors.New("Cart item not found")
+	ErrCategoryNotFound  = errors.New("Category not found")
+	ErrStoreNotFound     = errors.New("Store not found")
 	ErrDatabaseQuery     = errors.New("Database query error")
 	ErrDatabaseExecute   = errors.New("Database execution error")
 )
