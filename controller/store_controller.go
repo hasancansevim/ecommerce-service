@@ -27,7 +27,7 @@ func (storeController *StoreController) RegisterRoutes(e *echo.Echo) {
 
 func (storeController *StoreController) GetAllStores(c echo.Context) error {
 	stores := storeController.storeService.GetAllStores()
-	return storeController.Success(c, stores)
+	return storeController.Success(c, stores, "Tüm Mağazalar Getirildi")
 }
 
 func (storeController *StoreController) GetStoreById(c echo.Context) error {
@@ -39,7 +39,7 @@ func (storeController *StoreController) GetStoreById(c echo.Context) error {
 	if err != nil {
 		return storeController.BadRequest(c, err)
 	}
-	return storeController.Success(c, store)
+	return storeController.Success(c, store, "Mağaza Getirildi")
 }
 
 func (storeController *StoreController) AddStore(c echo.Context) error {
@@ -51,7 +51,7 @@ func (storeController *StoreController) AddStore(c echo.Context) error {
 	if err != nil {
 		return storeController.BadRequest(c, err)
 	}
-	return storeController.Success(c, nil)
+	return storeController.Success(c, addStoreRequest, "Mağaza Eklendi")
 }
 
 func (storeController *StoreController) DeleteStore(c echo.Context) error {
@@ -63,7 +63,7 @@ func (storeController *StoreController) DeleteStore(c echo.Context) error {
 	if err != nil {
 		return storeController.BadRequest(c, err)
 	}
-	return storeController.Success(c, nil)
+	return storeController.Success(c, nil, "Mağaza Silindi")
 }
 
 func (storeController *StoreController) UpdateStore(c echo.Context) error {
@@ -79,5 +79,5 @@ func (storeController *StoreController) UpdateStore(c echo.Context) error {
 	if err != nil {
 		return storeController.BadRequest(c, err)
 	}
-	return storeController.Success(c, nil)
+	return storeController.Success(c, nil, "Mağaza Güncellendi")
 }

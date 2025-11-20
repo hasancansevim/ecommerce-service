@@ -31,7 +31,7 @@ func (cartController *CartController) GetCartById(c echo.Context) error {
 	}
 
 	getCartById := cartController.cartService.GetCartById(id)
-	return cartController.Success(c, getCartById)
+	return cartController.Success(c, getCartById, "")
 }
 
 func (cartController *CartController) CreateCart(c echo.Context) error {
@@ -45,7 +45,7 @@ func (cartController *CartController) CreateCart(c echo.Context) error {
 		return cartController.BadRequest(c, toModelErr)
 	}
 
-	return cartController.Created(c)
+	return cartController.Created(c, addCartRequest, "")
 }
 
 func (cartController *CartController) GetCartsByUserId(c echo.Context) error {
@@ -55,7 +55,7 @@ func (cartController *CartController) GetCartsByUserId(c echo.Context) error {
 	}
 
 	getCartByUserId := cartController.cartService.GetCartsByUserId(userId)
-	return cartController.Success(c, getCartByUserId)
+	return cartController.Success(c, getCartByUserId, "")
 }
 
 func (cartController *CartController) DeleteCartById(c echo.Context) error {
@@ -67,7 +67,7 @@ func (cartController *CartController) DeleteCartById(c echo.Context) error {
 		return cartController.BadRequest(c, deleteCartByIdErr)
 	}
 
-	return cartController.Created(c)
+	return cartController.Created(c, nil, "")
 }
 
 func (cartController *CartController) ClearUserCarts(c echo.Context) error {
@@ -79,5 +79,5 @@ func (cartController *CartController) ClearUserCarts(c echo.Context) error {
 		return cartController.BadRequest(c, clearUserCartErr)
 	}
 
-	return cartController.Created(c)
+	return cartController.Created(c, nil, "Kullanıcının Sepeti Silindi")
 }

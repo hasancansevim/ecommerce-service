@@ -4,33 +4,19 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat(tests): complete comprehensive controller test suite&#10;&#10;✅ Implement full controller test coverage for all modules&#10;✅ Auth, Product, Order, Cart, CartItem, OrderItem controllers&#10;✅ Comprehensive test scenarios including success/error cases&#10;✅ Mock-based unit testing with proper service isolation&#10;✅ Validation error handling and edge case coverage&#10;✅ 100% test pass rate with enterprise-level quality standards">
-      <change afterPath="$PROJECT_DIR$/controller/category_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/controller/store_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/domain/category.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/domain/store.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/persistence/category_repository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/persistence/store_repository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/category_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/store_service.go" afterDir="false" />
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: add categories and stores tables with extended product management&#10;&#10;- Add categories and stores tables&#10;- Extend products table with new fields (slug, description, base_price, etc.)&#10;- Update product repository with new CRUD operations  &#10;- Add store and category management&#10;- Fix null pointer exceptions in scanners&#10;- Improve validation and error handling">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/auth_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/base_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/base_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/cart_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/cart_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_item_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/category_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/category_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/order_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_item_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/request/request.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/request/request.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/response/response.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/response/response.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/product.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/product.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/common/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/common/errors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/helper/interfaces/scanner.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/helper/interfaces/scanner.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/helper/scan_functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/helper/scan_functions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/product_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/validation/product_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/validation/product_validator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/model/model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/product_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/product_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/validation/order_item_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/order_item_validator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/validation/order_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/order_validator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/validation/product_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/product_validator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/validation/validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/validator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/scripts/test_db.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/test/scripts/test_db.ps1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/store_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/store_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/user_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user_controller.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,6 +100,15 @@
       <filePath value="$PROJECT_DIR$/main.go" />
       <method v="2" />
     </configuration>
+    <configuration name="go build product_controller.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="go-ecommerce-service" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="go-ecommerce-service" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/controller/product_controller.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="TestGetOrderById_InvalidID in go-ecommerce-service/test/controller" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-ecommerce-service" />
       <working_directory value="$PROJECT_DIR$/test/controller" />
@@ -125,19 +120,6 @@
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <pattern value="^\QTestOrderControllerTestSuite\E$/^\QTestGetOrderById_InvalidID\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestGetOrderById_Success in go-ecommerce-service/test/controller" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="go-ecommerce-service" />
-      <working_directory value="$PROJECT_DIR$/test/controller" />
-      <parameters value=" -testify.m ^TestGetOrderById_Success$" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="go-ecommerce-service/test/controller" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestOrderControllerTestSuite\E$/^\QTestGetOrderById_Success\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -167,10 +149,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.go build main.go" />
+        <item itemvalue="Go Build.go build product_controller.go" />
         <item itemvalue="Go Test.go test go-ecommerce-service/test/controller" />
         <item itemvalue="Go Test.TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller" />
         <item itemvalue="Go Test.TestGetOrderById_InvalidID in go-ecommerce-service/test/controller" />
-        <item itemvalue="Go Test.TestGetOrderById_Success in go-ecommerce-service/test/controller" />
       </list>
     </recent_temporary>
   </component>
@@ -197,7 +179,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="feat(tests): complete comprehensive controller test suite&#10;&#10;✅ Implement full controller test coverage for all modules&#10;✅ Auth, Product, Order, Cart, CartItem, OrderItem controllers&#10;✅ Comprehensive test scenarios including success/error cases&#10;✅ Mock-based unit testing with proper service isolation&#10;✅ Validation error handling and edge case coverage&#10;✅ 100% test pass rate with enterprise-level quality standards" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(tests): complete comprehensive controller test suite&#10;&#10;✅ Implement full controller test coverage for all modules&#10;✅ Auth, Product, Order, Cart, CartItem, OrderItem controllers&#10;✅ Comprehensive test scenarios including success/error cases&#10;✅ Mock-based unit testing with proper service isolation&#10;✅ Validation error handling and edge case coverage&#10;✅ 100% test pass rate with enterprise-level quality standards" />
+    <MESSAGE value="feat: add categories and stores tables with extended product management&#10;&#10;- Add categories and stores tables&#10;- Extend products table with new fields (slug, description, base_price, etc.)&#10;- Update product repository with new CRUD operations  &#10;- Add store and category management&#10;- Fix null pointer exceptions in scanners&#10;- Improve validation and error handling" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add categories and stores tables with extended product management&#10;&#10;- Add categories and stores tables&#10;- Extend products table with new fields (slug, description, base_price, etc.)&#10;- Update product repository with new CRUD operations  &#10;- Add store and category management&#10;- Fix null pointer exceptions in scanners&#10;- Improve validation and error handling" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

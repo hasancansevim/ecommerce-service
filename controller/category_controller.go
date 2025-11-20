@@ -31,7 +31,7 @@ func (categoryController *CategoryController) RegisterRoutes(e *echo.Echo) {
 
 func (categoryController *CategoryController) GetAllCategories(c echo.Context) error {
 	categories := categoryController.categoryService.GetAllCategories()
-	return categoryController.Success(c, categories)
+	return categoryController.Success(c, categories, "")
 }
 
 func (categoryController *CategoryController) GetCategoryById(c echo.Context) error {
@@ -43,7 +43,7 @@ func (categoryController *CategoryController) GetCategoryById(c echo.Context) er
 	if err != nil {
 		return categoryController.BadRequest(c, err)
 	}
-	return categoryController.Success(c, category)
+	return categoryController.Success(c, category, "")
 }
 
 func (categoryController *CategoryController) GetCategoriesByIsActive(c echo.Context) error {
@@ -53,7 +53,7 @@ func (categoryController *CategoryController) GetCategoriesByIsActive(c echo.Con
 	if err != nil {
 		return categoryController.BadRequest(c, err)
 	}
-	return categoryController.Success(c, categories)
+	return categoryController.Success(c, categories, "")
 }
 
 func (categoryController *CategoryController) AddCategory(c echo.Context) error {
@@ -66,7 +66,7 @@ func (categoryController *CategoryController) AddCategory(c echo.Context) error 
 	if err != nil {
 		return categoryController.BadRequest(c, err)
 	}
-	return categoryController.Success(c, nil)
+	return categoryController.Success(c, addCategoryRequest, "")
 }
 
 func (categoryController *CategoryController) UpdateCategory(c echo.Context) error {
@@ -82,7 +82,7 @@ func (categoryController *CategoryController) UpdateCategory(c echo.Context) err
 	if err != nil {
 		return categoryController.BadRequest(c, err)
 	}
-	return categoryController.Success(c, nil)
+	return categoryController.Success(c, nil, "Kategori Güncellendi")
 }
 
 func (categoryController *CategoryController) DeleteCategory(c echo.Context) error {
@@ -94,7 +94,7 @@ func (categoryController *CategoryController) DeleteCategory(c echo.Context) err
 	if err != nil {
 		return categoryController.BadRequest(c, err)
 	}
-	return categoryController.Success(c, nil)
+	return categoryController.Success(c, nil, "Kategori Silindi")
 }
 
 func parseBool(str string) bool {

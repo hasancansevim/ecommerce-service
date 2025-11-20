@@ -3,7 +3,6 @@ package controller
 import (
 	"errors"
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/controller/response"
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/service"
 	"go-ecommerce-service/service/model"
@@ -48,7 +47,7 @@ func (orderItemController *OrderItemController) AddOrderItem(c echo.Context) err
 	}); addOrderItemErr != nil {
 		return orderItemController.BadRequest(c, addOrderItemErr)
 	}
-	return orderItemController.Created(c)
+	return orderItemController.Created(c, addOrderItemRequest, "Sipariş Öğesi Eklendi")
 }
 
 func (orderItemController *OrderItemController) GetOrderItemById(c echo.Context) error {
@@ -56,11 +55,11 @@ func (orderItemController *OrderItemController) GetOrderItemById(c echo.Context)
 	if err != nil {
 		return orderItemController.BadRequest(c, err)
 	}
-	getOrderItemById, getOrderItemByIdErr := orderItemController.orderItemService.GetOrderItemById(id)
+	getOrderItem, getOrderItemByIdErr := orderItemController.orderItemService.GetOrderItemById(id)
 	if getOrderItemByIdErr != nil {
 		return orderItemController.BadRequest(c, getOrderItemByIdErr)
 	}
-	return orderItemController.Success(c, response.ToResponseOrderItemData(getOrderItemById))
+	return orderItemController.Success(c, getOrderItem, "Sipariş Öğresi Getirildi")
 }
 
 func (orderItemController *OrderItemController) GetOrderItems(c echo.Context) error {
@@ -76,7 +75,7 @@ func (orderItemController *OrderItemController) GetOrderItems(c echo.Context) er
 		if getOrderItemsByOrderIdErr != nil {
 			return orderItemController.BadRequest(c, getOrderItemsByOrderIdErr)
 		}
-		return orderItemController.Success(c, response.ToResponseListOrderItems(getOrderItemsByOrderId))
+		return orderItemController.Success(c, getOrderItemsByOrderId, "Siparişe Ait Sipariş Öğeleri Getirildi")
 	}
 	if productId != "" {
 		productId, convertErr := strconv.Atoi(productId)
@@ -87,7 +86,7 @@ func (orderItemController *OrderItemController) GetOrderItems(c echo.Context) er
 		if getOrderItemsByProductIdErr != nil {
 			return orderItemController.BadRequest(c, getOrderItemsByProductIdErr)
 		}
-		return orderItemController.Success(c, response.ToResponseListOrderItems(getOrderItemsByProductId))
+		return orderItemController.Success(c, getOrderItemsByProductId, "")
 	}
 	return orderItemController.BadRequest(c, errors.New("order_id or product_id parameters required"))
 }
@@ -113,7 +112,7 @@ func (orderItemController *OrderItemController) UpdateOrderItem(c echo.Context) 
 		return orderItemController.BadRequest(c, updateOrderItemErr)
 	}
 
-	return orderItemController.Created(c)
+	return orderItemController.Created(c, nil, "Sipariş Öğesi Güncellendi")
 }
 
 func (orderItemController *OrderItemController) UpdateOrderItemQuantity(c echo.Context) error {
@@ -130,7 +129,7 @@ func (orderItemController *OrderItemController) UpdateOrderItemQuantity(c echo.C
 	if updateOrderItemQuantityErr := orderItemController.orderItemService.UpdateOrderItemQuantity(id, newQuantity); updateOrderItemQuantityErr != nil {
 		return orderItemController.BadRequest(c, updateOrderItemQuantityErr)
 	}
-	return orderItemController.Created(c)
+	return orderItemController.Created(c, nil, "Sipariş Öğesi Adedi Arttıldı")
 }
 
 func (orderItemController *OrderItemController) DeleteOrderItemById(c echo.Context) error {
@@ -142,7 +141,7 @@ func (orderItemController *OrderItemController) DeleteOrderItemById(c echo.Conte
 	if deleteOrderItemByIdErr := orderItemController.orderItemService.DeleteOrderItemById(id); deleteOrderItemByIdErr != nil {
 		return orderItemController.BadRequest(c, deleteOrderItemByIdErr)
 	}
-	return orderItemController.Created(c)
+	return orderItemController.Created(c, nil, "Sipariş Öğesi Silindi")
 }
 
 func (orderItemController *OrderItemController) DeleteAllOrderItemsByOrderId(c echo.Context) error {
@@ -154,5 +153,5 @@ func (orderItemController *OrderItemController) DeleteAllOrderItemsByOrderId(c e
 	if deleteAllOrderItemsByOrderIdErr := orderItemController.orderItemService.DeleteAllOrderItemsByOrderId(int64(orderId)); deleteAllOrderItemsByOrderIdErr != nil {
 		return orderItemController.BadRequest(c, deleteAllOrderItemsByOrderIdErr)
 	}
-	return orderItemController.Created(c)
+	return orderItemController.Created(c, nil, "Siparişe Ait Tüm İlgili Sipariş Öğeleri Silindi")
 }

@@ -47,7 +47,7 @@ func (authController *AuthController) Register(c echo.Context) error {
 	if err != nil {
 		return authController.BadRequest(c, err)
 	}
-	return authController.Created(c)
+	return authController.Created(c, registerRequestModel, "Kayıt Başarılı")
 }
 
 func (authController *AuthController) Login(c echo.Context) error {
@@ -62,7 +62,5 @@ func (authController *AuthController) Login(c echo.Context) error {
 	if err != nil {
 		return authController.BadRequest(c, err)
 	}
-	return authController.Success(c, map[string]string{
-		"token": token,
-	})
+	return authController.Success(c, token, "Giriş Başarılı")
 }

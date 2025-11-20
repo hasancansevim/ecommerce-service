@@ -31,7 +31,7 @@ func (productController *ProductController) RegisterRoutes(e *echo.Echo) {
 
 func (productController *ProductController) GetAllProducts(c echo.Context) error {
 	products := productController.productService.GetAllProducts()
-	return productController.Success(c, products)
+	return productController.Success(c, products, "Tüm Ürünler Listelendi")
 }
 
 func (productController *ProductController) GetProductById(c echo.Context) error {
@@ -40,11 +40,11 @@ func (productController *ProductController) GetProductById(c echo.Context) error
 		return productController.BadRequest(c, err)
 	}
 
-	productById, productByIdErr := productController.productService.GetProductById(productId)
+	product, productByIdErr := productController.productService.GetProductById(productId)
 	if productByIdErr != nil {
 		return productController.BadRequest(c, productByIdErr)
 	}
-	return productController.Success(c, productById)
+	return productController.Success(c, product, "Ürün Getirildi")
 }
 
 func (productController *ProductController) AddProduct(c echo.Context) error {
@@ -77,7 +77,7 @@ func (productController *ProductController) AddProduct(c echo.Context) error {
 		return productController.BadRequest(c, addProductErr)
 	}
 
-	return productController.Created(c)
+	return productController.Created(c, addProductRequest, "Ürün Eklendi")
 }
 
 func (productController *ProductController) UpdatePrice(c echo.Context) error {
@@ -95,18 +95,18 @@ func (productController *ProductController) UpdatePrice(c echo.Context) error {
 		return productController.BadRequest(c, err)
 	}
 
-	return productController.Created(c)
+	return productController.Created(c, nil, "Fiyat Güncellendi")
 }
 
 func (productController *ProductController) DeleteProduct(c echo.Context) error {
-	productID, err := productController.ParseIdParam(c, "id")
+	productId, err := productController.ParseIdParam(c, "id")
 	if err != nil {
 		return productController.BadRequest(c, err)
 	}
 
-	if err := productController.productService.DeleteProductById(productID); err != nil {
+	if err := productController.productService.DeleteProductById(productId); err != nil {
 		return productController.BadRequest(c, err)
 	}
 
-	return productController.Created(c)
+	return productController.Created(c, nil, "ÜrünSilindi")
 }

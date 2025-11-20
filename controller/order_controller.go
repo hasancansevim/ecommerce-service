@@ -2,7 +2,6 @@ package controller
 
 import (
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/controller/response"
 	"go-ecommerce-service/pkg/validation"
 	"go-ecommerce-service/service"
 	"go-ecommerce-service/service/model"
@@ -50,7 +49,7 @@ func (orderController *OrderController) CreateOrder(c echo.Context) error {
 	if createOrderErr := orderController.orderService.CreateOrder(addOrderRequest.ToModel()); createOrderErr != nil {
 		return orderController.BadRequest(c, createOrderErr)
 	}
-	return orderController.Created(c)
+	return orderController.Created(c, addOrderRequest, "Sipariş Oluşturuldu")
 }
 
 func (orderController *OrderController) GetOrderById(c echo.Context) error {
@@ -59,7 +58,7 @@ func (orderController *OrderController) GetOrderById(c echo.Context) error {
 		return orderController.BadRequest(c, err)
 	}
 	getOrderById := orderController.orderService.GetOrderById(id)
-	return orderController.Success(c, getOrderById)
+	return orderController.Success(c, getOrderById, "")
 }
 
 func (orderController *OrderController) GetOrdersByUserId(c echo.Context) error {
@@ -71,7 +70,7 @@ func (orderController *OrderController) GetOrdersByUserId(c echo.Context) error 
 	if getOrdersByUserIdErr != nil {
 		return orderController.BadRequest(c, getOrdersByUserIdErr)
 	}
-	return orderController.Success(c, response.ToResponseListOrders(getOrdersByUserId))
+	return orderController.Success(c, getOrdersByUserId, "")
 }
 
 func (orderController *OrderController) GetAllOrders(c echo.Context) error {
@@ -79,7 +78,7 @@ func (orderController *OrderController) GetAllOrders(c echo.Context) error {
 	if getAllOrdersErr != nil {
 		return orderController.BadRequest(c, getAllOrdersErr)
 	}
-	return orderController.Success(c, response.ToResponseListOrders(orders))
+	return orderController.Success(c, orders, "")
 }
 
 func (orderController *OrderController) UpdateOrderStatus(c echo.Context) error {
@@ -92,7 +91,7 @@ func (orderController *OrderController) UpdateOrderStatus(c echo.Context) error 
 	if updateOrderStatusErr := orderController.orderService.UpdateOrderStatus(id, status); updateOrderStatusErr != nil {
 		return orderController.BadRequest(c, updateOrderStatusErr)
 	}
-	return orderController.Created(c)
+	return orderController.Created(c, nil, "Sipariş Durumu Güncellendi")
 }
 
 func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
@@ -103,7 +102,7 @@ func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
 	if deleteOrderByIdErr := orderController.orderService.DeleteOrderById(id); deleteOrderByIdErr != nil {
 		return orderController.BadRequest(c, deleteOrderByIdErr)
 	}
-	return orderController.Created(c)
+	return orderController.Created(c, nil, "Sipariş Silinid")
 }
 
 func (orderController *OrderController) UpdateOrderTotalPrice(c echo.Context) error {
@@ -120,7 +119,7 @@ func (orderController *OrderController) UpdateOrderTotalPrice(c echo.Context) er
 	if updateOrderTotalPriceErr != nil {
 		return orderController.BadRequest(c, updateOrderTotalPriceErr)
 	}
-	return orderController.Created(c)
+	return orderController.Created(c, nil, "Sipariş Tutarı Güncellendi")
 }
 
 func (orderController *OrderController) GetOrdersByStatus(c echo.Context) error {
@@ -129,5 +128,5 @@ func (orderController *OrderController) GetOrdersByStatus(c echo.Context) error 
 	if ordersByStatusErr != nil {
 		return orderController.BadRequest(c, ordersByStatusErr)
 	}
-	return orderController.Success(c, response.ToResponseListOrders(ordersByStatus))
+	return orderController.Success(c, ordersByStatus, "")
 }

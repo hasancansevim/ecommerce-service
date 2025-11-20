@@ -33,7 +33,7 @@ func (cartItemController *CartItemController) GetItemsByCartId(c echo.Context) e
 		return cartItemController.BadRequest(c, err)
 	}
 	cartItems := cartItemController.cartItemService.GetItemsByCartId(cartId)
-	return cartItemController.Success(c, cartItems)
+	return cartItemController.Success(c, cartItems, "")
 }
 
 func (cartItemController *CartItemController) AddItemToCart(c echo.Context) error {
@@ -46,7 +46,7 @@ func (cartItemController *CartItemController) AddItemToCart(c echo.Context) erro
 	if addCartItemErr := cartItemController.cartItemService.AddItemToCart(addCartItemRequest.ToModel()); addCartItemErr != nil {
 		return cartItemController.BadRequest(c, addCartItemErr)
 	}
-	return cartItemController.Created(c)
+	return cartItemController.Created(c, addCartItemRequest, "")
 }
 
 func (cartItemController *CartItemController) UpdateItemQuantity(c echo.Context) error {
@@ -62,7 +62,7 @@ func (cartItemController *CartItemController) UpdateItemQuantity(c echo.Context)
 	if updateQuantityErr := cartItemController.cartItemService.UpdateItemQuantity(id, newQuantity); updateQuantityErr != nil {
 		return cartItemController.BadRequest(c, updateQuantityErr)
 	}
-	return cartItemController.Created(c)
+	return cartItemController.Created(c, nil, "Sepet Öğesi Güncellendi")
 }
 
 func (cartItemController *CartItemController) RemoveItemFromCart(c echo.Context) error {
@@ -73,7 +73,7 @@ func (cartItemController *CartItemController) RemoveItemFromCart(c echo.Context)
 	if removeItemFromCartErr := cartItemController.cartItemService.RemoveItemFromCart(id); removeItemFromCartErr != nil {
 		return cartItemController.BadRequest(c, removeItemFromCartErr)
 	}
-	return cartItemController.Created(c)
+	return cartItemController.Created(c, nil, "Sepetten Ürün Silindi")
 }
 
 func (cartItemController *CartItemController) ClearCartItems(c echo.Context) error {
@@ -84,7 +84,7 @@ func (cartItemController *CartItemController) ClearCartItems(c echo.Context) err
 	if clearCartItemsErr := cartItemController.cartItemService.ClearCartItems(cartId); clearCartItemsErr != nil {
 		return cartItemController.BadRequest(c, clearCartItemsErr)
 	}
-	return cartItemController.Created(c)
+	return cartItemController.Created(c, nil, "Sepetteki Ürünler Silindi")
 }
 
 func (cartItemController *CartItemController) IncreaseItemQuantity(c echo.Context) error {
@@ -101,7 +101,7 @@ func (cartItemController *CartItemController) IncreaseItemQuantity(c echo.Contex
 	if increaseItemQuantityErr := cartItemController.cartItemService.IncreaseItemQuantity(id, amount); increaseItemQuantityErr != nil {
 		return cartItemController.BadRequest(c, increaseItemQuantityErr)
 	}
-	return cartItemController.Created(c)
+	return cartItemController.Created(c, nil, "")
 }
 
 func (cartItemController *CartItemController) DecreaseItemQuantity(c echo.Context) error {
@@ -118,5 +118,5 @@ func (cartItemController *CartItemController) DecreaseItemQuantity(c echo.Contex
 	if increaseItemQuantityErr := cartItemController.cartItemService.DecreaseItemQuantity(id, amount); increaseItemQuantityErr != nil {
 		return cartItemController.BadRequest(c, increaseItemQuantityErr)
 	}
-	return cartItemController.Created(c)
+	return cartItemController.Created(c, nil, "")
 }
