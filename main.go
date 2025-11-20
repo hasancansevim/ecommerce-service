@@ -10,6 +10,7 @@ import (
 	"go-ecommerce-service/service"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 )
 
@@ -74,6 +75,14 @@ func main() {
 	authController.RegisterRoutes(e)
 	categoryController.RegisterRoutes(e)
 	storeController.RegisterRoutes(e)
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:4200"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+
+	e.Logger.Fatal(e.Start(":8080"))
 
 	log.Printf("Server starting on %s", cfg.Server.Port)
 	if err := e.Start("localhost:" + cfg.Server.Port); err != nil {

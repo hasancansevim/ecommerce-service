@@ -10,15 +10,15 @@ type AddProductRequest struct {
 	Slug            string  `json:"slug"`
 	Description     string  `json:"description"`
 	Price           float64 `json:"price"`
-	BasePrice       float64 `json:"base_price"`
+	BasePrice       float64 `json:"basePrice"`
 	Discount        float64 `json:"discount"`
-	ImageUrl        string  `json:"image_url"`
-	MetaDescription string  `json:"meta_description"`
-	StockQuantity   int     `json:"stock_quantity"`
-	IsActive        bool    `json:"is_active"`
-	IsFeatured      bool    `json:"is_featured"`
-	CategoryId      *uint   `json:"category_id"`
-	StoreId         uint    `json:"store_id"`
+	ImageUrl        string  `json:"imageUrl"`
+	MetaDescription string  `json:"metaDescription"`
+	StockQuantity   int     `json:"stockQuantity"`
+	IsActive        bool    `json:"isActive"`
+	IsFeatured      bool    `json:"isFeatured"`
+	CategoryId      *uint   `json:"categoryId"`
+	StoreId         uint    `json:"storeId"`
 }
 
 type RegisterRequest struct {
