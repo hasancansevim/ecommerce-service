@@ -4,19 +4,16 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: add categories and stores tables with extended product management&#10;&#10;- Add categories and stores tables&#10;- Extend products table with new fields (slug, description, base_price, etc.)&#10;- Update product repository with new CRUD operations  &#10;- Add store and category management&#10;- Fix null pointer exceptions in scanners&#10;- Improve validation and error handling">
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="refactor: standardize API response structure in BaseController&#10;&#10;- Introduced generic `ApiResponse` struct (success, message, data).&#10;- Refactored `BaseController` methods (Success, Created, BadRequest) to use the new wrapper.&#10;- Updated `Created` method to return the created entity with 201 status instead of NoContent.&#10;- Standardized error handling to return consistent JSON format.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/auth_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/base_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/base_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/cart_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/cart_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_item_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/category_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/category_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/order_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_item_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/response/response.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/response/response.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/store_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/store_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/user_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/cart_item.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/cart_item.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/category.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/category.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/order.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/order_item.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/order_item.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/product.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/product.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/store.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/store.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/user.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +177,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="feat(tests): complete comprehensive controller test suite&#10;&#10;✅ Implement full controller test coverage for all modules&#10;✅ Auth, Product, Order, Cart, CartItem, OrderItem controllers&#10;✅ Comprehensive test scenarios including success/error cases&#10;✅ Mock-based unit testing with proper service isolation&#10;✅ Validation error handling and edge case coverage&#10;✅ 100% test pass rate with enterprise-level quality standards" />
     <MESSAGE value="feat: add categories and stores tables with extended product management&#10;&#10;- Add categories and stores tables&#10;- Extend products table with new fields (slug, description, base_price, etc.)&#10;- Update product repository with new CRUD operations  &#10;- Add store and category management&#10;- Fix null pointer exceptions in scanners&#10;- Improve validation and error handling" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add categories and stores tables with extended product management&#10;&#10;- Add categories and stores tables&#10;- Extend products table with new fields (slug, description, base_price, etc.)&#10;- Update product repository with new CRUD operations  &#10;- Add store and category management&#10;- Fix null pointer exceptions in scanners&#10;- Improve validation and error handling" />
+    <MESSAGE value="refactor: standardize API response structure in BaseController&#10;&#10;- Introduced generic `ApiResponse` struct (success, message, data).&#10;- Refactored `BaseController` methods (Success, Created, BadRequest) to use the new wrapper.&#10;- Updated `Created` method to return the created entity with 201 status instead of NoContent.&#10;- Standardized error handling to return consistent JSON format." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: standardize API response structure in BaseController&#10;&#10;- Introduced generic `ApiResponse` struct (success, message, data).&#10;- Refactored `BaseController` methods (Success, Created, BadRequest) to use the new wrapper.&#10;- Updated `Created` method to return the created entity with 201 status instead of NoContent.&#10;- Standardized error handling to return consistent JSON format." />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

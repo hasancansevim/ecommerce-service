@@ -3,7 +3,7 @@ package domain
 import "time"
 
 type Cart struct {
-	Id        int64
-	UserId    int64
-	CreatedAt time.Time
+	Id        int64     `json:"id"`
+	UserId    int64     `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
 }

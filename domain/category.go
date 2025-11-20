@@ -1,8 +1,8 @@
 package domain
 
 type Category struct {
-	Id          uint
-	Name        string
-	Description string
-	IsActive    bool
+	Id          uint   `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	IsActive    bool   `json:"is_active"`
 }
