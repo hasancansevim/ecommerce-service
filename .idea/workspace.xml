@@ -4,12 +4,32 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="refactor(domain): add json tags to structs for camelCase serialization&#10;&#10;- Added `json:&quot;...&quot;` tags to domain structs (Product, Category, etc.).&#10;- Standardized API response fields to camelCase to match frontend models.&#10;- Removed the need for manual property mapping on the client side.">
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="fix(controller): update request struct tags to camelCase for correct binding">
+      <change afterPath="$PROJECT_DIR$/internal/dto/cart_dto.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/dto/cart_item_dto.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/dto/category_dto.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/dto/store_dto.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/cart_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/cart_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_item_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/category_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/category_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/request/request.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/request/request.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/store_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/store_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/cart_item.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/cart_item.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/category.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/category.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/store.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/store.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/cart_item_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/cart_item_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/cart_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/cart_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/category_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/category_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/product_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/store_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/store_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/cart_item_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/cart_item_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/cart_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/cart_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/category_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/category_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/product_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/product_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/store_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/store_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,7 +195,8 @@
     <MESSAGE value="feat: add categories and stores tables with extended product management&#10;&#10;- Add categories and stores tables&#10;- Extend products table with new fields (slug, description, base_price, etc.)&#10;- Update product repository with new CRUD operations  &#10;- Add store and category management&#10;- Fix null pointer exceptions in scanners&#10;- Improve validation and error handling" />
     <MESSAGE value="refactor: standardize API response structure in BaseController&#10;&#10;- Introduced generic `ApiResponse` struct (success, message, data).&#10;- Refactored `BaseController` methods (Success, Created, BadRequest) to use the new wrapper.&#10;- Updated `Created` method to return the created entity with 201 status instead of NoContent.&#10;- Standardized error handling to return consistent JSON format." />
     <MESSAGE value="refactor(domain): add json tags to structs for camelCase serialization&#10;&#10;- Added `json:&quot;...&quot;` tags to domain structs (Product, Category, etc.).&#10;- Standardized API response fields to camelCase to match frontend models.&#10;- Removed the need for manual property mapping on the client side." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(domain): add json tags to structs for camelCase serialization&#10;&#10;- Added `json:&quot;...&quot;` tags to domain structs (Product, Category, etc.).&#10;- Standardized API response fields to camelCase to match frontend models.&#10;- Removed the need for manual property mapping on the client side." />
+    <MESSAGE value="fix(controller): update request struct tags to camelCase for correct binding" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(controller): update request struct tags to camelCase for correct binding" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

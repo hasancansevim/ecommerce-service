@@ -61,12 +61,12 @@ func (categoryController *CategoryController) AddCategory(c echo.Context) error 
 	if bindErr := c.Bind(&addCategoryRequest); bindErr != nil {
 		return categoryController.BadRequest(c, bindErr)
 	}
-	// validator
-	err := categoryController.categoryService.AddCategory(addCategoryRequest.ToModel())
+
+	addedCategory, err := categoryController.categoryService.AddCategory(addCategoryRequest.ToModel())
 	if err != nil {
 		return categoryController.BadRequest(c, err)
 	}
-	return categoryController.Success(c, addCategoryRequest, "")
+	return categoryController.Success(c, addedCategory, "")
 }
 
 func (categoryController *CategoryController) UpdateCategory(c echo.Context) error {
@@ -78,11 +78,11 @@ func (categoryController *CategoryController) UpdateCategory(c echo.Context) err
 	if bindErr := c.Bind(&updatedCategory); bindErr != nil {
 		return categoryController.BadRequest(c, bindErr)
 	}
-	err := categoryController.categoryService.UpdateCategory(uint(id), updatedCategory.ToModel())
+	category, err := categoryController.categoryService.UpdateCategory(uint(id), updatedCategory.ToModel())
 	if err != nil {
 		return categoryController.BadRequest(c, err)
 	}
-	return categoryController.Success(c, nil, "Kategori Güncellendi")
+	return categoryController.Success(c, category, "Kategori Güncellendi")
 }
 
 func (categoryController *CategoryController) DeleteCategory(c echo.Context) error {

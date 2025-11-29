@@ -12,8 +12,8 @@ type ICategoryRepository interface {
 	GetAllCategories() []domain.Category
 	GetCategoryById(id int) (domain.Category, error)
 	GetCategoriesByIsActive(isActive bool) ([]domain.Category, error)
-	AddCategory(category domain.Category) error
-	UpdateCategory(categoryId uint, category domain.Category) error
+	AddCategory(category domain.Category) (domain.Category, error)
+	UpdateCategory(categoryId uint, category domain.Category) (domain.Category, error)
 	DeleteCategory(id uint) error
 }
 
@@ -58,27 +58,27 @@ func (categoryRepository *CategoryRepository) GetCategoriesByIsActive(isActive b
 	return categories, nil
 }
 
-func (categoryRepository *CategoryRepository) AddCategory(category domain.Category) error {
+func (categoryRepository *CategoryRepository) AddCategory(category domain.Category) (domain.Category, error) {
 	ctx := context.Background()
-	query := `INSERT INTO categories (name,description,is_active) VALUES ($1,$2,$3)`
-	err := categoryRepository.scanner.ExecuteExec(ctx, query,
-		category.Name,
-		category.Description,
-		category.IsActive,
-	)
+	query := `INSERT INTO categories (name, description, is_active) 
+              VALUES ($1, $2, $3) 
+              RETURNING *`
+
+	category, err := categoryRepository.scanner.QueryRowAndScan(ctx, query, category.Name, category.Description, category.IsActive)
 	if err != nil {
-		return err
+		return domain.Category{}, err
 	}
-	return nil
+	return category, nil
 }
-func (categoryRepository *CategoryRepository) UpdateCategory(categoryId uint, category domain.Category) error {
+func (categoryRepository *CategoryRepository) UpdateCategory(categoryId uint, category domain.Category) (domain.Category, error) {
 	ctx := context.Background()
-	query := `UPDATE categories set name = $1, description = $2, is_active = $3 WHERE id = $4`
-	err := categoryRepository.scanner.ExecuteExec(ctx, query, category.Name, category.Description, category.IsActive, categoryId)
+	query := `UPDATE categories set name = $1, description = $2, is_active = $3 WHERE id = $4 RETURNING *`
+
+	category, err := categoryRepository.scanner.QueryRowAndScan(ctx, query, category.Name, category.Description, category.IsActive, categoryId)
 	if err != nil {
-		return err
+		return domain.Category{}, err
 	}
-	return nil
+	return category, nil
 }
 func (categoryRepository *CategoryRepository) DeleteCategory(id uint) error {
 	ctx := context.Background()

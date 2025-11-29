@@ -15,8 +15,8 @@ type IProductRepository interface {
 	AddProduct(product domain.Product) error
 	DeleteProductById(productId int64) error
 	UpdatePrice(productId int64, newPrice float32) error
+	UpdateProduct(productId uint, product domain.Product) error
 	// GetProductsBy : Store,Slug,Featured,Category
-	// UpdateProduct
 }
 
 type ProductRepository struct {
@@ -84,6 +84,18 @@ func (productRepository *ProductRepository) UpdatePrice(productId int64, newPric
 	ctx := context.Background()
 	query := "UPDATE products SET price = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2"
 	err := productRepository.scannner.ExecuteExec(ctx, query, newPrice, productId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (productRepository *ProductRepository) UpdateProduct(productId uint, product domain.Product) error {
+	ctx := context.Background()
+	query := "UPDATE products set name=$1, slug=$2, description=$3, price=$4, base_price=$5, discount = $6, image_url=$7, meta_description=$8, stock_quantity=$9, is_active=$10, is_featured=$11, category_id=$12, store_id=$13 WHERE id = $14"
+	err := productRepository.scannner.ExecuteExec(ctx, query,
+		product.Name, product.Slug, product.Description, product.Price, product.BasePrice, product.Discount, product.ImageUrl, product.MetaDescription, product.StockQuantity, product.IsActive, product.IsFeatured, product.CategoryId, product.StoreId, product.Id)
+
 	if err != nil {
 		return err
 	}

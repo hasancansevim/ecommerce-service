@@ -10,13 +10,13 @@ import (
 )
 
 type ICartItemRepository interface {
-	AddItemToCart(cartItem domain.CartItem) error
-	UpdateItemQuantity(cart_item_id int64, newQuantity int) error
-	RemoveItemFromCart(cart_item_id int64) error
-	GetItemsByCartId(cart_id int64) []domain.CartItem
-	ClearCartItems(cart_id int64) error
-	IncreaseItemQuantity(cart_item_id int64, amount int) error
-	DecreaseItemQuantity(cart_item_id int64, amount int) error
+	AddItemToCart(cartItem domain.CartItem) (domain.CartItem, error)
+	UpdateItemQuantity(cartItemId int64, newQuantity int) (domain.CartItem, error)
+	RemoveItemFromCart(cartItemId int64) error
+	GetItemsByCartId(cartId int64) []domain.CartItem
+	ClearCartItems(cartId int64) error
+	IncreaseItemQuantity(cartItemId int64, amount int) error
+	DecreaseItemQuantity(cartItemId int64, amount int) error
 }
 
 type CartItemRepository struct {
@@ -31,40 +31,41 @@ func NewCartItemRepository(dbPool *pgxpool.Pool) ICartItemRepository {
 	}
 }
 
-func (cartItemRepository *CartItemRepository) AddItemToCart(cartItem domain.CartItem) error {
+func (cartItemRepository *CartItemRepository) AddItemToCart(cartItem domain.CartItem) (domain.CartItem, error) {
 	ctx := context.Background()
-	err := cartItemRepository.scanner.ExecuteExec(ctx, "insert into cart_items (cart_id,product_id,quantity) values ($1,$2,$3)",
+	query := `INSERT INTO cart_items (cart_id,product_id,quantity) VALUES ($1,$2,$3) RETURNING *`
+	cartItem, err := cartItemRepository.scanner.QueryRowAndScan(ctx, query,
 		cartItem.CartId, cartItem.ProductId, cartItem.Quantity)
 	if err != nil {
-		log.Error(err)
-		return err
+		return domain.CartItem{}, err
 	}
-	return nil
+	return cartItem, nil
 }
 
-func (cartItemRepository *CartItemRepository) UpdateItemQuantity(cart_item_id int64, newQuantity int) error {
+func (cartItemRepository *CartItemRepository) UpdateItemQuantity(cartItemId int64, newQuantity int) (domain.CartItem, error) {
 	ctx := context.Background()
-	err := cartItemRepository.scanner.ExecuteExec(ctx, "update cart_items set quantity=$1 where id=$2", newQuantity, cart_item_id)
+	query := `UPDATE cart_items set quantity=$1 where id=$2 RETURNING *`
+	cartItem, err := cartItemRepository.scanner.QueryRowAndScan(ctx, query, newQuantity, cartItemId)
 	if err != nil {
-		log.Error(err)
-		return err
+		return domain.CartItem{}, err
 	}
-	return nil
+	return cartItem, nil
 }
 
-func (cartItemRepository *CartItemRepository) RemoveItemFromCart(cart_item_id int64) error {
+func (cartItemRepository *CartItemRepository) RemoveItemFromCart(cartItemId int64) error {
 	ctx := context.Background()
-	err := cartItemRepository.scanner.ExecuteExec(ctx, "elete from cart_items where id=$1", cart_item_id)
+	query := `SELECT from cart_items where id=$1`
+	err := cartItemRepository.scanner.ExecuteExec(ctx, query, cartItemId)
 	if err != nil {
-		log.Error(err)
 		return err
 	}
 	return nil
 }
 
-func (cartItemRepository *CartItemRepository) GetItemsByCartId(cart_id int64) []domain.CartItem {
+func (cartItemRepository *CartItemRepository) GetItemsByCartId(cartId int64) []domain.CartItem {
 	ctx := context.Background()
-	items, err := cartItemRepository.scanner.QueryAndScan(ctx, "select * from cart_items where cart_id = $1", cart_id)
+	query := `SELECT * from cart_items where cart_id = $1`
+	items, err := cartItemRepository.scanner.QueryAndScan(ctx, query, cartId)
 	if err != nil {
 		log.Error(err)
 		return []domain.CartItem{}
@@ -72,43 +73,44 @@ func (cartItemRepository *CartItemRepository) GetItemsByCartId(cart_id int64) []
 	return items
 }
 
-func (cartItemRepository *CartItemRepository) ClearCartItems(cart_id int64) error {
+func (cartItemRepository *CartItemRepository) ClearCartItems(cartId int64) error {
 	ctx := context.Background()
-	err := cartItemRepository.scanner.ExecuteExec(ctx, "delete from cart_items where cart_id=$1", cart_id)
+	query := `DELETE from cart_items where cart_id=$1`
+	err := cartItemRepository.scanner.ExecuteExec(ctx, query, cartId)
 	if err != nil {
-		log.Error(err)
 		return err
 	}
 	return nil
 }
 
-func (cartItemRepository *CartItemRepository) IncreaseItemQuantity(cart_item_id int64, amount int) error {
+func (cartItemRepository *CartItemRepository) IncreaseItemQuantity(cartItemId int64, amount int) error {
 	ctx := context.Background()
-	item, err := cartItemRepository.scanner.QueryRowAndScan(ctx, "select * from cart_items where id = $1", cart_item_id)
+	query := `SELECT * from cart_items where id = $1`
+	item, err := cartItemRepository.scanner.QueryRowAndScan(ctx, query, cartItemId)
 	if err != nil {
-		log.Error(err)
 		return err
 	}
 	increasedQuantity := item.Quantity + amount
-	executeExecErr := cartItemRepository.scanner.ExecuteExec(ctx, "update cart_items set quantity=$1 where id=$2", increasedQuantity, cart_item_id)
+
+	execQuery := `UPDATE cart_items set quantity=$1 where id=$2`
+	executeExecErr := cartItemRepository.scanner.ExecuteExec(ctx, execQuery, increasedQuantity, cartItemId)
 	if executeExecErr != nil {
-		log.Error(executeExecErr)
 		return executeExecErr
 	}
 	return nil
 }
 
-func (cartItemRepository *CartItemRepository) DecreaseItemQuantity(cart_item_id int64, amount int) error {
+func (cartItemRepository *CartItemRepository) DecreaseItemQuantity(cartItemId int64, amount int) error {
 	ctx := context.Background()
-	item, err := cartItemRepository.scanner.QueryRowAndScan(ctx, "select * from cart_items where id = $1", cart_item_id)
+	query := `SELECT * from cart_items where id = $1`
+	item, err := cartItemRepository.scanner.QueryRowAndScan(ctx, query, cartItemId)
 	if err != nil {
-		log.Error(err)
 		return err
 	}
 	decreasedQuantity := item.Quantity - amount
-	executeExecErr := cartItemRepository.scanner.ExecuteExec(ctx, "update cart_items set quantity=$1 where id=$2", decreasedQuantity, cart_item_id)
+	execQuery := `UPDATE cart_items set quantity=$1 where id=$2`
+	executeExecErr := cartItemRepository.scanner.ExecuteExec(ctx, execQuery, decreasedQuantity, cartItemId)
 	if executeExecErr != nil {
-		log.Error(executeExecErr)
 		return executeExecErr
 	}
 	return nil

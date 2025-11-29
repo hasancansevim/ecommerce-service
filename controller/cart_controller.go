@@ -41,11 +41,11 @@ func (cartController *CartController) CreateCart(c echo.Context) error {
 		return cartController.BadRequest(c, bindErr)
 	}
 
-	if toModelErr := cartController.cartService.CreateCart(addCartRequest.ToModel()); toModelErr != nil {
-		return cartController.BadRequest(c, toModelErr)
+	cart, err := cartController.cartService.CreateCart(addCartRequest.ToModel())
+	if err != nil {
+		return cartController.BadRequest(c, err)
 	}
-
-	return cartController.Created(c, addCartRequest, "")
+	return cartController.Created(c, cart, "")
 }
 
 func (cartController *CartController) GetCartsByUserId(c echo.Context) error {

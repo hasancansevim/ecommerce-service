@@ -12,7 +12,7 @@ import (
 type ICartRepository interface {
 	GetCartsByUserId(userId int64) []domain.Cart
 	GetCartById(cartId int64) domain.Cart
-	CreateCart(cart domain.Cart) error
+	CreateCart(cart domain.Cart) (domain.Cart, error)
 	DeleteCartById(cartId int64) error
 	ClearUserCart(userId int64) error
 }
@@ -49,14 +49,14 @@ func (cartRepository *CartRepository) GetCartById(cartId int64) domain.Cart {
 	return cart
 }
 
-func (cartRepository *CartRepository) CreateCart(cart domain.Cart) error {
+func (cartRepository *CartRepository) CreateCart(cart domain.Cart) (domain.Cart, error) {
 	ctx := context.Background()
-	err := cartRepository.scanner.ExecuteExec(ctx, "insert into carts (user_id, created_at) values ($1, $2)", cart.UserId, cart.CreatedAt)
+	query := `INSERT INTO carts (user_id, created_at) VALUES ($1, $2) RETURNING *`
+	cart, err := cartRepository.scanner.QueryRowAndScan(ctx, query, cart.UserId, cart.CreatedAt)
 	if err != nil {
-		log.Error(err)
-		return err
+		return domain.Cart{}, err
 	}
-	return nil
+	return cart, nil
 }
 
 func (cartRepository *CartRepository) DeleteCartById(cartId int64) error {

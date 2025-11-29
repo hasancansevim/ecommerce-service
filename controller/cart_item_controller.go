@@ -43,10 +43,12 @@ func (cartItemController *CartItemController) AddItemToCart(c echo.Context) erro
 	if bindErr != nil {
 		return cartItemController.BadRequest(c, bindErr)
 	}
-	if addCartItemErr := cartItemController.cartItemService.AddItemToCart(addCartItemRequest.ToModel()); addCartItemErr != nil {
-		return cartItemController.BadRequest(c, addCartItemErr)
+	cartItem, err := cartItemController.cartItemService.AddItemToCart(addCartItemRequest.ToModel())
+	if err != nil {
+		return cartItemController.BadRequest(c, err)
 	}
-	return cartItemController.Created(c, addCartItemRequest, "")
+
+	return cartItemController.Created(c, cartItem, "")
 }
 
 func (cartItemController *CartItemController) UpdateItemQuantity(c echo.Context) error {
@@ -59,10 +61,11 @@ func (cartItemController *CartItemController) UpdateItemQuantity(c echo.Context)
 	if queryParamConvertErr != nil {
 		return cartItemController.BadRequest(c, queryParamConvertErr)
 	}
-	if updateQuantityErr := cartItemController.cartItemService.UpdateItemQuantity(id, newQuantity); updateQuantityErr != nil {
+	cartItem, updateQuantityErr := cartItemController.cartItemService.UpdateItemQuantity(id, newQuantity)
+	if updateQuantityErr != nil {
 		return cartItemController.BadRequest(c, updateQuantityErr)
 	}
-	return cartItemController.Created(c, nil, "Sepet Öğesi Güncellendi")
+	return cartItemController.Created(c, cartItem, "Sepet Öğesi Güncellendi")
 }
 
 func (cartItemController *CartItemController) RemoveItemFromCart(c echo.Context) error {

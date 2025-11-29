@@ -2,15 +2,15 @@ package service
 
 import (
 	"go-ecommerce-service/domain"
+	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
-	"go-ecommerce-service/service/model"
-	"go-ecommerce-service/service/validation"
+	"time"
 )
 
 type ICartService interface {
-	GetCartsByUserId(userId int64) []domain.Cart
-	GetCartById(cartId int64) domain.Cart
-	CreateCart(cart model.CartCreate) error
+	GetCartsByUserId(userId int64) []dto.CartResponse
+	GetCartById(cartId int64) dto.CartResponse
+	CreateCart(cart dto.CreateCartRequest) (dto.CartResponse, error)
 	DeleteCartById(cartId int64) error
 	ClearUserCart(userId int64) error
 }
@@ -25,30 +25,44 @@ func NewCartService(cartRepository persistence.ICartRepository) ICartService {
 	}
 }
 
-func (cartService *CartService) GetCartById(cartId int64) domain.Cart {
-	return cartService.cartRepository.GetCartById(cartId)
-}
-
-func (cartService *CartService) CreateCart(cart model.CartCreate) error {
-
-	if validationErr := validation.ValidateCartCreate(cart); validationErr != nil {
-		return validationErr
-	}
-
-	err := cartService.cartRepository.CreateCart(domain.Cart{
+func (cartService *CartService) GetCartById(cartId int64) dto.CartResponse {
+	cart := cartService.cartRepository.GetCartById(cartId)
+	cartDto := dto.CartResponse{
 		UserId:    cart.UserId,
 		CreatedAt: cart.CreatedAt,
+	}
+	return cartDto
+}
+
+func (cartService *CartService) CreateCart(cart dto.CreateCartRequest) (dto.CartResponse, error) {
+	createdCart, err := cartService.cartRepository.CreateCart(domain.Cart{
+		UserId:    cart.UserId,
+		CreatedAt: time.Now(),
 	})
 
 	if err != nil {
-		return err
+		return dto.CartResponse{}, err
 	}
 
-	return nil
+	createdCartDto := dto.CartResponse{
+		UserId:    createdCart.UserId,
+		CreatedAt: createdCart.CreatedAt,
+	}
+
+	return createdCartDto, nil
 }
 
-func (cartService *CartService) GetCartsByUserId(userId int64) []domain.Cart {
-	return cartService.cartRepository.GetCartsByUserId(userId)
+func (cartService *CartService) GetCartsByUserId(userId int64) []dto.CartResponse {
+	carts := cartService.cartRepository.GetCartsByUserId(userId)
+
+	cartsDto := make([]dto.CartResponse, 0, len(carts))
+	for _, cart := range carts {
+		cartsDto = append(cartsDto, dto.CartResponse{
+			UserId:    cart.UserId,
+			CreatedAt: cart.CreatedAt,
+		})
+	}
+	return cartsDto
 }
 
 func (cartService *CartService) DeleteCartById(cartId int64) error {

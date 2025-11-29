@@ -47,11 +47,11 @@ func (storeController *StoreController) AddStore(c echo.Context) error {
 	if bindErr := c.Bind(&addStoreRequest); bindErr != nil {
 		return storeController.BadRequest(c, bindErr)
 	}
-	err := storeController.storeService.AddStore(addStoreRequest.ToModel())
+	addedStore, err := storeController.storeService.AddStore(addStoreRequest.ToModel())
 	if err != nil {
 		return storeController.BadRequest(c, err)
 	}
-	return storeController.Success(c, addStoreRequest, "Mağaza Eklendi")
+	return storeController.Success(c, addedStore, "Mağaza Eklendi")
 }
 
 func (storeController *StoreController) DeleteStore(c echo.Context) error {
@@ -75,9 +75,9 @@ func (storeController *StoreController) UpdateStore(c echo.Context) error {
 	if bindErr := c.Bind(&updatedStoreRequest); bindErr != nil {
 		return storeController.BadRequest(c, bindErr)
 	}
-	err := storeController.storeService.UpdateStoreById(uint(id), updatedStoreRequest.ToModel())
+	updatedStore, err := storeController.storeService.UpdateStoreById(uint(id), updatedStoreRequest.ToModel())
 	if err != nil {
 		return storeController.BadRequest(c, err)
 	}
-	return storeController.Success(c, nil, "Mağaza Güncellendi")
+	return storeController.Success(c, updatedStore, "Mağaza Güncellendi")
 }

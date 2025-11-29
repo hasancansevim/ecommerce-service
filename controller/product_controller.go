@@ -25,7 +25,8 @@ func (productController *ProductController) RegisterRoutes(e *echo.Echo) {
 	e.GET("/api/v1/products", productController.GetAllProducts)
 	e.GET("/api/v1/products/:id", productController.GetProductById)
 	e.POST("/api/v1/products", productController.AddProduct)
-	e.PUT("/api/v1/products/:id", productController.UpdatePrice)
+	e.PUT("/api/v1/products/newPrice:id", productController.UpdatePrice)
+	e.PUT("/api/v1/products/:id", productController.UpdateProduct)
 	e.DELETE("/api/v1/products/:id", productController.DeleteProduct)
 }
 
@@ -96,6 +97,43 @@ func (productController *ProductController) UpdatePrice(c echo.Context) error {
 	}
 
 	return productController.Created(c, nil, "Fiyat Güncellendi")
+}
+
+func (productController *ProductController) UpdateProduct(c echo.Context) error {
+	productId, err := productController.ParseIdParam(c, "id")
+	if err != nil {
+		return productController.BadRequest(c, err)
+	}
+	var updateProductRequest request.UpdateProductRequest
+	if bindErr := c.Bind(&updateProductRequest); bindErr != nil {
+		return productController.BadRequest(c, bindErr)
+	}
+
+	validator := validation.ProductCreateValidator{ProductReq: model.ProductCreate{
+		Name:            updateProductRequest.Name,
+		Description:     updateProductRequest.Description,
+		BasePrice:       updateProductRequest.BasePrice,
+		StockQuantity:   updateProductRequest.StockQuantity,
+		ImageUrl:        updateProductRequest.ImageUrl,
+		CategoryId:      updateProductRequest.CategoryId,
+		IsActive:        updateProductRequest.IsActive,
+		IsFeatured:      updateProductRequest.IsFeatured,
+		MetaDescription: updateProductRequest.MetaDescription,
+		Slug:            updateProductRequest.Slug,
+		Price:           updateProductRequest.Price,
+		Discount:        updateProductRequest.Discount,
+		StoreId:         updateProductRequest.StoreId,
+	}}
+
+	if validationErr := validator.Validate(); validationErr != nil {
+		return productController.BadRequest(c, validationErr)
+	}
+
+	serviceErr := productController.productService.UpdateProduct(uint(productId), updateProductRequest.ToModel())
+	if serviceErr != nil {
+		return productController.BadRequest(c, serviceErr)
+	}
+	return productController.Created(c, updateProductRequest, "Ürün Güncellendi")
 }
 
 func (productController *ProductController) DeleteProduct(c echo.Context) error {

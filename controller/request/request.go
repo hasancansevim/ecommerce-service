@@ -1,11 +1,28 @@
 package request
 
 import (
+	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/service/model"
 	"time"
 )
 
 type AddProductRequest struct {
+	Name            string  `json:"name"`
+	Slug            string  `json:"slug"`
+	Description     string  `json:"description"`
+	Price           float64 `json:"price"`
+	BasePrice       float64 `json:"basePrice"`
+	Discount        float64 `json:"discount"`
+	ImageUrl        string  `json:"imageUrl"`
+	MetaDescription string  `json:"metaDescription"`
+	StockQuantity   int     `json:"stockQuantity"`
+	IsActive        bool    `json:"isActive"`
+	IsFeatured      bool    `json:"isFeatured"`
+	CategoryId      *uint   `json:"categoryId"`
+	StoreId         uint    `json:"storeId"`
+}
+
+type UpdateProductRequest struct {
 	Name            string  `json:"name"`
 	Slug            string  `json:"slug"`
 	Description     string  `json:"description"`
@@ -80,8 +97,8 @@ type AddStoreRequest struct {
 	ContactPhone   string    `json:"contact_phone"`
 	ContactAddress string    `json:"contact_address"`
 	IsActive       bool      `json:"is_active"`
-	CreatedAt      time.Time `json:"created-at"`
-	UpdatedAt      time.Time `json:"updated-at"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
 }
 
 func (addProductRequest AddProductRequest) ToModel() model.ProductCreate {
@@ -102,15 +119,32 @@ func (addProductRequest AddProductRequest) ToModel() model.ProductCreate {
 	}
 }
 
-func (addCartCreate AddCartRequest) ToModel() model.CartCreate {
-	return model.CartCreate{
-		UserId:    addCartCreate.UserId,
-		CreatedAt: addCartCreate.CreatedAt,
+func (updateProductRequest UpdateProductRequest) ToModel() model.ProductCreate {
+	return model.ProductCreate{
+		Name:            updateProductRequest.Name,
+		Slug:            updateProductRequest.Slug,
+		Description:     updateProductRequest.Description,
+		Price:           updateProductRequest.Price,
+		BasePrice:       updateProductRequest.BasePrice,
+		Discount:        updateProductRequest.Discount,
+		ImageUrl:        updateProductRequest.ImageUrl,
+		MetaDescription: updateProductRequest.MetaDescription,
+		StockQuantity:   updateProductRequest.StockQuantity,
+		IsActive:        updateProductRequest.IsActive,
+		IsFeatured:      updateProductRequest.IsFeatured,
+		CategoryId:      updateProductRequest.CategoryId,
+		StoreId:         updateProductRequest.StoreId,
 	}
 }
 
-func (addCartItemRequest AddCartItemRequest) ToModel() model.CartItemCreate {
-	return model.CartItemCreate{
+func (addCartCreate AddCartRequest) ToModel() dto.CreateCartRequest {
+	return dto.CreateCartRequest{
+		UserId: addCartCreate.UserId,
+	}
+}
+
+func (addCartItemRequest AddCartItemRequest) ToModel() dto.CreateCartItemRequest {
+	return dto.CreateCartItemRequest{
 		CartId:    addCartItemRequest.CartId,
 		ProductId: addCartItemRequest.ProductId,
 		Quantity:  addCartItemRequest.Quantity,
@@ -135,16 +169,16 @@ func (addOrderItemRequest AddOrderItemRequest) ToModel() model.OrderItemCreate {
 	}
 }
 
-func (addCategoryRequest AddCategoryRequest) ToModel() model.CategoryCreate {
-	return model.CategoryCreate{
+func (addCategoryRequest AddCategoryRequest) ToModel() dto.CreateCategoryRequest {
+	return dto.CreateCategoryRequest{
 		Name:        addCategoryRequest.Name,
 		Description: addCategoryRequest.Description,
 		IsActive:    addCategoryRequest.IsActive,
 	}
 }
 
-func (addStoreRequest AddStoreRequest) ToModel() model.StoreCreate {
-	return model.StoreCreate{
+func (addStoreRequest AddStoreRequest) ToModel() dto.CreateStoreRequest {
+	return dto.CreateStoreRequest{
 		Name:         addStoreRequest.Name,
 		Slug:         addStoreRequest.Slug,
 		Description:  addStoreRequest.Description,
@@ -152,7 +186,5 @@ func (addStoreRequest AddStoreRequest) ToModel() model.StoreCreate {
 		ContactEmail: addStoreRequest.ContactEmail,
 		ContactPhone: addStoreRequest.ContactPhone,
 		IsActive:     addStoreRequest.IsActive,
-		CreatedAt:    addStoreRequest.CreatedAt,
-		UpdatedAt:    addStoreRequest.UpdatedAt,
 	}
 }
