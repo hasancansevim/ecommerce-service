@@ -2,19 +2,18 @@ package service
 
 import (
 	"go-ecommerce-service/domain"
+	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
-	"go-ecommerce-service/service/model"
-	"go-ecommerce-service/service/validation"
+	"go-ecommerce-service/pkg/util"
 	"time"
 )
 
 type IProductService interface {
-	GetAllProducts() []domain.Product
-	GetProductById(productId int64) (domain.Product, error)
-	AddProduct(productCreate model.ProductCreate) error
+	GetAllProducts() []dto.ProductResponse
+	GetProductById(productId int64) (dto.ProductResponse, error)
+	AddProduct(productCreate dto.CreateProductRequest) (dto.ProductResponse, error)
 	DeleteProductById(productId int64) error
-	UpdatePrice(productId int64, newPrice float32) error
-	UpdateProduct(productId uint, product model.ProductCreate) error
+	UpdateProduct(productId uint, product dto.CreateProductRequest) (dto.ProductResponse, error)
 }
 
 type ProductService struct {
@@ -27,21 +26,20 @@ func NewProductService(productRepository persistence.IProductRepository) IProduc
 	}
 }
 
-func (productService *ProductService) GetAllProducts() []domain.Product {
-	return productService.productRepository.GetAllProducts()
+func (productService *ProductService) GetAllProducts() []dto.ProductResponse {
+	products := productService.productRepository.GetAllProducts()
+	return convertToProductsResponse(products)
 }
 
-func (productService *ProductService) GetProductById(productId int64) (domain.Product, error) {
-	return productService.productRepository.GetProductById(productId)
+func (productService *ProductService) GetProductById(productId int64) (dto.ProductResponse, error) {
+	product, _ := productService.productRepository.GetProductById(productId)
+	return convertToProductResponse(product), nil
 }
 
-func (productService *ProductService) AddProduct(productCreate model.ProductCreate) error {
-	if validationError := validation.ValidateProductCreate(productCreate); validationError != nil {
-		return validationError
-	}
-	return productService.productRepository.AddProduct(domain.Product{
+func (productService *ProductService) AddProduct(productCreate dto.CreateProductRequest) (dto.ProductResponse, error) {
+	addedProduct, err := productService.productRepository.AddProduct(domain.Product{
 		Name:            productCreate.Name,
-		Slug:            productCreate.Slug,
+		Slug:            util.GenerateUniqueSlug(productCreate.Name),
 		Description:     productCreate.Description,
 		Price:           productCreate.Price,
 		BasePrice:       productCreate.BasePrice,
@@ -54,20 +52,21 @@ func (productService *ProductService) AddProduct(productCreate model.ProductCrea
 		CategoryId:      productCreate.CategoryId,
 		StoreId:         productCreate.StoreId,
 	})
+	if err != nil {
+		return dto.ProductResponse{}, err
+	}
+
+	return convertToProductResponse(addedProduct), nil
 }
 
 func (productService *ProductService) DeleteProductById(productId int64) error {
 	return productService.productRepository.DeleteProductById(productId)
 }
 
-func (productService *ProductService) UpdatePrice(productId int64, newPrice float32) error {
-	return productService.productRepository.UpdatePrice(productId, newPrice)
-}
-
-func (productService *ProductService) UpdateProduct(productId uint, product model.ProductCreate) error {
-	return productService.productRepository.UpdateProduct(productId, domain.Product{
+func (productService *ProductService) UpdateProduct(productId uint, product dto.CreateProductRequest) (dto.ProductResponse, error) {
+	updatedProduct, err := productService.productRepository.UpdateProduct(productId, domain.Product{
 		Name:            product.Name,
-		Slug:            product.Slug,
+		Slug:            util.GenerateUniqueSlug(product.Name),
 		Description:     product.Description,
 		Price:           product.Price,
 		BasePrice:       product.BasePrice,
@@ -81,4 +80,35 @@ func (productService *ProductService) UpdateProduct(productId uint, product mode
 		StoreId:         product.StoreId,
 		UpdatedAt:       time.Now(),
 	})
+
+	return convertToProductResponse(updatedProduct), err
+}
+
+func convertToProductResponse(product domain.Product) dto.ProductResponse {
+	return dto.ProductResponse{
+		Id:              product.Id,
+		Name:            product.Name,
+		Slug:            product.Slug,
+		Description:     product.Description,
+		Price:           product.Price,
+		BasePrice:       product.BasePrice,
+		Discount:        product.Discount,
+		ImageUrl:        product.ImageUrl,
+		MetaDescription: product.MetaDescription,
+		StockQuantity:   product.StockQuantity,
+		IsActive:        product.IsActive,
+		IsFeatured:      product.IsFeatured,
+		CategoryId:      product.CategoryId,
+		StoreId:         product.StoreId,
+		CreatedAt:       product.CreatedAt,
+		UpdatedAt:       product.UpdatedAt,
+	}
+}
+
+func convertToProductsResponse(products []domain.Product) []dto.ProductResponse {
+	productsDto := make([]dto.ProductResponse, 0, len(products))
+	for _, product := range products {
+		productsDto = append(productsDto, convertToProductResponse(product))
+	}
+	return productsDto
 }

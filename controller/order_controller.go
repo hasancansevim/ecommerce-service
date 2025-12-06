@@ -46,10 +46,11 @@ func (orderController *OrderController) CreateOrder(c echo.Context) error {
 	if validationErr := validator.Validate(); validationErr != nil {
 		return orderController.BadRequest(c, validationErr)
 	}
-	if createOrderErr := orderController.orderService.CreateOrder(addOrderRequest.ToModel()); createOrderErr != nil {
-		return orderController.BadRequest(c, createOrderErr)
+	createdOrder, serviceErr := orderController.orderService.CreateOrder(addOrderRequest.ToModel())
+	if serviceErr != nil {
+		return orderController.BadRequest(c, serviceErr)
 	}
-	return orderController.Created(c, addOrderRequest, "Sipariş Oluşturuldu")
+	return orderController.Success(c, createdOrder, "Sipariş Oluşturuldu")
 }
 
 func (orderController *OrderController) GetOrderById(c echo.Context) error {
@@ -82,16 +83,18 @@ func (orderController *OrderController) GetAllOrders(c echo.Context) error {
 }
 
 func (orderController *OrderController) UpdateOrderStatus(c echo.Context) error {
-	id, err := orderController.ParseIdParam(c, "id")
-	if err != nil {
-		return orderController.BadRequest(c, err)
+	id, parseIdErr := orderController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return orderController.BadRequest(c, parseIdErr)
 	}
+
 	queryParam := orderController.StringQueryParam(c, "status")
 	status := queryParam == "true"
-	if updateOrderStatusErr := orderController.orderService.UpdateOrderStatus(id, status); updateOrderStatusErr != nil {
-		return orderController.BadRequest(c, updateOrderStatusErr)
+	updatedOrder, serviceErr := orderController.orderService.UpdateOrderStatus(id, status)
+	if serviceErr != nil {
+		return orderController.BadRequest(c, serviceErr)
 	}
-	return orderController.Created(c, nil, "Sipariş Durumu Güncellendi")
+	return orderController.Success(c, updatedOrder, "Sipariş Durumu Güncellendi")
 }
 
 func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
@@ -106,20 +109,22 @@ func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
 }
 
 func (orderController *OrderController) UpdateOrderTotalPrice(c echo.Context) error {
-	id, err := orderController.ParseIdParam(c, "id")
-	if err != nil {
-		return orderController.BadRequest(c, err)
+	id, parseIdErr := orderController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return orderController.BadRequest(c, parseIdErr)
 	}
+
 	queryParam := orderController.StringQueryParam(c, "total_price")
 	totalPrice, parseFloatErr := strconv.ParseFloat(queryParam, 64)
 	if parseFloatErr != nil {
 		return orderController.BadRequest(c, parseFloatErr)
 	}
-	updateOrderTotalPriceErr := orderController.orderService.UpdateOrderTotalPrice(id, float32(totalPrice))
-	if updateOrderTotalPriceErr != nil {
-		return orderController.BadRequest(c, updateOrderTotalPriceErr)
+
+	updatedOrder, serviceErr := orderController.orderService.UpdateOrderTotalPrice(id, float32(totalPrice))
+	if serviceErr != nil {
+		return orderController.BadRequest(c, serviceErr)
 	}
-	return orderController.Created(c, nil, "Sipariş Tutarı Güncellendi")
+	return orderController.Success(c, updatedOrder, "Sipariş Tutarı Güncellendi")
 }
 
 func (orderController *OrderController) GetOrdersByStatus(c echo.Context) error {

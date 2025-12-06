@@ -3,9 +3,7 @@ package controller
 import (
 	"errors"
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/domain"
 	"go-ecommerce-service/service"
-	"go-ecommerce-service/service/model"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -39,21 +37,17 @@ func (orderItemController *OrderItemController) AddOrderItem(c echo.Context) err
 		return orderItemController.BadRequest(c, bindErr)
 	}
 
-	if addOrderItemErr := orderItemController.orderItemService.AddOrderItem(model.OrderItemCreate{
-		OrderId:   addOrderItemRequest.OrderId,
-		ProductId: addOrderItemRequest.ProductId,
-		Quantity:  addOrderItemRequest.Quantity,
-		Price:     addOrderItemRequest.Price,
-	}); addOrderItemErr != nil {
-		return orderItemController.BadRequest(c, addOrderItemErr)
+	addedOrderItem, serviceErr := orderItemController.orderItemService.AddOrderItem(addOrderItemRequest.ToModel())
+	if serviceErr != nil {
+		return orderItemController.BadRequest(c, serviceErr)
 	}
-	return orderItemController.Created(c, addOrderItemRequest, "Sipariş Öğesi Eklendi")
+	return orderItemController.Success(c, addedOrderItem, "Sipariş Öğesi Eklendi")
 }
 
 func (orderItemController *OrderItemController) GetOrderItemById(c echo.Context) error {
-	id, err := orderItemController.ParseIdParam(c, "id")
-	if err != nil {
-		return orderItemController.BadRequest(c, err)
+	id, parseIdErr := orderItemController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return orderItemController.BadRequest(c, parseIdErr)
 	}
 	getOrderItem, getOrderItemByIdErr := orderItemController.orderItemService.GetOrderItemById(id)
 	if getOrderItemByIdErr != nil {
@@ -98,21 +92,16 @@ func (orderItemController *OrderItemController) UpdateOrderItem(c echo.Context) 
 		return orderItemController.BadRequest(c, bindErr)
 	}
 
-	id, parseIdParamErr := orderItemController.ParseIdParam(c, "id")
-	if parseIdParamErr != nil {
-		return orderItemController.BadRequest(c, parseIdParamErr)
+	id, parseIdErr := orderItemController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return orderItemController.BadRequest(c, parseIdErr)
 	}
 
-	if updateOrderItemErr := orderItemController.orderItemService.UpdateOrderItem(id, domain.OrderItem{
-		OrderId:   updateOrderItemRequest.OrderId,
-		ProductId: updateOrderItemRequest.ProductId,
-		Quantity:  updateOrderItemRequest.Quantity,
-		Price:     updateOrderItemRequest.Price,
-	}); updateOrderItemErr != nil {
-		return orderItemController.BadRequest(c, updateOrderItemErr)
+	updatedOrderItem, serviceErr := orderItemController.orderItemService.UpdateOrderItem(id, updateOrderItemRequest.ToModel())
+	if serviceErr != nil {
+		return orderItemController.BadRequest(c, serviceErr)
 	}
-
-	return orderItemController.Created(c, nil, "Sipariş Öğesi Güncellendi")
+	return orderItemController.Created(c, updatedOrderItem, "Sipariş Öğesi Güncellendi")
 }
 
 func (orderItemController *OrderItemController) UpdateOrderItemQuantity(c echo.Context) error {
@@ -126,10 +115,11 @@ func (orderItemController *OrderItemController) UpdateOrderItemQuantity(c echo.C
 		return orderItemController.BadRequest(c, queryParamConvertErr)
 	}
 
-	if updateOrderItemQuantityErr := orderItemController.orderItemService.UpdateOrderItemQuantity(id, newQuantity); updateOrderItemQuantityErr != nil {
-		return orderItemController.BadRequest(c, updateOrderItemQuantityErr)
+	updatedOrderItem, serviceErr := orderItemController.orderItemService.UpdateOrderItemQuantity(id, newQuantity)
+	if serviceErr != nil {
+		return orderItemController.BadRequest(c, serviceErr)
 	}
-	return orderItemController.Created(c, nil, "Sipariş Öğesi Adedi Arttıldı")
+	return orderItemController.Created(c, updatedOrderItem, "Sipariş Öğesi Adedi Arttıldı")
 }
 
 func (orderItemController *OrderItemController) DeleteOrderItemById(c echo.Context) error {

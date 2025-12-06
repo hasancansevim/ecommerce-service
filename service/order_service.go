@@ -2,20 +2,19 @@ package service
 
 import (
 	"go-ecommerce-service/domain"
+	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
-	"go-ecommerce-service/service/model"
-	"go-ecommerce-service/service/validation"
 )
 
 type IOrderService interface {
-	CreateOrder(order model.OrderCreate) error
-	GetOrderById(orderId int64) domain.Order
-	GetOrdersByUserId(userId int64) ([]domain.Order, error)
-	GetAllOrders() ([]domain.Order, error)
-	UpdateOrderStatus(orderId int64, status bool) error
+	CreateOrder(order dto.CreateOrderRequest) (dto.OrderResponse, error)
+	GetOrderById(orderId int64) dto.OrderResponse
+	GetOrdersByUserId(userId int64) ([]dto.OrderResponse, error)
+	GetAllOrders() ([]dto.OrderResponse, error)
+	UpdateOrderStatus(orderId int64, status bool) (dto.OrderResponse, error)
 	DeleteOrderById(orderId int64) error
-	UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) error
-	GetOrdersByStatus(status string) ([]domain.Order, error)
+	UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) (dto.OrderResponse, error)
+	GetOrdersByStatus(status string) ([]dto.OrderResponse, error)
 }
 
 type OrderService struct {
@@ -28,51 +27,46 @@ func NewOrderService(orderRepository persistence.IOrderRepository) IOrderService
 	}
 }
 
-func (orderService *OrderService) CreateOrder(orderCreate model.OrderCreate) error {
+func (orderService *OrderService) CreateOrder(order dto.CreateOrderRequest) (dto.OrderResponse, error) {
 
-	if validationErr := validation.ValidateOrderCreate(orderCreate); validationErr != nil {
-		return validationErr
-	}
-
-	createOrderErr := orderService.orderRepository.CreateOrder(domain.Order{
-		UserId:     orderCreate.UserId,
-		TotalPrice: orderCreate.TotalPrice,
-		Status:     orderCreate.Status,
-		CreatedAt:  orderCreate.CreatedAt,
+	createdOrder, repositoryErr := orderService.orderRepository.CreateOrder(domain.Order{
+		UserId:     order.UserId,
+		TotalPrice: order.TotalPrice,
+		Status:     order.Status,
 	})
-	if createOrderErr != nil {
-		return createOrderErr
+	if repositoryErr != nil {
+		return dto.OrderResponse{}, repositoryErr
 	}
-	return nil
+	return convertToOrderResponse(createdOrder), nil
 }
 
-func (orderService *OrderService) GetOrderById(orderId int64) domain.Order {
-	return orderService.orderRepository.GetOrderById(orderId)
-
+func (orderService *OrderService) GetOrderById(orderId int64) dto.OrderResponse {
+	order := orderService.orderRepository.GetOrderById(orderId)
+	return convertToOrderResponse(order)
 }
 
-func (orderService *OrderService) GetOrdersByUserId(userId int64) ([]domain.Order, error) {
-	getOrdersByUserId, getOrdersByUserIdErr := orderService.orderRepository.GetOrdersByUserId(userId)
-	if getOrdersByUserIdErr != nil {
-		return []domain.Order{}, getOrdersByUserIdErr
+func (orderService *OrderService) GetOrdersByUserId(userId int64) ([]dto.OrderResponse, error) {
+	ordersById, repositoryErr := orderService.orderRepository.GetOrdersByUserId(userId)
+	if repositoryErr != nil {
+		return []dto.OrderResponse{}, repositoryErr
 	}
-	return getOrdersByUserId, nil
+	return convertToOrdersResponse(ordersById), nil
 }
 
-func (orderService *OrderService) GetAllOrders() ([]domain.Order, error) {
-	orders, getAllOrdersErr := orderService.orderRepository.GetAllOrders()
-	if getAllOrdersErr != nil {
-		return []domain.Order{}, getAllOrdersErr
+func (orderService *OrderService) GetAllOrders() ([]dto.OrderResponse, error) {
+	orders, repositoryErr := orderService.orderRepository.GetAllOrders()
+	if repositoryErr != nil {
+		return []dto.OrderResponse{}, repositoryErr
 	}
-	return orders, nil
+	return convertToOrdersResponse(orders), nil
 }
 
-func (orderService *OrderService) UpdateOrderStatus(orderId int64, status bool) error {
-	updateOrderStatusErr := orderService.orderRepository.UpdateOrderStatus(orderId, status)
-	if updateOrderStatusErr != nil {
-		return updateOrderStatusErr
+func (orderService *OrderService) UpdateOrderStatus(orderId int64, status bool) (dto.OrderResponse, error) {
+	updatedOrder, repositoryErr := orderService.orderRepository.UpdateOrderStatus(orderId, status)
+	if repositoryErr != nil {
+		return dto.OrderResponse{}, repositoryErr
 	}
-	return nil
+	return convertToOrderResponse(updatedOrder), nil
 }
 
 func (orderService *OrderService) DeleteOrderById(orderId int64) error {
@@ -83,18 +77,36 @@ func (orderService *OrderService) DeleteOrderById(orderId int64) error {
 	return nil
 }
 
-func (orderService *OrderService) UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) error {
-	updateOrderTotalPriceErr := orderService.orderRepository.UpdateOrderTotalPrice(orderId, newTotalPrice)
-	if updateOrderTotalPriceErr != nil {
-		return updateOrderTotalPriceErr
+func (orderService *OrderService) UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) (dto.OrderResponse, error) {
+	updatedOrder, repositoryErr := orderService.orderRepository.UpdateOrderTotalPrice(orderId, newTotalPrice)
+	if repositoryErr != nil {
+		return dto.OrderResponse{}, repositoryErr
 	}
-	return nil
+	return convertToOrderResponse(updatedOrder), nil
 }
 
-func (orderService *OrderService) GetOrdersByStatus(status string) ([]domain.Order, error) {
-	ordersByStatus, getOrdersByStatusErr := orderService.orderRepository.GetOrdersByStatus(status)
-	if getOrdersByStatusErr != nil {
-		return []domain.Order{}, getOrdersByStatusErr
+func (orderService *OrderService) GetOrdersByStatus(status string) ([]dto.OrderResponse, error) {
+	ordersByStatus, repositoryErr := orderService.orderRepository.GetOrdersByStatus(status)
+	if repositoryErr != nil {
+		return []dto.OrderResponse{}, repositoryErr
 	}
-	return ordersByStatus, nil
+	return convertToOrdersResponse(ordersByStatus), nil
+}
+
+func convertToOrderResponse(order domain.Order) dto.OrderResponse {
+	return dto.OrderResponse{
+		Id:         order.Id,
+		UserId:     order.UserId,
+		TotalPrice: order.TotalPrice,
+		Status:     order.Status,
+		CreatedAt:  order.CreatedAt,
+	}
+}
+
+func convertToOrdersResponse(orders []domain.Order) []dto.OrderResponse {
+	ordersDto := make([]dto.OrderResponse, 0, len(orders))
+	for _, order := range orders {
+		ordersDto = append(ordersDto, convertToOrderResponse(order))
+	}
+	return ordersDto
 }

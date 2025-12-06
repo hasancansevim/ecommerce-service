@@ -10,13 +10,13 @@ import (
 )
 
 type IOrderRepository interface {
-	CreateOrder(order domain.Order) error
+	CreateOrder(order domain.Order) (domain.Order, error)
 	GetOrderById(orderId int64) domain.Order
 	GetOrdersByUserId(userId int64) ([]domain.Order, error)
 	GetAllOrders() ([]domain.Order, error)
-	UpdateOrderStatus(orderId int64, status bool) error
+	UpdateOrderStatus(orderId int64, status bool) (domain.Order, error)
 	DeleteOrderById(orderId int64) error
-	UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) error
+	UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) (domain.Order, error)
 	GetOrdersByStatus(status string) ([]domain.Order, error)
 }
 
@@ -32,15 +32,15 @@ func NewOrderRepository(dbPool *pgxpool.Pool) IOrderRepository {
 	}
 }
 
-func (orderRepository *OrderRepository) CreateOrder(order domain.Order) error {
+func (orderRepository *OrderRepository) CreateOrder(order domain.Order) (domain.Order, error) {
 	ctx := context.Background()
-	err := orderRepository.scanner.ExecuteExec(ctx, "insert into orders (user_id,total_price,status) values ($1,$2,$3)",
+	query := `insert into orders (user_id,total_price,status) values ($1,$2,$3) RETURNING *`
+	createdOrder, err := orderRepository.scanner.QueryRowAndScan(ctx, query,
 		order.UserId, order.TotalPrice, order.Status)
 	if err != nil {
-		log.Error(err)
-		return err
+		return domain.Order{}, err
 	}
-	return nil
+	return createdOrder, err
 }
 
 func (orderRepository *OrderRepository) GetOrderById(orderId int64) domain.Order {
@@ -73,14 +73,15 @@ func (orderRepository *OrderRepository) GetAllOrders() ([]domain.Order, error) {
 	return orders, nil
 }
 
-func (orderRepository *OrderRepository) UpdateOrderStatus(orderId int64, status bool) error {
+func (orderRepository *OrderRepository) UpdateOrderStatus(orderId int64, status bool) (domain.Order, error) {
 	ctx := context.Background()
-	err := orderRepository.scanner.ExecuteExec(ctx, "update orders set status = $1 where id = $2", status, orderId)
+	query := `update orders set status = $1 where id = $2 RETURNING *`
+
+	updatedOrder, err := orderRepository.scanner.QueryRowAndScan(ctx, query, status, orderId)
 	if err != nil {
-		log.Error(err)
-		return err
+		return domain.Order{}, err
 	}
-	return nil
+	return updatedOrder, nil
 }
 
 func (orderRepository *OrderRepository) DeleteOrderById(orderId int64) error {
@@ -93,21 +94,20 @@ func (orderRepository *OrderRepository) DeleteOrderById(orderId int64) error {
 	return nil
 }
 
-func (orderRepository *OrderRepository) UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) error {
+func (orderRepository *OrderRepository) UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) (domain.Order, error) {
 	ctx := context.Background()
-	err := orderRepository.scanner.ExecuteExec(ctx, "update orders set total_price = $1 where id = $2", newTotalPrice, orderId)
+	query := `update orders set total_price = $1 where id = $2 RETURNING *`
+	updatedOrder, err := orderRepository.scanner.QueryRowAndScan(ctx, query, newTotalPrice, orderId)
 	if err != nil {
-		log.Error(err)
-		return err
+		return domain.Order{}, err
 	}
-	return nil
+	return updatedOrder, nil
 }
 
 func (orderRepository *OrderRepository) GetOrdersByStatus(status string) ([]domain.Order, error) {
 	ctx := context.Background()
 	orders, err := orderRepository.scanner.QueryAndScan(ctx, "select * from orders where status = $1", status)
 	if err != nil {
-		log.Error(err)
 		return []domain.Order{}, err
 	}
 	return orders, nil

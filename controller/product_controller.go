@@ -5,7 +5,6 @@ import (
 	"go-ecommerce-service/pkg/validation"
 	"go-ecommerce-service/service"
 	"go-ecommerce-service/service/model"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -25,7 +24,6 @@ func (productController *ProductController) RegisterRoutes(e *echo.Echo) {
 	e.GET("/api/v1/products", productController.GetAllProducts)
 	e.GET("/api/v1/products/:id", productController.GetProductById)
 	e.POST("/api/v1/products", productController.AddProduct)
-	e.PUT("/api/v1/products/newPrice:id", productController.UpdatePrice)
 	e.PUT("/api/v1/products/:id", productController.UpdateProduct)
 	e.DELETE("/api/v1/products/:id", productController.DeleteProduct)
 }
@@ -74,35 +72,18 @@ func (productController *ProductController) AddProduct(c echo.Context) error {
 		return productController.BadRequest(c, validationErr)
 	}
 
-	if addProductErr := productController.productService.AddProduct(addProductRequest.ToModel()); addProductErr != nil {
-		return productController.BadRequest(c, addProductErr)
+	addedProduct, serviceErr := productController.productService.AddProduct(addProductRequest.ToModel())
+	if serviceErr != nil {
+		return productController.BadRequest(c, serviceErr)
 	}
 
-	return productController.Created(c, addProductRequest, "Ürün Eklendi")
-}
-
-func (productController *ProductController) UpdatePrice(c echo.Context) error {
-	productID, err := productController.ParseIdParam(c, "id")
-	if err != nil {
-		return productController.BadRequest(c, err)
-	}
-
-	newPrice, err := strconv.ParseFloat(c.QueryParam("newPrice"), 32)
-	if err != nil {
-		return productController.BadRequest(c, err)
-	}
-
-	if err := productController.productService.UpdatePrice(productID, float32(newPrice)); err != nil {
-		return productController.BadRequest(c, err)
-	}
-
-	return productController.Created(c, nil, "Fiyat Güncellendi")
+	return productController.Success(c, addedProduct, "Ürün Eklendi")
 }
 
 func (productController *ProductController) UpdateProduct(c echo.Context) error {
-	productId, err := productController.ParseIdParam(c, "id")
-	if err != nil {
-		return productController.BadRequest(c, err)
+	productId, parseIdErr := productController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return productController.BadRequest(c, parseIdErr)
 	}
 	var updateProductRequest request.UpdateProductRequest
 	if bindErr := c.Bind(&updateProductRequest); bindErr != nil {
@@ -129,11 +110,11 @@ func (productController *ProductController) UpdateProduct(c echo.Context) error 
 		return productController.BadRequest(c, validationErr)
 	}
 
-	serviceErr := productController.productService.UpdateProduct(uint(productId), updateProductRequest.ToModel())
+	updatedProduct, serviceErr := productController.productService.UpdateProduct(uint(productId), updateProductRequest.ToModel())
 	if serviceErr != nil {
 		return productController.BadRequest(c, serviceErr)
 	}
-	return productController.Created(c, updateProductRequest, "Ürün Güncellendi")
+	return productController.Success(c, updatedProduct, "Ürün Güncellendi")
 }
 
 func (productController *ProductController) DeleteProduct(c echo.Context) error {
@@ -146,5 +127,5 @@ func (productController *ProductController) DeleteProduct(c echo.Context) error 
 		return productController.BadRequest(c, err)
 	}
 
-	return productController.Created(c, nil, "ÜrünSilindi")
+	return productController.Created(c, nil, "Ürün Silindi")
 }

@@ -18,7 +18,6 @@ type StoreResponse struct {
 
 type CreateStoreRequest struct {
 	Name           string `json:"name"`
-	Slug           string `json:"slug"`
 	Description    string `json:"description"`
 	LogoUrl        string `json:"logo_url"`
 	ContactEmail   string `json:"contact_email"`

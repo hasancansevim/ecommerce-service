@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
+	"go-ecommerce-service/pkg/util"
 	"time"
 )
 
@@ -67,7 +68,7 @@ func (s *StoreService) GetStoreById(storeId uint) (dto.StoreResponse, error) {
 func (s *StoreService) AddStore(store dto.CreateStoreRequest) (dto.StoreResponse, error) {
 	addedStore, err := s.storeRepository.AddStore(domain.Store{
 		Name:           store.Name,
-		Slug:           store.Slug,
+		Slug:           util.GenerateUniqueSlug(store.Name),
 		LogoUrl:        store.LogoUrl,
 		ContactAddress: store.ContactAddress,
 		ContactEmail:   store.ContactEmail,
@@ -100,7 +101,7 @@ func (s *StoreService) DeleteStoreById(storeId uint) error {
 func (s *StoreService) UpdateStoreById(id uint, store dto.CreateStoreRequest) (dto.StoreResponse, error) {
 	updatedStore, err := s.storeRepository.UpdateStoreById(id, domain.Store{
 		Name:           store.Name,
-		Slug:           store.Slug,
+		Slug:           util.GenerateUniqueSlug(store.Name),
 		LogoUrl:        store.LogoUrl,
 		ContactAddress: store.ContactAddress,
 		ContactEmail:   store.ContactEmail,

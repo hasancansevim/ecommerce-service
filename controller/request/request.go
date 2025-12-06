@@ -8,7 +8,6 @@ import (
 
 type AddProductRequest struct {
 	Name            string  `json:"name"`
-	Slug            string  `json:"slug"`
 	Description     string  `json:"description"`
 	Price           float64 `json:"price"`
 	BasePrice       float64 `json:"basePrice"`
@@ -24,7 +23,6 @@ type AddProductRequest struct {
 
 type UpdateProductRequest struct {
 	Name            string  `json:"name"`
-	Slug            string  `json:"slug"`
 	Description     string  `json:"description"`
 	Price           float64 `json:"price"`
 	BasePrice       float64 `json:"basePrice"`
@@ -101,10 +99,9 @@ type AddStoreRequest struct {
 	UpdatedAt      time.Time `json:"updated_at"`
 }
 
-func (addProductRequest AddProductRequest) ToModel() model.ProductCreate {
-	return model.ProductCreate{
+func (addProductRequest AddProductRequest) ToModel() dto.CreateProductRequest {
+	return dto.CreateProductRequest{
 		Name:            addProductRequest.Name,
-		Slug:            addProductRequest.Slug,
 		Description:     addProductRequest.Description,
 		Price:           addProductRequest.Price,
 		BasePrice:       addProductRequest.BasePrice,
@@ -122,7 +119,6 @@ func (addProductRequest AddProductRequest) ToModel() model.ProductCreate {
 func (updateProductRequest UpdateProductRequest) ToModel() model.ProductCreate {
 	return model.ProductCreate{
 		Name:            updateProductRequest.Name,
-		Slug:            updateProductRequest.Slug,
 		Description:     updateProductRequest.Description,
 		Price:           updateProductRequest.Price,
 		BasePrice:       updateProductRequest.BasePrice,
@@ -151,21 +147,29 @@ func (addCartItemRequest AddCartItemRequest) ToModel() dto.CreateCartItemRequest
 	}
 }
 
-func (addOrderRequest AddOrderRequest) ToModel() model.OrderCreate {
-	return model.OrderCreate{
+func (addOrderRequest AddOrderRequest) ToModel() dto.CreateOrderRequest {
+	return dto.CreateOrderRequest{
 		UserId:     addOrderRequest.UserId,
 		TotalPrice: addOrderRequest.TotalPrice,
 		Status:     addOrderRequest.Status,
-		CreatedAt:  addOrderRequest.CreatedAt,
 	}
 }
 
-func (addOrderItemRequest AddOrderItemRequest) ToModel() model.OrderItemCreate {
-	return model.OrderItemCreate{
+func (addOrderItemRequest AddOrderItemRequest) ToModel() dto.CreateOrderItemRequest {
+	return dto.CreateOrderItemRequest{
 		OrderId:   addOrderItemRequest.OrderId,
 		ProductId: addOrderItemRequest.ProductId,
 		Quantity:  addOrderItemRequest.Quantity,
 		Price:     addOrderItemRequest.Price,
+	}
+}
+
+func (updateOrderItemRequest UpdateOrderItemRequest) ToModel() dto.CreateOrderItemRequest {
+	return dto.CreateOrderItemRequest{
+		OrderId:   updateOrderItemRequest.OrderId,
+		ProductId: updateOrderItemRequest.ProductId,
+		Quantity:  updateOrderItemRequest.Quantity,
+		Price:     updateOrderItemRequest.Price,
 	}
 }
 
@@ -180,7 +184,6 @@ func (addCategoryRequest AddCategoryRequest) ToModel() dto.CreateCategoryRequest
 func (addStoreRequest AddStoreRequest) ToModel() dto.CreateStoreRequest {
 	return dto.CreateStoreRequest{
 		Name:         addStoreRequest.Name,
-		Slug:         addStoreRequest.Slug,
 		Description:  addStoreRequest.Description,
 		LogoUrl:      addStoreRequest.LogoUrl,
 		ContactEmail: addStoreRequest.ContactEmail,
