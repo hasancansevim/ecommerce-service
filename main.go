@@ -7,15 +7,13 @@ import (
 	"go-ecommerce-service/controller"
 	"go-ecommerce-service/internal/jwt"
 	"go-ecommerce-service/persistence"
+	customMiddleware "go-ecommerce-service/pkg/middleware"
 	"go-ecommerce-service/service"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 )
-
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
 
 func main() {
 	cfg, err := config.Load()
@@ -75,6 +73,8 @@ func main() {
 	authController.RegisterRoutes(e)
 	categoryController.RegisterRoutes(e)
 	storeController.RegisterRoutes(e)
+
+	e.HTTPErrorHandler = customMiddleware.CustomHTTPErrorHandler
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:4200"},

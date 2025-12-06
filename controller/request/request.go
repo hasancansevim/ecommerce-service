@@ -2,7 +2,6 @@ package request
 
 import (
 	"go-ecommerce-service/internal/dto"
-	"go-ecommerce-service/service/model"
 	"time"
 )
 
@@ -116,8 +115,8 @@ func (addProductRequest AddProductRequest) ToModel() dto.CreateProductRequest {
 	}
 }
 
-func (updateProductRequest UpdateProductRequest) ToModel() model.ProductCreate {
-	return model.ProductCreate{
+func (updateProductRequest UpdateProductRequest) ToModel() dto.CreateProductRequest {
+	return dto.CreateProductRequest{
 		Name:            updateProductRequest.Name,
 		Description:     updateProductRequest.Description,
 		Price:           updateProductRequest.Price,

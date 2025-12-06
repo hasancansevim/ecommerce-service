@@ -4,31 +4,31 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="refactor: implement DTO pattern and optimize repository layer&#10;&#10;- Introduced DTO pattern (Request/Response) for Category, Store, Cart, and CartItem modules.&#10;- Decoupled Domain Entities from API responses to ensure data encapsulation and security.&#10;- Updated Repository layer to use PostgreSQL `RETURNING *` clause with `QueryRowAndScan` for atomic Create/Update operations.&#10;- Refactored Service layer to handle DTO-to-Domain mapping.&#10;- Standardized Controller responses and fixed routing conflicts (Query Params usage).&#10;&#10;Modules affected: Category, Store, Cart, CartItem">
-      <change afterPath="$PROJECT_DIR$/internal/dto/order_dto.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/dto/order_item_dto.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/dto/product_dto.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/dto/user_dto.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/util/slug_helper.go" afterDir="false" />
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="refactor: apply DTO pattern to Product and Order modules&#10;&#10;- Refactored Product, Order, and OrderItem modules to use DTOs (Request/Response).&#10;- Removed Domain Entity leakage in API responses for better encapsulation.&#10;- Optimized Repository layer using `RETURNING *` and `QueryRowAndScan` for atomic operations.&#10;- Implemented Slug generation helper in Service layer.&#10;- Standardized Service-to-DTO mapping logic.&#10;&#10;Modules affected: Product, Order, OrderItem">
+      <change afterPath="$PROJECT_DIR$/pkg/middleware/error_handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/auth_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/cart_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/cart_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_item_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/category_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/category_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/order_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_item_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/request/request.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/request/request.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/order.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/order.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/order_item.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/order_item.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/product.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/product.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/dto/store_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/store_dto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/order_item_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/order_item_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/order_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/order_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/product_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/store_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/store_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middleware/auth_middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/middleware/auth_middleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middleware/error_handler.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/errors/app_error.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/errors/app_error.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/auth_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/auth_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/cart_item_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/cart_item_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/cart_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/cart_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/category_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/category_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/order_item_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/order_item_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/order_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/order_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/product_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/product_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/store_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/store_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/user_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,6 +106,11 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Hasan Can\GolandProjects\go-ecommerce-service\pkg" />
+    </key>
+  </component>
   <component name="RunManager" selected="Go Build.go build main.go">
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go-ecommerce-service" />
@@ -211,7 +216,8 @@
     <MESSAGE value="refactor(domain): add json tags to structs for camelCase serialization&#10;&#10;- Added `json:&quot;...&quot;` tags to domain structs (Product, Category, etc.).&#10;- Standardized API response fields to camelCase to match frontend models.&#10;- Removed the need for manual property mapping on the client side." />
     <MESSAGE value="fix(controller): update request struct tags to camelCase for correct binding" />
     <MESSAGE value="refactor: implement DTO pattern and optimize repository layer&#10;&#10;- Introduced DTO pattern (Request/Response) for Category, Store, Cart, and CartItem modules.&#10;- Decoupled Domain Entities from API responses to ensure data encapsulation and security.&#10;- Updated Repository layer to use PostgreSQL `RETURNING *` clause with `QueryRowAndScan` for atomic Create/Update operations.&#10;- Refactored Service layer to handle DTO-to-Domain mapping.&#10;- Standardized Controller responses and fixed routing conflicts (Query Params usage).&#10;&#10;Modules affected: Category, Store, Cart, CartItem" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: implement DTO pattern and optimize repository layer&#10;&#10;- Introduced DTO pattern (Request/Response) for Category, Store, Cart, and CartItem modules.&#10;- Decoupled Domain Entities from API responses to ensure data encapsulation and security.&#10;- Updated Repository layer to use PostgreSQL `RETURNING *` clause with `QueryRowAndScan` for atomic Create/Update operations.&#10;- Refactored Service layer to handle DTO-to-Domain mapping.&#10;- Standardized Controller responses and fixed routing conflicts (Query Params usage).&#10;&#10;Modules affected: Category, Store, Cart, CartItem" />
+    <MESSAGE value="refactor: apply DTO pattern to Product and Order modules&#10;&#10;- Refactored Product, Order, and OrderItem modules to use DTOs (Request/Response).&#10;- Removed Domain Entity leakage in API responses for better encapsulation.&#10;- Optimized Repository layer using `RETURNING *` and `QueryRowAndScan` for atomic operations.&#10;- Implemented Slug generation helper in Service layer.&#10;- Standardized Service-to-DTO mapping logic.&#10;&#10;Modules affected: Product, Order, OrderItem" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: apply DTO pattern to Product and Order modules&#10;&#10;- Refactored Product, Order, and OrderItem modules to use DTOs (Request/Response).&#10;- Removed Domain Entity leakage in API responses for better encapsulation.&#10;- Optimized Repository layer using `RETURNING *` and `QueryRowAndScan` for atomic operations.&#10;- Implemented Slug generation helper in Service layer.&#10;- Standardized Service-to-DTO mapping logic.&#10;&#10;Modules affected: Product, Order, OrderItem" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

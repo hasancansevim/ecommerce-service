@@ -2,9 +2,7 @@ package controller
 
 import (
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/pkg/validation"
 	"go-ecommerce-service/service"
-	"go-ecommerce-service/service/model"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -34,50 +32,43 @@ func (orderController *OrderController) CreateOrder(c echo.Context) error {
 	var addOrderRequest request.AddOrderRequest
 	bindErr := c.Bind(&addOrderRequest)
 	if bindErr != nil {
-		return orderController.BadRequest(c, bindErr)
+		return bindErr
 	}
 
-	validator := validation.OrderCreateValidator{OrderReq: model.OrderCreate{
-		UserId:     addOrderRequest.UserId,
-		TotalPrice: addOrderRequest.TotalPrice,
-		Status:     addOrderRequest.Status,
-		CreatedAt:  addOrderRequest.CreatedAt,
-	}}
-	if validationErr := validator.Validate(); validationErr != nil {
-		return orderController.BadRequest(c, validationErr)
-	}
 	createdOrder, serviceErr := orderController.orderService.CreateOrder(addOrderRequest.ToModel())
 	if serviceErr != nil {
-		return orderController.BadRequest(c, serviceErr)
+		return serviceErr
 	}
 	return orderController.Success(c, createdOrder, "Sipariş Oluşturuldu")
 }
 
 func (orderController *OrderController) GetOrderById(c echo.Context) error {
-	id, err := orderController.ParseIdParam(c, "id")
-	if err != nil {
-		return orderController.BadRequest(c, err)
+	id, parseIdErr := orderController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
+
 	getOrderById := orderController.orderService.GetOrderById(id)
 	return orderController.Success(c, getOrderById, "")
 }
 
 func (orderController *OrderController) GetOrdersByUserId(c echo.Context) error {
-	userId, err := orderController.ParseIdParam(c, "user_id")
-	if err != nil {
-		return orderController.BadRequest(c, err)
+	userId, parseIdErr := orderController.ParseIdParam(c, "user_id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	getOrdersByUserId, getOrdersByUserIdErr := orderController.orderService.GetOrdersByUserId(userId)
-	if getOrdersByUserIdErr != nil {
-		return orderController.BadRequest(c, getOrdersByUserIdErr)
+
+	getOrdersByUserId, serviceErr := orderController.orderService.GetOrdersByUserId(userId)
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return orderController.Success(c, getOrdersByUserId, "")
 }
 
 func (orderController *OrderController) GetAllOrders(c echo.Context) error {
-	orders, getAllOrdersErr := orderController.orderService.GetAllOrders()
-	if getAllOrdersErr != nil {
-		return orderController.BadRequest(c, getAllOrdersErr)
+	orders, serviceErr := orderController.orderService.GetAllOrders()
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return orderController.Success(c, orders, "")
 }
@@ -85,25 +76,26 @@ func (orderController *OrderController) GetAllOrders(c echo.Context) error {
 func (orderController *OrderController) UpdateOrderStatus(c echo.Context) error {
 	id, parseIdErr := orderController.ParseIdParam(c, "id")
 	if parseIdErr != nil {
-		return orderController.BadRequest(c, parseIdErr)
+		return parseIdErr
 	}
 
 	queryParam := orderController.StringQueryParam(c, "status")
 	status := queryParam == "true"
 	updatedOrder, serviceErr := orderController.orderService.UpdateOrderStatus(id, status)
 	if serviceErr != nil {
-		return orderController.BadRequest(c, serviceErr)
+		return serviceErr
 	}
 	return orderController.Success(c, updatedOrder, "Sipariş Durumu Güncellendi")
 }
 
 func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
-	id, err := orderController.ParseIdParam(c, "id")
-	if err != nil {
-		return orderController.BadRequest(c, err)
+	id, parseIdErr := orderController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	if deleteOrderByIdErr := orderController.orderService.DeleteOrderById(id); deleteOrderByIdErr != nil {
-		return orderController.BadRequest(c, deleteOrderByIdErr)
+
+	if serviceErr := orderController.orderService.DeleteOrderById(id); serviceErr != nil {
+		return serviceErr
 	}
 	return orderController.Created(c, nil, "Sipariş Silinid")
 }
@@ -111,27 +103,28 @@ func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
 func (orderController *OrderController) UpdateOrderTotalPrice(c echo.Context) error {
 	id, parseIdErr := orderController.ParseIdParam(c, "id")
 	if parseIdErr != nil {
-		return orderController.BadRequest(c, parseIdErr)
+		return parseIdErr
 	}
 
 	queryParam := orderController.StringQueryParam(c, "total_price")
 	totalPrice, parseFloatErr := strconv.ParseFloat(queryParam, 64)
 	if parseFloatErr != nil {
-		return orderController.BadRequest(c, parseFloatErr)
+		return parseFloatErr
 	}
 
 	updatedOrder, serviceErr := orderController.orderService.UpdateOrderTotalPrice(id, float32(totalPrice))
 	if serviceErr != nil {
-		return orderController.BadRequest(c, serviceErr)
+		return serviceErr
 	}
 	return orderController.Success(c, updatedOrder, "Sipariş Tutarı Güncellendi")
 }
 
 func (orderController *OrderController) GetOrdersByStatus(c echo.Context) error {
 	status := orderController.StringQueryParam(c, "status")
-	ordersByStatus, ordersByStatusErr := orderController.orderService.GetOrdersByStatus(status)
-	if ordersByStatusErr != nil {
-		return orderController.BadRequest(c, ordersByStatusErr)
+	ordersByStatus, serviceErr := orderController.orderService.GetOrdersByStatus(status)
+	if serviceErr != nil {
+		return serviceErr
 	}
+
 	return orderController.Success(c, ordersByStatus, "")
 }

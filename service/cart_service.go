@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
+	_errors "go-ecommerce-service/pkg/errors"
 	"time"
 )
 
@@ -41,7 +42,7 @@ func (cartService *CartService) CreateCart(cart dto.CreateCartRequest) (dto.Cart
 	})
 
 	if err != nil {
-		return dto.CartResponse{}, err
+		return dto.CartResponse{}, _errors.NewBadRequest(err.Error())
 	}
 
 	createdCartDto := dto.CartResponse{

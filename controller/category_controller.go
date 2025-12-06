@@ -35,13 +35,13 @@ func (categoryController *CategoryController) GetAllCategories(c echo.Context) e
 }
 
 func (categoryController *CategoryController) GetCategoryById(c echo.Context) error {
-	id, convertErr := strconv.Atoi(c.Param("id"))
-	if convertErr != nil {
-		return categoryController.BadRequest(c, convertErr)
+	id, parseIdErr := strconv.Atoi(c.Param("id"))
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	category, err := categoryController.categoryService.GetCategoryById(id)
-	if err != nil {
-		return categoryController.BadRequest(c, err)
+	category, serviceErr := categoryController.categoryService.GetCategoryById(id)
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return categoryController.Success(c, category, "")
 }
@@ -49,9 +49,9 @@ func (categoryController *CategoryController) GetCategoryById(c echo.Context) er
 func (categoryController *CategoryController) GetCategoriesByIsActive(c echo.Context) error {
 	param := c.Param("true")
 	b := parseBool(param)
-	categories, err := categoryController.categoryService.GetCategoriesByIsActive(b)
-	if err != nil {
-		return categoryController.BadRequest(c, err)
+	categories, serviceErr := categoryController.categoryService.GetCategoriesByIsActive(b)
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return categoryController.Success(c, categories, "")
 }
@@ -59,40 +59,40 @@ func (categoryController *CategoryController) GetCategoriesByIsActive(c echo.Con
 func (categoryController *CategoryController) AddCategory(c echo.Context) error {
 	var addCategoryRequest request.AddCategoryRequest
 	if bindErr := c.Bind(&addCategoryRequest); bindErr != nil {
-		return categoryController.BadRequest(c, bindErr)
+		return bindErr
 	}
 
-	addedCategory, err := categoryController.categoryService.AddCategory(addCategoryRequest.ToModel())
-	if err != nil {
-		return categoryController.BadRequest(c, err)
+	addedCategory, serviceErr := categoryController.categoryService.AddCategory(addCategoryRequest.ToModel())
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return categoryController.Success(c, addedCategory, "")
 }
 
 func (categoryController *CategoryController) UpdateCategory(c echo.Context) error {
-	id, convertErr := strconv.Atoi(c.Param("id"))
-	if convertErr != nil {
-		return categoryController.BadRequest(c, convertErr)
+	id, parseIdErr := strconv.Atoi(c.Param("id"))
+	if parseIdErr != nil {
+		return parseIdErr
 	}
 	var updatedCategory request.AddCategoryRequest
 	if bindErr := c.Bind(&updatedCategory); bindErr != nil {
-		return categoryController.BadRequest(c, bindErr)
+		return bindErr
 	}
-	category, err := categoryController.categoryService.UpdateCategory(uint(id), updatedCategory.ToModel())
-	if err != nil {
-		return categoryController.BadRequest(c, err)
+	category, serviceErr := categoryController.categoryService.UpdateCategory(uint(id), updatedCategory.ToModel())
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return categoryController.Success(c, category, "Kategori Güncellendi")
 }
 
 func (categoryController *CategoryController) DeleteCategory(c echo.Context) error {
-	id, convertErr := strconv.Atoi(c.Param("id"))
-	if convertErr != nil {
-		return categoryController.BadRequest(c, convertErr)
+	id, parseIdErr := strconv.Atoi(c.Param("id"))
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	err := categoryController.categoryService.DeleteCategory(uint(id))
-	if err != nil {
-		return categoryController.BadRequest(c, err)
+	serviceErr := categoryController.categoryService.DeleteCategory(uint(id))
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return categoryController.Success(c, nil, "Kategori Silindi")
 }

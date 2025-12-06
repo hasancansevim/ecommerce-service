@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
+	_errors "go-ecommerce-service/pkg/errors"
 )
 
 type ICartItemService interface {
@@ -34,7 +35,7 @@ func (cartItemService *CartItemService) AddItemToCart(cartItem dto.CreateCartIte
 	})
 
 	if err != nil {
-		return dto.CartItemResponse{}, err
+		return dto.CartItemResponse{}, _errors.NewBadRequest(err.Error())
 	}
 
 	cartItemDto := dto.CartItemResponse{
@@ -61,7 +62,7 @@ func (cartItemService *CartItemService) GetItemsByCartId(cartId int64) []dto.Car
 func (cartItemService *CartItemService) UpdateItemQuantity(cartItemId int64, newQuantity int) (dto.CartItemResponse, error) {
 	item, err := cartItemService.cartItemRepository.UpdateItemQuantity(cartItemId, newQuantity)
 	if err != nil {
-		return dto.CartItemResponse{}, err
+		return dto.CartItemResponse{}, _errors.NewBadRequest(err.Error())
 	}
 	cartItemDto := dto.CartItemResponse{
 		CartId:    item.CartId,

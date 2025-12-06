@@ -34,12 +34,12 @@ func (orderItemController *OrderItemController) AddOrderItem(c echo.Context) err
 	var addOrderItemRequest request.AddOrderItemRequest
 	bindErr := c.Bind(&addOrderItemRequest)
 	if bindErr != nil {
-		return orderItemController.BadRequest(c, bindErr)
+		return bindErr
 	}
 
 	addedOrderItem, serviceErr := orderItemController.orderItemService.AddOrderItem(addOrderItemRequest.ToModel())
 	if serviceErr != nil {
-		return orderItemController.BadRequest(c, serviceErr)
+		return serviceErr
 	}
 	return orderItemController.Success(c, addedOrderItem, "Sipariş Öğesi Eklendi")
 }
@@ -47,12 +47,14 @@ func (orderItemController *OrderItemController) AddOrderItem(c echo.Context) err
 func (orderItemController *OrderItemController) GetOrderItemById(c echo.Context) error {
 	id, parseIdErr := orderItemController.ParseIdParam(c, "id")
 	if parseIdErr != nil {
-		return orderItemController.BadRequest(c, parseIdErr)
+		return parseIdErr
 	}
-	getOrderItem, getOrderItemByIdErr := orderItemController.orderItemService.GetOrderItemById(id)
-	if getOrderItemByIdErr != nil {
-		return orderItemController.BadRequest(c, getOrderItemByIdErr)
+
+	getOrderItem, serviceErr := orderItemController.orderItemService.GetOrderItemById(id)
+	if serviceErr != nil {
+		return serviceErr
 	}
+
 	return orderItemController.Success(c, getOrderItem, "Sipariş Öğresi Getirildi")
 }
 
@@ -63,22 +65,22 @@ func (orderItemController *OrderItemController) GetOrderItems(c echo.Context) er
 	if orderId != "" {
 		orderId, convertErr := strconv.Atoi(orderId)
 		if convertErr != nil {
-			return orderItemController.BadRequest(c, convertErr)
+			return convertErr
 		}
-		getOrderItemsByOrderId, getOrderItemsByOrderIdErr := orderItemController.orderItemService.GetOrderItemsByOrderId(int64(orderId))
-		if getOrderItemsByOrderIdErr != nil {
-			return orderItemController.BadRequest(c, getOrderItemsByOrderIdErr)
+		getOrderItemsByOrderId, serviceErr := orderItemController.orderItemService.GetOrderItemsByOrderId(int64(orderId))
+		if serviceErr != nil {
+			return serviceErr
 		}
 		return orderItemController.Success(c, getOrderItemsByOrderId, "Siparişe Ait Sipariş Öğeleri Getirildi")
 	}
 	if productId != "" {
 		productId, convertErr := strconv.Atoi(productId)
 		if convertErr != nil {
-			return orderItemController.BadRequest(c, convertErr)
+			return convertErr
 		}
-		getOrderItemsByProductId, getOrderItemsByProductIdErr := orderItemController.orderItemService.GetOrderItemsByProductId(int64(productId))
-		if getOrderItemsByProductIdErr != nil {
-			return orderItemController.BadRequest(c, getOrderItemsByProductIdErr)
+		getOrderItemsByProductId, serviceErr := orderItemController.orderItemService.GetOrderItemsByProductId(int64(productId))
+		if serviceErr != nil {
+			return serviceErr
 		}
 		return orderItemController.Success(c, getOrderItemsByProductId, "")
 	}
@@ -89,59 +91,61 @@ func (orderItemController *OrderItemController) UpdateOrderItem(c echo.Context) 
 	var updateOrderItemRequest request.UpdateOrderItemRequest
 	bindErr := c.Bind(&updateOrderItemRequest)
 	if bindErr != nil {
-		return orderItemController.BadRequest(c, bindErr)
+		return bindErr
 	}
 
 	id, parseIdErr := orderItemController.ParseIdParam(c, "id")
 	if parseIdErr != nil {
-		return orderItemController.BadRequest(c, parseIdErr)
+		return parseIdErr
 	}
 
 	updatedOrderItem, serviceErr := orderItemController.orderItemService.UpdateOrderItem(id, updateOrderItemRequest.ToModel())
 	if serviceErr != nil {
-		return orderItemController.BadRequest(c, serviceErr)
+		return serviceErr
 	}
 	return orderItemController.Created(c, updatedOrderItem, "Sipariş Öğesi Güncellendi")
 }
 
 func (orderItemController *OrderItemController) UpdateOrderItemQuantity(c echo.Context) error {
-	id, err := orderItemController.ParseIdParam(c, "id")
-	if err != nil {
-		return orderItemController.BadRequest(c, err)
+	id, parseIdErr := orderItemController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
+
 	queryParam := orderItemController.StringQueryParam(c, "new_quantity")
-	newQuantity, queryParamConvertErr := strconv.Atoi(queryParam)
-	if queryParamConvertErr != nil {
-		return orderItemController.BadRequest(c, queryParamConvertErr)
+	newQuantity, queryParamErr := strconv.Atoi(queryParam)
+	if queryParamErr != nil {
+		return queryParamErr
 	}
 
 	updatedOrderItem, serviceErr := orderItemController.orderItemService.UpdateOrderItemQuantity(id, newQuantity)
 	if serviceErr != nil {
-		return orderItemController.BadRequest(c, serviceErr)
+		return serviceErr
 	}
 	return orderItemController.Created(c, updatedOrderItem, "Sipariş Öğesi Adedi Arttıldı")
 }
 
 func (orderItemController *OrderItemController) DeleteOrderItemById(c echo.Context) error {
-	id, err := orderItemController.ParseIdParam(c, "id")
-	if err != nil {
-		return orderItemController.BadRequest(c, err)
+	id, parseIdErr := orderItemController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
 
-	if deleteOrderItemByIdErr := orderItemController.orderItemService.DeleteOrderItemById(id); deleteOrderItemByIdErr != nil {
-		return orderItemController.BadRequest(c, deleteOrderItemByIdErr)
+	if serviceErr := orderItemController.orderItemService.DeleteOrderItemById(id); serviceErr != nil {
+		return serviceErr
 	}
 	return orderItemController.Created(c, nil, "Sipariş Öğesi Silindi")
 }
 
 func (orderItemController *OrderItemController) DeleteAllOrderItemsByOrderId(c echo.Context) error {
 	queryParam := orderItemController.StringQueryParam(c, "order_id")
-	orderId, err := strconv.Atoi(queryParam)
-	if err != nil {
-		return orderItemController.BadRequest(c, err)
+	orderId, paramErr := strconv.Atoi(queryParam)
+	if paramErr != nil {
+		return paramErr
 	}
-	if deleteAllOrderItemsByOrderIdErr := orderItemController.orderItemService.DeleteAllOrderItemsByOrderId(int64(orderId)); deleteAllOrderItemsByOrderIdErr != nil {
-		return orderItemController.BadRequest(c, deleteAllOrderItemsByOrderIdErr)
+
+	if serviceErr := orderItemController.orderItemService.DeleteAllOrderItemsByOrderId(int64(orderId)); serviceErr != nil {
+		return serviceErr
 	}
 	return orderItemController.Created(c, nil, "Siparişe Ait Tüm İlgili Sipariş Öğeleri Silindi")
 }

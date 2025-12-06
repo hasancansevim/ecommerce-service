@@ -31,13 +31,13 @@ func (storeController *StoreController) GetAllStores(c echo.Context) error {
 }
 
 func (storeController *StoreController) GetStoreById(c echo.Context) error {
-	id, convertErr := strconv.Atoi(c.Param("id"))
-	if convertErr != nil {
-		return storeController.BadRequest(c, convertErr)
+	id, parseIdErr := strconv.Atoi(c.Param("id"))
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	store, err := storeController.storeService.GetStoreById(uint(id))
-	if err != nil {
-		return storeController.BadRequest(c, err)
+	store, serviceErr := storeController.storeService.GetStoreById(uint(id))
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return storeController.Success(c, store, "Mağaza Getirildi")
 }
@@ -45,39 +45,39 @@ func (storeController *StoreController) GetStoreById(c echo.Context) error {
 func (storeController *StoreController) AddStore(c echo.Context) error {
 	var addStoreRequest request.AddStoreRequest
 	if bindErr := c.Bind(&addStoreRequest); bindErr != nil {
-		return storeController.BadRequest(c, bindErr)
+		return bindErr
 	}
-	addedStore, err := storeController.storeService.AddStore(addStoreRequest.ToModel())
-	if err != nil {
-		return storeController.BadRequest(c, err)
+	addedStore, serviceErr := storeController.storeService.AddStore(addStoreRequest.ToModel())
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return storeController.Success(c, addedStore, "Mağaza Eklendi")
 }
 
 func (storeController *StoreController) DeleteStore(c echo.Context) error {
-	id, convertErr := strconv.Atoi(c.Param("id"))
-	if convertErr != nil {
-		return storeController.BadRequest(c, convertErr)
+	id, parseIdErr := strconv.Atoi(c.Param("id"))
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	err := storeController.storeService.DeleteStoreById(uint(id))
-	if err != nil {
-		return storeController.BadRequest(c, err)
+	serviceErr := storeController.storeService.DeleteStoreById(uint(id))
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return storeController.Success(c, nil, "Mağaza Silindi")
 }
 
 func (storeController *StoreController) UpdateStore(c echo.Context) error {
-	id, convertErr := strconv.Atoi(c.Param("id"))
-	if convertErr != nil {
-		return storeController.BadRequest(c, convertErr)
+	id, parseIdErr := strconv.Atoi(c.Param("id"))
+	if parseIdErr != nil {
+		return parseIdErr
 	}
 	var updatedStoreRequest request.AddStoreRequest
 	if bindErr := c.Bind(&updatedStoreRequest); bindErr != nil {
-		return storeController.BadRequest(c, bindErr)
+		return bindErr
 	}
-	updatedStore, err := storeController.storeService.UpdateStoreById(uint(id), updatedStoreRequest.ToModel())
-	if err != nil {
-		return storeController.BadRequest(c, err)
+	updatedStore, serviceErr := storeController.storeService.UpdateStoreById(uint(id), updatedStoreRequest.ToModel())
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return storeController.Success(c, updatedStore, "Mağaza Güncellendi")
 }

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"go-ecommerce-service/controller/request"
-	"go-ecommerce-service/pkg/validation"
 	_interface "go-ecommerce-service/service/interface"
 	"go-ecommerce-service/service/model"
 
@@ -28,7 +27,7 @@ func (authController *AuthController) RegisterRoutes(e *echo.Echo) {
 func (authController *AuthController) Register(c echo.Context) error {
 	var registerRequest request.RegisterRequest
 	if bindErr := c.Bind(&registerRequest); bindErr != nil {
-		return authController.BadRequest(c, bindErr)
+		return bindErr
 	}
 
 	registerRequestModel := model.RegisterCreate{
@@ -38,14 +37,9 @@ func (authController *AuthController) Register(c echo.Context) error {
 		Password:  registerRequest.Password,
 	}
 
-	validator := validation.RegisterValidator{RegisterReq: registerRequestModel}
-	if validationErr := validator.Validate(); validationErr != nil {
-		return authController.BadRequest(c, validationErr)
-	}
-
-	err := authController.authService.Register(registerRequestModel)
-	if err != nil {
-		return authController.BadRequest(c, err)
+	serviceErr := authController.authService.Register(registerRequestModel)
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return authController.Created(c, registerRequestModel, "Kayıt Başarılı")
 }
@@ -53,14 +47,14 @@ func (authController *AuthController) Register(c echo.Context) error {
 func (authController *AuthController) Login(c echo.Context) error {
 	var loginRequest request.LoginRequest
 	if bindErr := c.Bind(&loginRequest); bindErr != nil {
-		return authController.BadRequest(c, bindErr)
+		return bindErr
 	}
-	token, err := authController.authService.Login(model.LoginCreate{
+	token, serviceErr := authController.authService.Login(model.LoginCreate{
 		Email:    loginRequest.Email,
 		Password: loginRequest.Password,
 	})
-	if err != nil {
-		return authController.BadRequest(c, err)
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return authController.Success(c, token, "Giriş Başarılı")
 }

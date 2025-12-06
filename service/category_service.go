@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
+	_errors "go-ecommerce-service/pkg/errors"
 )
 
 type ICategoryService interface {
@@ -41,7 +42,7 @@ func (categoryService *CategoryService) GetAllCategories() []dto.CategoryRespons
 func (categoryService *CategoryService) GetCategoryById(id int) (dto.CategoryResponse, error) {
 	category, err := categoryService.categoryRepository.GetCategoryById(id)
 	if err != nil {
-		return dto.CategoryResponse{}, err
+		return dto.CategoryResponse{}, _errors.NewBadRequest(err.Error())
 	}
 	categoryDto := dto.CategoryResponse{
 		Id:          category.Id,
@@ -53,7 +54,7 @@ func (categoryService *CategoryService) GetCategoryById(id int) (dto.CategoryRes
 func (categoryService *CategoryService) GetCategoriesByIsActive(isActive bool) ([]dto.CategoryResponse, error) {
 	categories, err := categoryService.categoryRepository.GetCategoriesByIsActive(isActive)
 	if err != nil {
-		return []dto.CategoryResponse{}, err
+		return []dto.CategoryResponse{}, _errors.NewBadRequest(err.Error())
 	}
 	categoriesDto := make([]dto.CategoryResponse, 0, len(categories))
 	for _, category := range categories {
@@ -72,7 +73,7 @@ func (categoryService *CategoryService) AddCategory(categoryCreate dto.CreateCat
 		IsActive:    categoryCreate.IsActive,
 	})
 	if err != nil {
-		return dto.CategoryResponse{}, err
+		return dto.CategoryResponse{}, _errors.NewBadRequest(err.Error())
 	}
 	addedCategoryDto := dto.CategoryResponse{
 		Id:          addedCategory.Id,
@@ -89,7 +90,7 @@ func (categoryService *CategoryService) UpdateCategory(categoryId uint, category
 		IsActive:    categoryCreate.IsActive,
 	})
 	if err != nil {
-		return dto.CategoryResponse{}, err
+		return dto.CategoryResponse{}, _errors.NewBadRequest(err.Error())
 	}
 	updateCategoryDto := dto.CategoryResponse{
 		Id:          updateCategory.Id,

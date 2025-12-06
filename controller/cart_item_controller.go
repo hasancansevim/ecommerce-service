@@ -28,9 +28,9 @@ func (cartItemController *CartItemController) RegiesterRoutes(e *echo.Echo) {
 }
 
 func (cartItemController *CartItemController) GetItemsByCartId(c echo.Context) error {
-	cartId, err := cartItemController.BaseController.ParseIdParam(c, "cart_id")
-	if err != nil {
-		return cartItemController.BadRequest(c, err)
+	cartId, parseIdErr := cartItemController.BaseController.ParseIdParam(c, "cart_id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
 	cartItems := cartItemController.cartItemService.GetItemsByCartId(cartId)
 	return cartItemController.Success(c, cartItems, "")
@@ -41,85 +41,87 @@ func (cartItemController *CartItemController) AddItemToCart(c echo.Context) erro
 	bindErr := c.Bind(&addCartItemRequest)
 
 	if bindErr != nil {
-		return cartItemController.BadRequest(c, bindErr)
+		return bindErr
 	}
-	cartItem, err := cartItemController.cartItemService.AddItemToCart(addCartItemRequest.ToModel())
-	if err != nil {
-		return cartItemController.BadRequest(c, err)
+	cartItem, serviceErr := cartItemController.cartItemService.AddItemToCart(addCartItemRequest.ToModel())
+	if serviceErr != nil {
+		return serviceErr
 	}
 
 	return cartItemController.Created(c, cartItem, "")
 }
 
 func (cartItemController *CartItemController) UpdateItemQuantity(c echo.Context) error {
-	id, err := cartItemController.ParseIdParam(c, "id")
-	if err != nil {
-		return cartItemController.BadRequest(c, err)
+	id, parseIdErr := cartItemController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
+
 	queryParam := cartItemController.StringQueryParam(c, "newQuantity")
-	newQuantity, queryParamConvertErr := strconv.Atoi(queryParam)
-	if queryParamConvertErr != nil {
-		return cartItemController.BadRequest(c, queryParamConvertErr)
+	newQuantity, queryParamErr := strconv.Atoi(queryParam)
+	if queryParamErr != nil {
+		return queryParamErr
 	}
-	cartItem, updateQuantityErr := cartItemController.cartItemService.UpdateItemQuantity(id, newQuantity)
-	if updateQuantityErr != nil {
-		return cartItemController.BadRequest(c, updateQuantityErr)
+
+	cartItem, serviceErr := cartItemController.cartItemService.UpdateItemQuantity(id, newQuantity)
+	if serviceErr != nil {
+		return queryParamErr
 	}
 	return cartItemController.Created(c, cartItem, "Sepet Öğesi Güncellendi")
 }
 
 func (cartItemController *CartItemController) RemoveItemFromCart(c echo.Context) error {
-	id, err := cartItemController.ParseIdParam(c, "id")
-	if err != nil {
-		return cartItemController.BadRequest(c, err)
+	id, parseIdErr := cartItemController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	if removeItemFromCartErr := cartItemController.cartItemService.RemoveItemFromCart(id); removeItemFromCartErr != nil {
-		return cartItemController.BadRequest(c, removeItemFromCartErr)
+	if serviceErr := cartItemController.cartItemService.RemoveItemFromCart(id); serviceErr != nil {
+		return serviceErr
 	}
 	return cartItemController.Created(c, nil, "Sepetten Ürün Silindi")
 }
 
 func (cartItemController *CartItemController) ClearCartItems(c echo.Context) error {
-	cartId, err := cartItemController.ParseIdParam(c, "cart_id")
-	if err != nil {
-		return cartItemController.BadRequest(c, err)
+	cartId, parseIdErr := cartItemController.ParseIdParam(c, "cart_id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	if clearCartItemsErr := cartItemController.cartItemService.ClearCartItems(cartId); clearCartItemsErr != nil {
-		return cartItemController.BadRequest(c, clearCartItemsErr)
+	if serviceErr := cartItemController.cartItemService.ClearCartItems(cartId); serviceErr != nil {
+		return serviceErr
 	}
 	return cartItemController.Created(c, nil, "Sepetteki Ürünler Silindi")
 }
 
 func (cartItemController *CartItemController) IncreaseItemQuantity(c echo.Context) error {
-	id, err := cartItemController.ParseIdParam(c, "id")
-	if err != nil {
-		return cartItemController.BadRequest(c, err)
+	id, parseIdErr := cartItemController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
 	queryParam := cartItemController.StringQueryParam(c, "amount")
 	amount, queryParamErr := strconv.Atoi(queryParam)
 	if queryParamErr != nil {
-		return cartItemController.BadRequest(c, queryParamErr)
+		return queryParamErr
 	}
 
-	if increaseItemQuantityErr := cartItemController.cartItemService.IncreaseItemQuantity(id, amount); increaseItemQuantityErr != nil {
-		return cartItemController.BadRequest(c, increaseItemQuantityErr)
+	if serviceErr := cartItemController.cartItemService.IncreaseItemQuantity(id, amount); serviceErr != nil {
+		return serviceErr
 	}
 	return cartItemController.Created(c, nil, "")
 }
 
 func (cartItemController *CartItemController) DecreaseItemQuantity(c echo.Context) error {
-	id, err := cartItemController.ParseIdParam(c, "id")
-	if err != nil {
-		return cartItemController.BadRequest(c, err)
+	id, parseIdErr := cartItemController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
 	queryParam := cartItemController.StringQueryParam(c, "amount")
 	amount, queryParamErr := strconv.Atoi(queryParam)
 	if queryParamErr != nil {
-		return cartItemController.BadRequest(c, queryParamErr)
+		return queryParamErr
 	}
 
-	if increaseItemQuantityErr := cartItemController.cartItemService.DecreaseItemQuantity(id, amount); increaseItemQuantityErr != nil {
-		return cartItemController.BadRequest(c, increaseItemQuantityErr)
+	if serviceErr := cartItemController.cartItemService.DecreaseItemQuantity(id, amount); serviceErr != nil {
+		return serviceErr
 	}
 	return cartItemController.Created(c, nil, "")
 }

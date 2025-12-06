@@ -25,9 +25,9 @@ func (cartController *CartController) RegisterRoutes(e *echo.Echo) {
 }
 
 func (cartController *CartController) GetCartById(c echo.Context) error {
-	id, err := cartController.BaseController.ParseIdParam(c, "id")
-	if err != nil {
-		return cartController.BadRequest(c, err)
+	id, parseIdErr := cartController.BaseController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
 
 	getCartById := cartController.cartService.GetCartById(id)
@@ -38,20 +38,20 @@ func (cartController *CartController) CreateCart(c echo.Context) error {
 	var addCartRequest request.AddCartRequest
 	bindErr := c.Bind(&addCartRequest)
 	if bindErr != nil {
-		return cartController.BadRequest(c, bindErr)
+		return bindErr
 	}
 
-	cart, err := cartController.cartService.CreateCart(addCartRequest.ToModel())
-	if err != nil {
-		return cartController.BadRequest(c, err)
+	cart, serviceErr := cartController.cartService.CreateCart(addCartRequest.ToModel())
+	if serviceErr != nil {
+		return serviceErr
 	}
 	return cartController.Created(c, cart, "")
 }
 
 func (cartController *CartController) GetCartsByUserId(c echo.Context) error {
-	userId, err := cartController.ParseIdParam(c, "user_id")
-	if err != nil {
-		return cartController.BadRequest(c, err)
+	userId, parseIdErr := cartController.ParseIdParam(c, "user_id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
 
 	getCartByUserId := cartController.cartService.GetCartsByUserId(userId)
@@ -59,24 +59,24 @@ func (cartController *CartController) GetCartsByUserId(c echo.Context) error {
 }
 
 func (cartController *CartController) DeleteCartById(c echo.Context) error {
-	id, err := cartController.ParseIdParam(c, "id")
-	if err != nil {
-		return cartController.BadRequest(c, err)
+	id, parseIdErr := cartController.ParseIdParam(c, "id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	if deleteCartByIdErr := cartController.cartService.DeleteCartById(id); deleteCartByIdErr != nil {
-		return cartController.BadRequest(c, deleteCartByIdErr)
+	if serviceErr := cartController.cartService.DeleteCartById(id); serviceErr != nil {
+		return serviceErr
 	}
 
 	return cartController.Created(c, nil, "")
 }
 
 func (cartController *CartController) ClearUserCarts(c echo.Context) error {
-	userId, err := cartController.ParseIdParam(c, "user_id")
-	if err != nil {
-		return cartController.BadRequest(c, err)
+	userId, parseIdErr := cartController.ParseIdParam(c, "user_id")
+	if parseIdErr != nil {
+		return parseIdErr
 	}
-	if clearUserCartErr := cartController.cartService.ClearUserCart(userId); clearUserCartErr != nil {
-		return cartController.BadRequest(c, clearUserCartErr)
+	if serviceErr := cartController.cartService.ClearUserCart(userId); serviceErr != nil {
+		return serviceErr
 	}
 
 	return cartController.Created(c, nil, "Kullanıcının Sepeti Silindi")

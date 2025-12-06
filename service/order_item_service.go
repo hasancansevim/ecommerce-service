@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
+	_errors "go-ecommerce-service/pkg/errors"
 )
 
 type IOrderItemService interface {
@@ -35,7 +36,7 @@ func (orderItemService *OrderItemService) AddOrderItem(orderItemCreate dto.Creat
 		Price:     orderItemCreate.Price,
 	})
 	if repositoryErr != nil {
-		return dto.OrderItemResponse{}, repositoryErr
+		return dto.OrderItemResponse{}, _errors.NewBadRequest(repositoryErr.Error())
 	}
 	return convertToOrderItemResponse(addedOrderItem), nil
 }
@@ -43,7 +44,7 @@ func (orderItemService *OrderItemService) AddOrderItem(orderItemCreate dto.Creat
 func (orderItemService *OrderItemService) GetOrderItemById(orderItemId int64) (dto.OrderItemResponse, error) {
 	orderItem, repositoryErr := orderItemService.orderItemRepository.GetOrderItemById(orderItemId)
 	if repositoryErr != nil {
-		return dto.OrderItemResponse{}, repositoryErr
+		return dto.OrderItemResponse{}, _errors.NewBadRequest(repositoryErr.Error())
 	}
 	return convertToOrderItemResponse(orderItem), nil
 }
@@ -51,7 +52,7 @@ func (orderItemService *OrderItemService) GetOrderItemById(orderItemId int64) (d
 func (orderItemService *OrderItemService) GetOrderItemsByOrderId(orderId int64) ([]dto.OrderItemResponse, error) {
 	orderItems, repositoryErr := orderItemService.orderItemRepository.GetOrderItemsByOrderId(orderId)
 	if repositoryErr != nil {
-		return []dto.OrderItemResponse{}, repositoryErr
+		return []dto.OrderItemResponse{}, _errors.NewBadRequest(repositoryErr.Error())
 	}
 	return convertToOrderItemsResponse(orderItems), nil
 }
@@ -60,7 +61,7 @@ func (orderItemService *OrderItemService) GetOrderItemsByProductId(productId int
 	orderItems, repositoryErr := orderItemService.orderItemRepository.GetOrderItemsByProductId(productId)
 
 	if repositoryErr != nil {
-		return []dto.OrderItemResponse{}, nil
+		return []dto.OrderItemResponse{}, _errors.NewBadRequest(repositoryErr.Error())
 	}
 	return convertToOrderItemsResponse(orderItems), nil
 }
@@ -74,7 +75,7 @@ func (orderItemService *OrderItemService) UpdateOrderItem(orderItemId int64, ord
 		ProductId: orderItem.ProductId,
 	})
 	if repositoryErr != nil {
-		return dto.OrderItemResponse{}, repositoryErr
+		return dto.OrderItemResponse{}, _errors.NewBadRequest(repositoryErr.Error())
 	}
 	return convertToOrderItemResponse(updatedOrderItem), nil
 }

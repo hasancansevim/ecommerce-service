@@ -7,7 +7,6 @@ import (
 	_errors "go-ecommerce-service/pkg/errors"
 	_interface "go-ecommerce-service/service/interface"
 	"go-ecommerce-service/service/model"
-	"go-ecommerce-service/service/validation"
 
 	jwt2 "github.com/golang-jwt/jwt/v4"
 )
@@ -25,18 +24,15 @@ func NewAuthService(userRepository persistence.IUserRepository, jwtManager _inte
 }
 
 func (authService *AuthService) Register(registerModel model.RegisterCreate) error {
-	if validationErr := validation.ValidateRegisterModel(registerModel); validationErr != nil {
-		return validationErr
-	}
 
 	existingUser, getUserByEmailErr := authService.userRepository.GetUserByEmail(registerModel.Email)
 	if getUserByEmailErr == nil && existingUser.Email != "" {
-		return _errors.UserAlreadyExists
+		return _errors.NewBadRequest(getUserByEmailErr.Error())
 	}
 
-	passwordHash, err := auth.HashPassword(registerModel.Password)
-	if err != nil {
-		return _errors.InternalServerError
+	passwordHash, passwordErr := auth.HashPassword(registerModel.Password)
+	if passwordErr != nil {
+		return _errors.NewBadRequest(passwordErr.Error())
 	}
 	return authService.userRepository.CreateUser(domain.User{
 		FirstName:    registerModel.FirstName,
@@ -49,15 +45,15 @@ func (authService *AuthService) Register(registerModel model.RegisterCreate) err
 func (authService *AuthService) Login(loginModel model.LoginCreate) (string, error) {
 	userByEmail, userByEmailErr := authService.userRepository.GetUserByEmail(loginModel.Email)
 	if userByEmailErr != nil {
-		return "", _errors.UserNotFound
+		return "", _errors.NewBadRequest(userByEmailErr.Error())
 	}
 	checkPasswordHash := auth.CheckPasswordHash(loginModel.Password, userByEmail.PasswordHash)
 	if checkPasswordHash == false {
-		return "", _errors.InvalidCredentials
+		return "", _errors.NewBadRequest("Password Error")
 	}
 	token, tokenErr := authService.jwtManager.GenerateToken(userByEmail.Id, userByEmail.Email)
 	if tokenErr != nil {
-		return "", _errors.ErrInvalidToken
+		return "", _errors.NewBadRequest(tokenErr.Error())
 	}
 	return token, nil
 }
@@ -65,7 +61,7 @@ func (authService *AuthService) Login(loginModel model.LoginCreate) (string, err
 func (authService *AuthService) ValidateToken(token string) (jwt2.Claims, error) {
 	claim, err := authService.jwtManager.ValidateToken(token)
 	if err != nil {
-		return nil, err
+		return nil, _errors.NewBadRequest(err.Error())
 	}
 	return claim, nil
 }

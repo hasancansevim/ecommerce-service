@@ -3,8 +3,8 @@ package service
 import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/persistence"
+	_errors "go-ecommerce-service/pkg/errors"
 	"go-ecommerce-service/service/model"
-	"go-ecommerce-service/service/validation"
 	"time"
 )
 
@@ -30,10 +30,6 @@ func (userService *UserService) GetAllUsers() []domain.User {
 }
 
 func (userService *UserService) CreateUser(userCreate model.UserCreate) error {
-	if validationError := validation.ValidateUserCreate(userCreate); validationError != nil {
-		return validationError
-	}
-
 	return userService.userRepository.CreateUser(domain.User{
 		FirstName:    userCreate.FirstName,
 		LastName:     userCreate.LastName,
@@ -46,7 +42,7 @@ func (userService *UserService) CreateUser(userCreate model.UserCreate) error {
 func (userService *UserService) GetUserById(id int64) (domain.User, error) {
 	getUserById, err := userService.userRepository.GetUserById(id)
 	if err != nil {
-		return domain.User{}, err
+		return domain.User{}, _errors.NewBadRequest(err.Error())
 	}
 	return getUserById, nil
 }
@@ -54,7 +50,7 @@ func (userService *UserService) GetUserById(id int64) (domain.User, error) {
 func (userService *UserService) GetUserByEmail(email string) (domain.User, error) {
 	getUserByEmail, err := userService.userRepository.GetUserByEmail(email)
 	if err != nil {
-		return domain.User{}, err
+		return domain.User{}, _errors.NewBadRequest(err.Error())
 	}
 	return getUserByEmail, nil
 }

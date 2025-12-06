@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
+	_errors "go-ecommerce-service/pkg/errors"
 	"go-ecommerce-service/pkg/util"
 	"time"
 )
@@ -49,7 +50,7 @@ func (s *StoreService) GetAllStores() []dto.StoreResponse {
 func (s *StoreService) GetStoreById(storeId uint) (dto.StoreResponse, error) {
 	store, err := s.storeRepository.GetStoreById(storeId)
 	if err != nil {
-		return dto.StoreResponse{}, err
+		return dto.StoreResponse{}, _errors.NewBadRequest(err.Error())
 	}
 	storeDto := dto.StoreResponse{
 		Name:           store.Name,
@@ -79,7 +80,7 @@ func (s *StoreService) AddStore(store dto.CreateStoreRequest) (dto.StoreResponse
 		UpdatedAt:      time.Now(),
 	})
 	if err != nil {
-		return dto.StoreResponse{}, err
+		return dto.StoreResponse{}, _errors.NewBadRequest(err.Error())
 	}
 	addedStoreDto := dto.StoreResponse{
 		Name:           addedStore.Name,
@@ -112,7 +113,7 @@ func (s *StoreService) UpdateStoreById(id uint, store dto.CreateStoreRequest) (d
 		UpdatedAt:      time.Now(),
 	})
 	if err != nil {
-		return dto.StoreResponse{}, err
+		return dto.StoreResponse{}, _errors.NewBadRequest(err.Error())
 	}
 	updatedStoreDto := dto.StoreResponse{
 		Name:           updatedStore.Name,

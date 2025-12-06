@@ -4,6 +4,7 @@ import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/persistence"
+	_errors "go-ecommerce-service/pkg/errors"
 	"go-ecommerce-service/pkg/util"
 	"time"
 )
@@ -32,12 +33,15 @@ func (productService *ProductService) GetAllProducts() []dto.ProductResponse {
 }
 
 func (productService *ProductService) GetProductById(productId int64) (dto.ProductResponse, error) {
-	product, _ := productService.productRepository.GetProductById(productId)
+	product, repositoryErr := productService.productRepository.GetProductById(productId)
+	if repositoryErr != nil {
+		return dto.ProductResponse{}, _errors.NewBadRequest(repositoryErr.Error())
+	}
 	return convertToProductResponse(product), nil
 }
 
 func (productService *ProductService) AddProduct(productCreate dto.CreateProductRequest) (dto.ProductResponse, error) {
-	addedProduct, err := productService.productRepository.AddProduct(domain.Product{
+	addedProduct, repositoryErr := productService.productRepository.AddProduct(domain.Product{
 		Name:            productCreate.Name,
 		Slug:            util.GenerateUniqueSlug(productCreate.Name),
 		Description:     productCreate.Description,
@@ -52,8 +56,8 @@ func (productService *ProductService) AddProduct(productCreate dto.CreateProduct
 		CategoryId:      productCreate.CategoryId,
 		StoreId:         productCreate.StoreId,
 	})
-	if err != nil {
-		return dto.ProductResponse{}, err
+	if repositoryErr != nil {
+		return dto.ProductResponse{}, _errors.NewBadRequest(repositoryErr.Error())
 	}
 
 	return convertToProductResponse(addedProduct), nil
@@ -64,7 +68,7 @@ func (productService *ProductService) DeleteProductById(productId int64) error {
 }
 
 func (productService *ProductService) UpdateProduct(productId uint, product dto.CreateProductRequest) (dto.ProductResponse, error) {
-	updatedProduct, err := productService.productRepository.UpdateProduct(productId, domain.Product{
+	updatedProduct, repositoryErr := productService.productRepository.UpdateProduct(productId, domain.Product{
 		Name:            product.Name,
 		Slug:            util.GenerateUniqueSlug(product.Name),
 		Description:     product.Description,
@@ -81,7 +85,11 @@ func (productService *ProductService) UpdateProduct(productId uint, product dto.
 		UpdatedAt:       time.Now(),
 	})
 
-	return convertToProductResponse(updatedProduct), err
+	if repositoryErr != nil {
+		return dto.ProductResponse{}, _errors.NewBadRequest(repositoryErr.Error())
+	}
+
+	return convertToProductResponse(updatedProduct), nil
 }
 
 func convertToProductResponse(product domain.Product) dto.ProductResponse {
