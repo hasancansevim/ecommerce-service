@@ -1,15 +1,6 @@
 package middleware
 
-import (
-	"go-ecommerce-service/internal/jwt"
-	_errors "go-ecommerce-service/pkg/errors"
-	_interface "go-ecommerce-service/service/interface"
-	"net/http"
-	"strings"
-
-	"github.com/labstack/echo/v4"
-)
-
+/*
 func AuthMiddleware(authService _interface.AuthService) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -31,3 +22,4 @@ func AuthMiddleware(authService _interface.AuthService) echo.MiddlewareFunc {
 		}
 	}
 }
+*/

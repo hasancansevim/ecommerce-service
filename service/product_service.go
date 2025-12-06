@@ -3,6 +3,7 @@ package service
 import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
+	"go-ecommerce-service/internal/rules"
 	"go-ecommerce-service/persistence"
 	_errors "go-ecommerce-service/pkg/errors"
 	"go-ecommerce-service/pkg/util"
@@ -19,11 +20,13 @@ type IProductService interface {
 
 type ProductService struct {
 	productRepository persistence.IProductRepository
+	validator         *rules.ProductRules
 }
 
 func NewProductService(productRepository persistence.IProductRepository) IProductService {
 	return &ProductService{
 		productRepository: productRepository,
+		validator:         rules.NewProductRules(),
 	}
 }
 
@@ -35,12 +38,16 @@ func (productService *ProductService) GetAllProducts() []dto.ProductResponse {
 func (productService *ProductService) GetProductById(productId int64) (dto.ProductResponse, error) {
 	product, repositoryErr := productService.productRepository.GetProductById(productId)
 	if repositoryErr != nil {
-		return dto.ProductResponse{}, _errors.NewBadRequest(repositoryErr.Error())
+		return dto.ProductResponse{}, _errors.NewInternalServerError(repositoryErr)
 	}
 	return convertToProductResponse(product), nil
 }
 
 func (productService *ProductService) AddProduct(productCreate dto.CreateProductRequest) (dto.ProductResponse, error) {
+	if validationErr := productService.validator.ValidateCreate(productCreate); validationErr != nil {
+		return dto.ProductResponse{}, _errors.NewBadRequest(validationErr.Error())
+	}
+
 	addedProduct, repositoryErr := productService.productRepository.AddProduct(domain.Product{
 		Name:            productCreate.Name,
 		Slug:            util.GenerateUniqueSlug(productCreate.Name),
@@ -57,7 +64,7 @@ func (productService *ProductService) AddProduct(productCreate dto.CreateProduct
 		StoreId:         productCreate.StoreId,
 	})
 	if repositoryErr != nil {
-		return dto.ProductResponse{}, _errors.NewBadRequest(repositoryErr.Error())
+		return dto.ProductResponse{}, _errors.NewInternalServerError(repositoryErr)
 	}
 
 	return convertToProductResponse(addedProduct), nil
@@ -68,6 +75,10 @@ func (productService *ProductService) DeleteProductById(productId int64) error {
 }
 
 func (productService *ProductService) UpdateProduct(productId uint, product dto.CreateProductRequest) (dto.ProductResponse, error) {
+	if validationErr := productService.validator.ValidateCreate(product); validationErr != nil {
+		return dto.ProductResponse{}, _errors.NewBadRequest(validationErr.Error())
+	}
+
 	updatedProduct, repositoryErr := productService.productRepository.UpdateProduct(productId, domain.Product{
 		Name:            product.Name,
 		Slug:            util.GenerateUniqueSlug(product.Name),

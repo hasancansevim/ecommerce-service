@@ -3,6 +3,7 @@ package service
 import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
+	"go-ecommerce-service/internal/rules"
 	"go-ecommerce-service/persistence"
 	_errors "go-ecommerce-service/pkg/errors"
 )
@@ -20,15 +21,21 @@ type IOrderItemService interface {
 
 type OrderItemService struct {
 	orderItemRepository persistence.IOrderItemRepository
+	validator           *rules.OrderItemRules
 }
 
 func NewOrderItemService(orderItemRepository persistence.IOrderItemRepository) IOrderItemService {
 	return &OrderItemService{
 		orderItemRepository: orderItemRepository,
+		validator:           rules.NewOrderItemRules(),
 	}
 }
 
 func (orderItemService *OrderItemService) AddOrderItem(orderItemCreate dto.CreateOrderItemRequest) (dto.OrderItemResponse, error) {
+	if validationErr := orderItemService.validator.ValidateStructure(orderItemCreate); validationErr != nil {
+		return dto.OrderItemResponse{}, _errors.NewBadRequest(validationErr.Error())
+	}
+
 	addedOrderItem, repositoryErr := orderItemService.orderItemRepository.AddOrderItem(domain.OrderItem{
 		OrderId:   orderItemCreate.OrderId,
 		ProductId: orderItemCreate.ProductId,
@@ -67,6 +74,10 @@ func (orderItemService *OrderItemService) GetOrderItemsByProductId(productId int
 }
 
 func (orderItemService *OrderItemService) UpdateOrderItem(orderItemId int64, orderItem dto.CreateOrderItemRequest) (dto.OrderItemResponse, error) {
+	if validationErr := orderItemService.validator.ValidateStructure(orderItem); validationErr != nil {
+		return dto.OrderItemResponse{}, _errors.NewBadRequest(validationErr.Error())
+	}
+
 	updatedOrderItem, repositoryErr := orderItemService.orderItemRepository.UpdateOrderItem(orderItemId, domain.OrderItem{
 		Id:        orderItemId,
 		Quantity:  orderItem.Quantity,

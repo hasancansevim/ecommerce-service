@@ -3,6 +3,7 @@ package service
 import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
+	"go-ecommerce-service/internal/rules"
 	"go-ecommerce-service/persistence"
 	_errors "go-ecommerce-service/pkg/errors"
 )
@@ -20,15 +21,20 @@ type IOrderService interface {
 
 type OrderService struct {
 	orderRepository persistence.IOrderRepository
+	validator       *rules.OrderRules
 }
 
 func NewOrderService(orderRepository persistence.IOrderRepository) IOrderService {
 	return &OrderService{
 		orderRepository: orderRepository,
+		validator:       rules.NewOrderRules(),
 	}
 }
 
 func (orderService *OrderService) CreateOrder(order dto.CreateOrderRequest) (dto.OrderResponse, error) {
+	if validationErr := orderService.validator.ValidateStructure(order); validationErr != nil {
+		return dto.OrderResponse{}, _errors.NewBadRequest(validationErr.Error())
+	}
 
 	createdOrder, repositoryErr := orderService.orderRepository.CreateOrder(domain.Order{
 		UserId:     order.UserId,

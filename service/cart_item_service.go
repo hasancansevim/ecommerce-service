@@ -3,6 +3,7 @@ package service
 import (
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
+	"go-ecommerce-service/internal/rules"
 	"go-ecommerce-service/persistence"
 	_errors "go-ecommerce-service/pkg/errors"
 )
@@ -19,15 +20,21 @@ type ICartItemService interface {
 
 type CartItemService struct {
 	cartItemRepository persistence.ICartItemRepository
+	validator          *rules.CartItemRules
 }
 
 func NewCartItemService(cartItemRepository persistence.ICartItemRepository) ICartItemService {
 	return &CartItemService{
 		cartItemRepository: cartItemRepository,
+		validator:          rules.NewCartItemRules(),
 	}
 }
 
 func (cartItemService *CartItemService) AddItemToCart(cartItem dto.CreateCartItemRequest) (dto.CartItemResponse, error) {
+	if validationErr := cartItemService.validator.ValidateStructure(cartItem); validationErr != nil {
+		return dto.CartItemResponse{}, _errors.NewBadRequest(validationErr.Error())
+	}
+
 	item, err := cartItemService.cartItemRepository.AddItemToCart(domain.CartItem{
 		CartId:    cartItem.CartId,
 		ProductId: cartItem.ProductId,

@@ -22,8 +22,8 @@ type ProductResponse struct {
 }
 
 type CreateProductRequest struct {
-	Name            string  `json:"name"`
-	Description     string  `json:"description"`
+	Name            string  `json:"name" validate:"required"`
+	Description     string  `json:"description" validate:"required"`
 	Price           float64 `json:"price"`
 	BasePrice       float64 `json:"base_price"`
 	Discount        float64 `json:"discount"`

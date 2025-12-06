@@ -4,23 +4,26 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="refactor: apply DTO pattern to Product and Order modules&#10;&#10;- Refactored Product, Order, and OrderItem modules to use DTOs (Request/Response).&#10;- Removed Domain Entity leakage in API responses for better encapsulation.&#10;- Optimized Repository layer using `RETURNING *` and `QueryRowAndScan` for atomic operations.&#10;- Implemented Slug generation helper in Service layer.&#10;- Standardized Service-to-DTO mapping logic.&#10;&#10;Modules affected: Product, Order, OrderItem">
-      <change afterPath="$PROJECT_DIR$/pkg/middleware/error_handler.go" afterDir="false" />
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="refactor: standardize error handling and clean up controllers&#10;&#10;- Removed ad-hoc validation logic from all controllers to ensure separation of concerns.&#10;- Refactored all services to return typed errors (AppError) for better HTTP status mapping (400 vs 500).&#10;- Updated controllers to delegate error handling to the global middleware.&#10;- Standardized response format across all modules (Product, Order, User, etc.).&#10;- Prepared the architecture for the upcoming centralized Validation layer.&#10;&#10;Modules affected: All Controllers &amp; Services">
+      <change afterPath="$PROJECT_DIR$/internal/rules/base_rules.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/rules/cart_item_rules.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/rules/cart_rules.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/rules/category_rules.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/rules/order_item_rules.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/rules/order_rules.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/rules/product_rules.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/rules/store_rules.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/auth_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/cart_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/cart_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_item_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/category_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/category_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/order_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_item_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/request/request.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/request/request.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/store_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/store_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/auth_middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/middleware/auth_middleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/error_handler.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/errors/app_error.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/errors/app_error.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/auth_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/auth_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/dto/product_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/product_dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/errors/error_codes.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/errors/error_codes.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/middleware/auth_middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/middleware/auth_middleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/validation/order_item_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/validation/validation.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/validation/order_validator.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/validation/product_validator.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/validation/types.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/validation/validator.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/service/cart_item_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/cart_item_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/cart_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/cart_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/category_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/category_service.go" afterDir="false" />
@@ -28,7 +31,6 @@
       <change beforePath="$PROJECT_DIR$/service/order_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/order_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/product_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/product_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/store_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/store_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/user_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -217,7 +219,8 @@
     <MESSAGE value="fix(controller): update request struct tags to camelCase for correct binding" />
     <MESSAGE value="refactor: implement DTO pattern and optimize repository layer&#10;&#10;- Introduced DTO pattern (Request/Response) for Category, Store, Cart, and CartItem modules.&#10;- Decoupled Domain Entities from API responses to ensure data encapsulation and security.&#10;- Updated Repository layer to use PostgreSQL `RETURNING *` clause with `QueryRowAndScan` for atomic Create/Update operations.&#10;- Refactored Service layer to handle DTO-to-Domain mapping.&#10;- Standardized Controller responses and fixed routing conflicts (Query Params usage).&#10;&#10;Modules affected: Category, Store, Cart, CartItem" />
     <MESSAGE value="refactor: apply DTO pattern to Product and Order modules&#10;&#10;- Refactored Product, Order, and OrderItem modules to use DTOs (Request/Response).&#10;- Removed Domain Entity leakage in API responses for better encapsulation.&#10;- Optimized Repository layer using `RETURNING *` and `QueryRowAndScan` for atomic operations.&#10;- Implemented Slug generation helper in Service layer.&#10;- Standardized Service-to-DTO mapping logic.&#10;&#10;Modules affected: Product, Order, OrderItem" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: apply DTO pattern to Product and Order modules&#10;&#10;- Refactored Product, Order, and OrderItem modules to use DTOs (Request/Response).&#10;- Removed Domain Entity leakage in API responses for better encapsulation.&#10;- Optimized Repository layer using `RETURNING *` and `QueryRowAndScan` for atomic operations.&#10;- Implemented Slug generation helper in Service layer.&#10;- Standardized Service-to-DTO mapping logic.&#10;&#10;Modules affected: Product, Order, OrderItem" />
+    <MESSAGE value="refactor: standardize error handling and clean up controllers&#10;&#10;- Removed ad-hoc validation logic from all controllers to ensure separation of concerns.&#10;- Refactored all services to return typed errors (AppError) for better HTTP status mapping (400 vs 500).&#10;- Updated controllers to delegate error handling to the global middleware.&#10;- Standardized response format across all modules (Product, Order, User, etc.).&#10;- Prepared the architecture for the upcoming centralized Validation layer.&#10;&#10;Modules affected: All Controllers &amp; Services" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: standardize error handling and clean up controllers&#10;&#10;- Removed ad-hoc validation logic from all controllers to ensure separation of concerns.&#10;- Refactored all services to return typed errors (AppError) for better HTTP status mapping (400 vs 500).&#10;- Updated controllers to delegate error handling to the global middleware.&#10;- Standardized response format across all modules (Product, Order, User, etc.).&#10;- Prepared the architecture for the upcoming centralized Validation layer.&#10;&#10;Modules affected: All Controllers &amp; Services" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
