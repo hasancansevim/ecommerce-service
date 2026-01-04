@@ -14,7 +14,7 @@ type IOrderRepository interface {
 	GetOrderById(orderId int64) domain.Order
 	GetOrdersByUserId(userId int64) ([]domain.Order, error)
 	GetAllOrders() ([]domain.Order, error)
-	UpdateOrderStatus(orderId int64, status bool) (domain.Order, error)
+	UpdateOrderStatus(orderId int64, status string) (domain.Order, error)
 	DeleteOrderById(orderId int64) error
 	UpdateOrderTotalPrice(orderId int64, newTotalPrice float32) (domain.Order, error)
 	GetOrdersByStatus(status string) ([]domain.Order, error)
@@ -73,7 +73,7 @@ func (orderRepository *OrderRepository) GetAllOrders() ([]domain.Order, error) {
 	return orders, nil
 }
 
-func (orderRepository *OrderRepository) UpdateOrderStatus(orderId int64, status bool) (domain.Order, error) {
+func (orderRepository *OrderRepository) UpdateOrderStatus(orderId int64, status string) (domain.Order, error) {
 	ctx := context.Background()
 	query := `update orders set status = $1 where id = $2 RETURNING *`
 

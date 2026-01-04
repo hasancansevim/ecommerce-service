@@ -7,6 +7,7 @@ type Config struct {
 	Auth     AuthConfig
 	Server   ServerConfig
 	Redis    RedisConfig
+	RabbitMQ RabbitMQConfig
 }
 
 type DatabaseConfig struct {
@@ -32,6 +33,13 @@ type ServerConfig struct {
 type RedisConfig struct {
 	Host string `envconfig:"REDIS_HOST" default:"localhost"`
 	Port string `envconfig:"REDIS_PORT" default:"6379"`
+}
+
+type RabbitMQConfig struct {
+	Host     string `envconfig:"RABBITMQ_HOST" default:"localhost"`
+	Port     string `envconfig:"RABBITMQ_PORT" default:"5672"`
+	User     string `envconfig:"RABBITMQ_USER" default:"guest"`
+	Password string `envconfig:"RABBITMQ_PASSWORD" default:"guest"`
 }
 
 func Load() (*Config, error) {

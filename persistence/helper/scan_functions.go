@@ -97,7 +97,14 @@ func ScanCartItem(row pgx.Row) (domain.CartItem, error) {
 
 func ScanOrder(row pgx.Row) (domain.Order, error) {
 	var order domain.Order
-	err := row.Scan(&order.Id, &order.UserId, &order.TotalPrice, &order.Status, &order.CreatedAt)
+	err := row.Scan(
+		&order.Id,
+		&order.UserId,
+		&order.TotalPrice,
+		&order.Status,
+		&order.CreatedAt,
+		&order.UpdatedAt,
+	)
 	if err != nil {
 		if err.Error() == common.NOT_FOUND {
 			return domain.Order{}, common.ErrOrderNotFound

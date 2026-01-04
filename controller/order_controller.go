@@ -79,8 +79,7 @@ func (orderController *OrderController) UpdateOrderStatus(c echo.Context) error 
 		return parseIdErr
 	}
 
-	queryParam := orderController.StringQueryParam(c, "status")
-	status := queryParam == "true"
+	status := orderController.StringQueryParam(c, "status")
 	updatedOrder, serviceErr := orderController.orderService.UpdateOrderStatus(id, status)
 	if serviceErr != nil {
 		return serviceErr

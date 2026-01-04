@@ -8,8 +8,13 @@ services:
       - "8080:8080"
     environment:
       - DB_HOST=postgres
+      - DB_PORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq  # Docker içinde servis adı
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=user
+      - RABBITMQ_PASSWORD=password
     depends_on:
       - postgres
       - redis
@@ -32,5 +37,18 @@ services:
     ports:
       - "6379:6379"
 
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # Uygulamanın bağlanacağı port
+      - "15672:15672" # Tarayıcıdan yönetim paneline gireceğimiz port
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    
+
 volumes:
   postgres_data:
+

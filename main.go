@@ -5,11 +5,14 @@ import (
 	"go-ecommerce-service/common/postgresql"
 	"go-ecommerce-service/config"
 	"go-ecommerce-service/controller"
+	"go-ecommerce-service/infrastructure/rabbitmq"
 	"go-ecommerce-service/internal/jwt"
 	"go-ecommerce-service/persistence"
 	customMiddleware "go-ecommerce-service/pkg/middleware"
 	"go-ecommerce-service/service"
+	"time"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -20,6 +23,7 @@ func main() {
 
 	/*
 		docker-compose up -d postgres redis
+		docker-compose up -d rabbitmq
 		docker-compose up --build
 	*/
 
@@ -39,14 +43,53 @@ func main() {
 		log.Fatal("Failed connect to redis", redisConnectionErr)
 	}
 
-	dbPool, dbPoolErr := postgresql.GetConnectionPool(ctx, cfg.Database)
-	if dbPoolErr != nil {
-		log.Fatal("Failed connect to database", err)
+	// Database Connection
+	var dbPool *pgxpool.Pool
+	var dbPoolErr error
+	for i := 0; i < 5; i++ {
+		dbPool, dbPoolErr = postgresql.GetConnectionPool(ctx, cfg.Database)
+		if dbPoolErr == nil {
+			log.Info("Veritabanı bağlantısı başarılı! 🚀")
+			break
+		}
+		log.Warnf("Veritabanına bağlanılamadı, tekrar deneniyor (%d/5)... Hata: %v", i+1, dbPoolErr)
+		time.Sleep(3 * time.Second)
 	}
+
+	if dbPoolErr != nil {
+		log.Fatal("Veritabanına bağlanılamadı, pes ediliyor: ", dbPoolErr)
+	}
+
 	defer dbPool.Close()
 
-	// Dependency Injection
+	var rabbitClient *rabbitmq.RabbitMQClient
+	var rabbitErr error
 
+	for i := 0; i < 20; i++ {
+		rabbitClient, rabbitErr = rabbitmq.NewRabbitMQClient(
+			cfg.RabbitMQ.User,
+			cfg.RabbitMQ.Password,
+			cfg.RabbitMQ.Host,
+			cfg.RabbitMQ.Port,
+		)
+
+		if rabbitErr == nil {
+			log.Info("🐇 RabbitMQ bağlantısı başarılı! 🚀")
+			break
+		}
+
+		log.Warnf("RabbitMQ'ya bağlanılamadı (Host: %s), tekrar deneniyor (%d/20)... Hata: %v", cfg.RabbitMQ.Host, i+1, rabbitErr)
+		time.Sleep(3 * time.Second)
+	}
+
+	if rabbitErr != nil {
+		log.Fatal("RabbitMQ bağlantısı kurulamadı, pes ediliyor: ", rabbitErr)
+	}
+	defer rabbitClient.Close()
+
+	StartOrderWorker(rabbitClient)
+
+	// Dependency Injection
 	productRepository := persistence.NewProductRepository(dbPool)
 	userRepository := persistence.NewUserRepository(dbPool)
 	cartRepository := persistence.NewCartRepository(dbPool)
@@ -60,7 +103,7 @@ func main() {
 	userService := service.NewUserService(userRepository)
 	cartService := service.NewCartService(cartRepository)
 	carItemService := service.NewCartItemService(carItemRepository)
-	orderService := service.NewOrderService(orderRepository)
+	orderService := service.NewOrderService(orderRepository, rabbitClient)
 	orderItemService := service.NewOrderItemService(orderItemRepository)
 	jwtManager := service.NewJWTService()
 	authService := service.NewAuthService(userRepository, jwtManager)
@@ -79,15 +122,20 @@ func main() {
 
 	e := echo.New()
 
+	authMiddleware := customMiddleware.AuthMiddleware(authService)
+
+	authController.RegisterRoutes(e)
 	productController.RegisterRoutes(e)
 	userController.RegisterRoutes(e)
+	categoryController.RegisterRoutes(e)
+	storeController.RegisterRoutes(e)
+
+	api := e.Group("/api/v1")
+	api.Use(authMiddleware)
 	cartController.RegisterRoutes(e)
 	cartItemController.RegiesterRoutes(e)
 	orderController.RegisterRoutes(e)
 	orderItemController.RegisterRoutes(e)
-	authController.RegisterRoutes(e)
-	categoryController.RegisterRoutes(e)
-	storeController.RegisterRoutes(e)
 
 	e.HTTPErrorHandler = customMiddleware.CustomHTTPErrorHandler
 
@@ -103,4 +151,30 @@ func main() {
 	if err := e.Start("localhost:" + cfg.Server.Port); err != nil {
 		log.Fatal("Failed to start server", err)
 	}
+}
+
+func StartOrderWorker(rabbitClient *rabbitmq.RabbitMQClient) {
+	msgs, err := rabbitClient.Channel.Consume(
+		"order_created_queue", // dinlenecek kuyruk
+		"",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		log.Fatal("Worker Başlatılamadı : ", err)
+	}
+
+	go func() {
+		log.Print("Worker iş başında! Siparişler bekleniyor...")
+		for d := range msgs {
+			log.Printf("Yeni İş : Mesaj alındı : %s", d.Body)
+
+			time.Sleep(3 * time.Second)
+
+			log.Print("Mail Gönderildi ve Stok Güncellendi")
+		}
+	}()
 }
