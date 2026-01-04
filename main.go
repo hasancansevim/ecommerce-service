@@ -10,6 +10,7 @@ import (
 	"go-ecommerce-service/persistence"
 	customMiddleware "go-ecommerce-service/pkg/middleware"
 	"go-ecommerce-service/service"
+	"go-ecommerce-service/service/worker"
 	"time"
 
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -87,7 +88,8 @@ func main() {
 	}
 	defer rabbitClient.Close()
 
-	StartOrderWorker(rabbitClient)
+	orderWorker := worker.NewOrderWorker(rabbitClient)
+	orderWorker.Start()
 
 	// Dependency Injection
 	productRepository := persistence.NewProductRepository(dbPool)
@@ -151,30 +153,4 @@ func main() {
 	if err := e.Start("localhost:" + cfg.Server.Port); err != nil {
 		log.Fatal("Failed to start server", err)
 	}
-}
-
-func StartOrderWorker(rabbitClient *rabbitmq.RabbitMQClient) {
-	msgs, err := rabbitClient.Channel.Consume(
-		"order_created_queue", // dinlenecek kuyruk
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		log.Fatal("Worker Başlatılamadı : ", err)
-	}
-
-	go func() {
-		log.Print("Worker iş başında! Siparişler bekleniyor...")
-		for d := range msgs {
-			log.Printf("Yeni İş : Mesaj alındı : %s", d.Body)
-
-			time.Sleep(3 * time.Second)
-
-			log.Print("Mail Gönderildi ve Stok Güncellendi")
-		}
-	}()
 }

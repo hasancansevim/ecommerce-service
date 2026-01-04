@@ -4,25 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: dockerization and redis caching implementation&#10;&#10;- Added Dockerfile and docker-compose.yml for container orchestration&#10;- Integrated go-redis client for high-performance caching&#10;- Implemented Cache-Aside pattern in ProductService (GetProductById)&#10;- Added cache invalidation logic for Update/Delete operations&#10;- Updated config and dependency injection in main.go&#10;- Fixed Go version compatibility issues&#10;- Improved system scalability and response times">
-      <change afterPath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/init.sql" afterDir="false" />
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: implement async order processing with rabbitmq&#10;&#10;- Added RabbitMQ infrastructure and docker service&#10;- Implemented RabbitMQ client and producer in OrderService&#10;- Created background worker for processing order events&#10;- Updated database schema for orders table (status field fix)&#10;- Fixed domain models and scanners for mapping consistency&#10;- Configured Docker networking for inter-container communication">
+      <change afterPath="$PROJECT_DIR$/service/worker/order_worker.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/request/request.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/request/request.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/order.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/order.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/dto/order_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/order_dto.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/helper/scan_functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/helper/scan_functions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/order_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/order_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/errors/app_error.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/errors/app_error.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/errors/error_codes.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/middleware/auth_middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/middleware/auth_middleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/order_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/order_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +199,8 @@
     <MESSAGE value="refactor: standardize error handling and clean up controllers&#10;&#10;- Removed ad-hoc validation logic from all controllers to ensure separation of concerns.&#10;- Refactored all services to return typed errors (AppError) for better HTTP status mapping (400 vs 500).&#10;- Updated controllers to delegate error handling to the global middleware.&#10;- Standardized response format across all modules (Product, Order, User, etc.).&#10;- Prepared the architecture for the upcoming centralized Validation layer.&#10;&#10;Modules affected: All Controllers &amp; Services" />
     <MESSAGE value="feat(core): implement generic centralized validation system&#10;&#10;- Introduced `BaseRules[T]` using Go Generics to eliminate boilerplate validation logic across modules.&#10;- Implemented concrete validator structs (e.g., `ProductRules`, `CategoryRules`) embedding `BaseRules` for tag-based validation.&#10;- Integrated validation logic into Service layer for both Create and Update operations.&#10;- Corrected error mapping in Services: Validation errors return 400 (Bad Request), Repository errors return 500 (Internal Server Error).&#10;- Enforced Separation of Concerns by removing all residual validation logic from Controllers.&#10;&#10;Modules affected: Validation, Product, Category, Store, and others." />
     <MESSAGE value="feat: dockerization and redis caching implementation&#10;&#10;- Added Dockerfile and docker-compose.yml for container orchestration&#10;- Integrated go-redis client for high-performance caching&#10;- Implemented Cache-Aside pattern in ProductService (GetProductById)&#10;- Added cache invalidation logic for Update/Delete operations&#10;- Updated config and dependency injection in main.go&#10;- Fixed Go version compatibility issues&#10;- Improved system scalability and response times" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: dockerization and redis caching implementation&#10;&#10;- Added Dockerfile and docker-compose.yml for container orchestration&#10;- Integrated go-redis client for high-performance caching&#10;- Implemented Cache-Aside pattern in ProductService (GetProductById)&#10;- Added cache invalidation logic for Update/Delete operations&#10;- Updated config and dependency injection in main.go&#10;- Fixed Go version compatibility issues&#10;- Improved system scalability and response times" />
+    <MESSAGE value="feat: implement async order processing with rabbitmq&#10;&#10;- Added RabbitMQ infrastructure and docker service&#10;- Implemented RabbitMQ client and producer in OrderService&#10;- Created background worker for processing order events&#10;- Updated database schema for orders table (status field fix)&#10;- Fixed domain models and scanners for mapping consistency&#10;- Configured Docker networking for inter-container communication" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: implement async order processing with rabbitmq&#10;&#10;- Added RabbitMQ infrastructure and docker service&#10;- Implemented RabbitMQ client and producer in OrderService&#10;- Created background worker for processing order events&#10;- Updated database schema for orders table (status field fix)&#10;- Fixed domain models and scanners for mapping consistency&#10;- Configured Docker networking for inter-container communication" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
