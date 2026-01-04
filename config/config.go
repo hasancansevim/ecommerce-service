@@ -6,6 +6,7 @@ type Config struct {
 	Database DatabaseConfig
 	Auth     AuthConfig
 	Server   ServerConfig
+	Redis    RedisConfig
 }
 
 type DatabaseConfig struct {
@@ -26,6 +27,11 @@ type AuthConfig struct {
 type ServerConfig struct {
 	Port        string `envconfig:"SERVER_PORT" default:"8080"`
 	Environment string `envconfig:"ENVIRONMENT" default:"development"`
+}
+
+type RedisConfig struct {
+	Host string `envconfig:"REDIS_HOST" default:"localhost"`
+	Port string `envconfig:"REDIS_PORT" default:"6379"`
 }
 
 func Load() (*Config, error) {

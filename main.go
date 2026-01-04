@@ -13,9 +13,16 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
+
+	/*
+		docker-compose up -d postgres redis
+		docker-compose up --build
+	*/
+
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatal("Failed to load config", err)
@@ -24,9 +31,17 @@ func main() {
 
 	ctx := context.Background()
 
+	// Redis
+	rdb := redis.NewClient(&redis.Options{
+		Addr: cfg.Redis.Host + ":" + cfg.Redis.Port,
+	})
+	if redisConnectionErr := rdb.Ping(ctx).Err(); redisConnectionErr != nil {
+		log.Fatal("Failed connect to redis", redisConnectionErr)
+	}
+
 	dbPool, dbPoolErr := postgresql.GetConnectionPool(ctx, cfg.Database)
 	if dbPoolErr != nil {
-		log.Fatal("Failed to connect to database", err)
+		log.Fatal("Failed connect to database", err)
 	}
 	defer dbPool.Close()
 
@@ -41,7 +56,7 @@ func main() {
 	categoryRepository := persistence.NewCategoryRepository(dbPool)
 	storeRepository := persistence.NewStoreRepository(dbPool)
 
-	productService := service.NewProductService(productRepository)
+	productService := service.NewProductService(productRepository, rdb)
 	userService := service.NewUserService(userRepository)
 	cartService := service.NewCartService(cartRepository)
 	carItemService := service.NewCartItemService(carItemRepository)

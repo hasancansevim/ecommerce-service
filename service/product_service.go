@@ -1,6 +1,9 @@
 package service
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/internal/rules"
@@ -8,6 +11,8 @@ import (
 	_errors "go-ecommerce-service/pkg/errors"
 	"go-ecommerce-service/pkg/util"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type IProductService interface {
@@ -21,12 +26,14 @@ type IProductService interface {
 type ProductService struct {
 	productRepository persistence.IProductRepository
 	validator         *rules.ProductRules
+	redisClient       *redis.Client
 }
 
-func NewProductService(productRepository persistence.IProductRepository) IProductService {
+func NewProductService(productRepository persistence.IProductRepository, rdb *redis.Client) IProductService {
 	return &ProductService{
 		productRepository: productRepository,
 		validator:         rules.NewProductRules(),
+		redisClient:       rdb,
 	}
 }
 
@@ -36,11 +43,23 @@ func (productService *ProductService) GetAllProducts() []dto.ProductResponse {
 }
 
 func (productService *ProductService) GetProductById(productId int64) (dto.ProductResponse, error) {
+	ctx := context.Background()
+	key := fmt.Sprintf("product:%d", productId)
+
+	result, redisErr := productService.redisClient.Get(ctx, key).Result()
+	if redisErr == nil {
+		var cachedProduct dto.ProductResponse
+		json.Unmarshal([]byte(result), &cachedProduct)
+		return cachedProduct, nil
+	}
 	product, repositoryErr := productService.productRepository.GetProductById(productId)
 	if repositoryErr != nil {
-		return dto.ProductResponse{}, _errors.NewInternalServerError(repositoryErr)
+		return dto.ProductResponse{}, repositoryErr
 	}
-	return convertToProductResponse(product), nil
+	response := convertToProductResponse(product)
+	data, _ := json.Marshal(response)
+	productService.redisClient.Set(ctx, key, data, 10*time.Minute)
+	return response, nil
 }
 
 func (productService *ProductService) AddProduct(productCreate dto.CreateProductRequest) (dto.ProductResponse, error) {
@@ -71,7 +90,16 @@ func (productService *ProductService) AddProduct(productCreate dto.CreateProduct
 }
 
 func (productService *ProductService) DeleteProductById(productId int64) error {
-	return productService.productRepository.DeleteProductById(productId)
+	err := productService.productRepository.DeleteProductById(productId)
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+
+	key := fmt.Sprintf("product:%d", productId)
+	productService.redisClient.Del(ctx, key)
+	return nil
 }
 
 func (productService *ProductService) UpdateProduct(productId uint, product dto.CreateProductRequest) (dto.ProductResponse, error) {
@@ -100,6 +128,9 @@ func (productService *ProductService) UpdateProduct(productId uint, product dto.
 		return dto.ProductResponse{}, _errors.NewBadRequest(repositoryErr.Error())
 	}
 
+	ctx := context.Background()
+	key := fmt.Sprintf("product:%d", productId)
+	productService.redisClient.Del(ctx, key)
 	return convertToProductResponse(updatedProduct), nil
 }
 

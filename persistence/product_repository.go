@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"context"
+	"fmt"
 	"go-ecommerce-service/domain"
 	"go-ecommerce-service/persistence/helper"
 
@@ -33,6 +34,7 @@ func (productRepository *ProductRepository) GetAllProducts() []domain.Product {
 	ctx := context.Background()
 	products, err := productRepository.scannner.QueryAndScan(ctx, "SELECT * FROM products")
 	if err != nil {
+		fmt.Println("SCANNING ERROR:", err)
 		return nil
 	}
 	return products
