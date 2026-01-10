@@ -88,9 +88,6 @@ func main() {
 	}
 	defer rabbitClient.Close()
 
-	orderWorker := worker.NewOrderWorker(rabbitClient)
-	orderWorker.Start()
-
 	// Dependency Injection
 	productRepository := persistence.NewProductRepository(dbPool)
 	userRepository := persistence.NewUserRepository(dbPool)
@@ -121,6 +118,10 @@ func main() {
 	authController := controller.NewAuthController(authService)
 	categoryController := controller.NewCategoryController(categoryService)
 	storeController := controller.NewStoreController(storeService)
+
+	// Worker
+	orderWorker := worker.NewOrderWorker(rabbitClient, orderRepository)
+	orderWorker.Start()
 
 	e := echo.New()
 

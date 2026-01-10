@@ -1,26 +1,29 @@
 package worker
 
 import (
+	"encoding/json"
 	"go-ecommerce-service/infrastructure/rabbitmq"
+	"go-ecommerce-service/persistence"
 	"log"
-	"time"
 )
 
 type OrderWorker struct {
-	client *rabbitmq.RabbitMQClient
+	client     *rabbitmq.RabbitMQClient
+	repository persistence.IOrderRepository
 }
 
-func NewOrderWorker(client *rabbitmq.RabbitMQClient) *OrderWorker {
+func NewOrderWorker(client *rabbitmq.RabbitMQClient, repository persistence.IOrderRepository) *OrderWorker {
 	return &OrderWorker{
-		client: client,
+		client:     client,
+		repository: repository,
 	}
 }
 
 func (w *OrderWorker) Start() {
 	msgs, err := w.client.Channel.Consume(
-		"order_created_queue", // dinlenecek kuyruk
+		"order_created_queue",
 		"",
-		true,
+		false,
 		false,
 		false,
 		false,
@@ -35,12 +38,23 @@ func (w *OrderWorker) Start() {
 		log.Println("👷‍♂️ Worker İş Başında! Siparişler bekleniyor...")
 
 		for d := range msgs {
-			log.Printf("📩 Yeni İş : Mesaj alındı : %s", d.Body)
+			order := OrderMessage{}
+			json.Unmarshal(d.Body, &order)
 
-			// Simulasyon - Mail atma işlemi 3 sn sürsün
-			time.Sleep(3 * time.Second)
+			log.Printf("📩 Yeni İş : Mesaj alındı : %d", order.OrderId)
+
+			_, err := w.repository.UpdateOrderStatus(order.OrderId, "Shipped")
+
+			if err != nil {
+				log.Println(err)
+			}
 
 			log.Println("✅ Mail Gönderildi ve Stok Güncellendi")
+			d.Ack(false)
 		}
 	}()
+}
+
+type OrderMessage struct {
+	OrderId int64 `json:"order_id"`
 }
