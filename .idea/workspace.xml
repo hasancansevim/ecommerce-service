@@ -4,16 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="Worker logic fixed : Implemented manual ack and DB update">
-      <change afterPath="$PROJECT_DIR$/infrastructure/elasticsearch/client.go" afterDir="false" />
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: Elasticsearch integration completed (Dual Write, Search, Sync, Fuzzy Matching)">
+      <change afterPath="$PROJECT_DIR$/pkg/logger/logger.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/infrastructure/elasticsearch/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/elasticsearch/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/persistence/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/product_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/product_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/product_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,7 +207,8 @@
     <MESSAGE value="feat: implement async order processing with rabbitmq&#10;&#10;- Added RabbitMQ infrastructure and docker service&#10;- Implemented RabbitMQ client and producer in OrderService&#10;- Created background worker for processing order events&#10;- Updated database schema for orders table (status field fix)&#10;- Fixed domain models and scanners for mapping consistency&#10;- Configured Docker networking for inter-container communication" />
     <MESSAGE value="refactor: move worker logic from main.go to dedicated worker package" />
     <MESSAGE value="Worker logic fixed : Implemented manual ack and DB update" />
-    <option name="LAST_COMMIT_MESSAGE" value="Worker logic fixed : Implemented manual ack and DB update" />
+    <MESSAGE value="feat: Elasticsearch integration completed (Dual Write, Search, Sync, Fuzzy Matching)" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Elasticsearch integration completed (Dual Write, Search, Sync, Fuzzy Matching)" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

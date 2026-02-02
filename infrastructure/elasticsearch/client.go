@@ -1,18 +1,23 @@
 package elasticsearch
 
 import (
+	"fmt"
+	"go-ecommerce-service/config"
 	"log"
 
 	"github.com/elastic/go-elasticsearch/v8"
 )
 
-func NewElasticSearchClient() *elasticsearch.Client {
-	cfg := elasticsearch.Config{ // Elasticsearch'ün ayar objesi
-		// Elasticsearch ün çalıştığı yer
-		Addresses: []string{"http://localhost:9200"},
+func NewElasticSearchClient(cfg config.ElasticSearchConfig) *elasticsearch.Client {
+	// http://localhost:9200
+	address := fmt.Sprintf("http://%s:%s", cfg.Host, cfg.Port)
+	esCfg := elasticsearch.Config{
+		Addresses: []string{
+			address,
+		},
 	}
 
-	es, err := elasticsearch.NewClient(cfg) // Go ile Elasticsearch bunun üzerinden konuşacak
+	es, err := elasticsearch.NewClient(esCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

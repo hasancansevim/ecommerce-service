@@ -3,11 +3,12 @@ package config
 import "github.com/kelseyhightower/envconfig"
 
 type Config struct {
-	Database DatabaseConfig
-	Auth     AuthConfig
-	Server   ServerConfig
-	Redis    RedisConfig
-	RabbitMQ RabbitMQConfig
+	Database      DatabaseConfig
+	Auth          AuthConfig
+	Server        ServerConfig
+	Redis         RedisConfig
+	RabbitMQ      RabbitMQConfig
+	ElasticSearch ElasticSearchConfig
 }
 
 type DatabaseConfig struct {
@@ -40,6 +41,11 @@ type RabbitMQConfig struct {
 	Port     string `envconfig:"RABBITMQ_PORT" default:"5672"`
 	User     string `envconfig:"RABBITMQ_USER" default:"guest"`
 	Password string `envconfig:"RABBITMQ_PASSWORD" default:"guest"`
+}
+
+type ElasticSearchConfig struct {
+	Host string `envconfig:"ELASTICSEARCH_HOST" default:"localhost"`
+	Port string `envconfig:"ELASTICSEARCH_PORT" default:"9200"`
 }
 
 func Load() (*Config, error) {

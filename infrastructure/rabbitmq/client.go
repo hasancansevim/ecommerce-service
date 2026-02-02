@@ -2,6 +2,7 @@ package rabbitmq
 
 import (
 	"fmt"
+	"go-ecommerce-service/config"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -11,8 +12,8 @@ type RabbitMQClient struct {
 	Channel *amqp.Channel
 }
 
-func NewRabbitMQClient(user, password, host, port string) (*RabbitMQClient, error) {
-	connStr := fmt.Sprintf("amqp://%s:%s@%s:%s/", user, password, host, port)
+func NewRabbitMQClient(cfg config.RabbitMQConfig) (*RabbitMQClient, error) {
+	connStr := fmt.Sprintf("amqp://%s:%s@%s:%s/", cfg.User, cfg.Password, cfg.Host, cfg.Port)
 	conn, err := amqp.Dial(connStr)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to RabbitMq: %v", err)

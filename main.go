@@ -9,6 +9,7 @@ import (
 	"go-ecommerce-service/infrastructure/rabbitmq"
 	"go-ecommerce-service/internal/jwt"
 	"go-ecommerce-service/persistence"
+	"go-ecommerce-service/pkg/logger"
 	customMiddleware "go-ecommerce-service/pkg/middleware"
 	"go-ecommerce-service/service"
 	"go-ecommerce-service/service/worker"
@@ -17,8 +18,8 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
 	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
@@ -29,9 +30,11 @@ func main() {
 		docker-compose up --build
 	*/
 
+	logger.Init()
+
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatal("Failed to load config", err)
+		log.Fatal().Err(err).Msg("Failed to load config")
 	}
 	jwt.Initialize(cfg.Auth.JWTSecret)
 
@@ -42,7 +45,7 @@ func main() {
 		Addr: cfg.Redis.Host + ":" + cfg.Redis.Port,
 	})
 	if redisConnectionErr := rdb.Ping(ctx).Err(); redisConnectionErr != nil {
-		log.Fatal("Failed connect to redis", redisConnectionErr)
+		log.Fatal().Err(redisConnectionErr).Msg("Failed connect to redis")
 	}
 
 	// Database Connection
@@ -51,15 +54,15 @@ func main() {
 	for i := 0; i < 5; i++ {
 		dbPool, dbPoolErr = postgresql.GetConnectionPool(ctx, cfg.Database)
 		if dbPoolErr == nil {
-			log.Info("Veritabanı bağlantısı başarılı! 🚀")
+			log.Info().Msg("Veritabanı bağlantısı başarılı! 🚀")
 			break
 		}
-		log.Warnf("Veritabanına bağlanılamadı, tekrar deneniyor (%d/5)... Hata: %v", i+1, dbPoolErr)
+		log.Warn().Err(dbPoolErr).Msg("Veritabanına bağlanılamadı, tekrar deneniyor...")
 		time.Sleep(3 * time.Second)
 	}
 
 	if dbPoolErr != nil {
-		log.Fatal("Veritabanına bağlanılamadı, pes ediliyor: ", dbPoolErr)
+		log.Fatal().Err(dbPoolErr).Msg("Veritabanına bağlanılamadı, pes ediliyor: ")
 	}
 
 	defer dbPool.Close()
@@ -69,30 +72,29 @@ func main() {
 	var rabbitErr error
 
 	for i := 0; i < 20; i++ {
-		rabbitClient, rabbitErr = rabbitmq.NewRabbitMQClient(
-			cfg.RabbitMQ.User,
-			cfg.RabbitMQ.Password,
-			cfg.RabbitMQ.Host,
-			cfg.RabbitMQ.Port,
-		)
+		rabbitClient, rabbitErr = rabbitmq.NewRabbitMQClient(cfg.RabbitMQ)
 
 		if rabbitErr == nil {
-			log.Info("🐇 RabbitMQ bağlantısı başarılı! 🚀")
+			log.Info().Msg("RabbitMQ bağlantısı başarılı! 🚀")
 			break
 		}
 
-		log.Warnf("RabbitMQ'ya bağlanılamadı (Host: %s), tekrar deneniyor (%d/20)... Hata: %v", cfg.RabbitMQ.Host, i+1, rabbitErr)
+		log.Warn().Err(dbPoolErr).Msg("RabbitMQ'ya bağlanılamadı, tekrar deneniyor...")
 		time.Sleep(3 * time.Second)
 	}
 
 	if rabbitErr != nil {
-		log.Fatal("RabbitMQ bağlantısı kurulamadı, pes ediliyor: ", rabbitErr)
+		log.Fatal().Err(rabbitErr).Msg("RabbitMQ bağlantısı kurulamadı, pes ediliyor.")
 	}
 	defer rabbitClient.Close()
 
 	// ElasticSearch
-	esClient := elasticsearch.NewElasticSearchClient()
-	_ = esClient
+	esClient := elasticsearch.NewElasticSearchClient(cfg.ElasticSearch)
+	if _, err := esClient.Info(); err != nil {
+		log.Fatal().Err(err).Msg("ElasticSearch bağlantısı kurulamadı.")
+	}
+	log.Info().Msg("ElasticSearch bağlantısı başarılı! 🚀")
+
 	// Dependency Injection
 	productRepository := persistence.NewProductRepository(dbPool, esClient)
 	userRepository := persistence.NewUserRepository(dbPool)
@@ -153,10 +155,9 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
-	e.Logger.Fatal(e.Start(":8080"))
-
-	log.Printf("Server starting on %s", cfg.Server.Port)
-	if err := e.Start("localhost:" + cfg.Server.Port); err != nil {
-		log.Fatal("Failed to start server", err)
+	if err := e.Start(":" + cfg.Server.Port); err != nil {
+		log.Fatal().Err(err).Msg("Failed to start server")
 	}
+
+	log.Info().Msg("Server starting...")
 }
