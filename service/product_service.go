@@ -21,6 +21,8 @@ type IProductService interface {
 	AddProduct(productCreate dto.CreateProductRequest) (dto.ProductResponse, error)
 	DeleteProductById(productId int64) error
 	UpdateProduct(productId uint, product dto.CreateProductRequest) (dto.ProductResponse, error)
+	SearchProducts(query string) ([]dto.ProductResponse, error)
+	SyncElasticsearch() error
 }
 
 type ProductService struct {
@@ -132,6 +134,46 @@ func (productService *ProductService) UpdateProduct(productId uint, product dto.
 	key := fmt.Sprintf("product:%d", productId)
 	productService.redisClient.Del(ctx, key)
 	return convertToProductResponse(updatedProduct), nil
+}
+
+func (productService *ProductService) SearchProducts(query string) ([]dto.ProductResponse, error) {
+	products, err := productService.productRepository.SearchProducts(query)
+	if err != nil {
+		return nil, err
+	}
+	return convertToProductsResponse(products), nil
+}
+
+func (productService *ProductService) SyncElasticsearch() error {
+	allProducts := productService.GetAllProducts()
+
+	fmt.Printf("🔄 Senkronizasyon Başlıyor... Toplam Ürün: %d\n", len(allProducts))
+	for _, p := range allProducts {
+		err := productService.productRepository.IndexProduct(domain.Product{
+			Id:              p.Id,
+			Name:            p.Name,
+			Slug:            p.Slug,
+			Description:     p.Description,
+			Price:           p.Price,
+			BasePrice:       p.BasePrice,
+			Discount:        p.Discount,
+			ImageUrl:        p.ImageUrl,
+			MetaDescription: p.MetaDescription,
+			StockQuantity:   p.StockQuantity,
+			IsActive:        p.IsActive,
+			IsFeatured:      p.IsFeatured,
+			CategoryId:      p.CategoryId,
+			StoreId:         p.StoreId,
+			UpdatedAt:       time.Now(),
+		})
+		if err != nil {
+			fmt.Printf("❌ Hata (ID: %d): %v\n", p.Id, err)
+			continue
+		}
+		fmt.Printf("✅ Indekslendi: %s\n", p.Name)
+	}
+
+	return nil
 }
 
 func convertToProductResponse(product domain.Product) dto.ProductResponse {

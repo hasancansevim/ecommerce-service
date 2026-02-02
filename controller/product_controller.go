@@ -20,10 +20,12 @@ func NewProductController(productService service.IProductService) *ProductContro
 
 func (productController *ProductController) RegisterRoutes(e *echo.Echo) {
 	e.GET("/api/v1/products", productController.GetAllProducts)
+	e.GET("/api/v1/products/search", productController.SearchProducts)
 	e.GET("/api/v1/products/:id", productController.GetProductById)
 	e.POST("/api/v1/products", productController.AddProduct)
 	e.PUT("/api/v1/products/:id", productController.UpdateProduct)
 	e.DELETE("/api/v1/products/:id", productController.DeleteProduct)
+	e.POST("/api/v1/products/sync", productController.SyncElasticsearch)
 }
 
 func (productController *ProductController) GetAllProducts(c echo.Context) error {
@@ -87,4 +89,23 @@ func (productController *ProductController) DeleteProduct(c echo.Context) error 
 	}
 
 	return productController.Created(c, nil, "Ürün Silindi")
+}
+
+func (productController *ProductController) SearchProducts(c echo.Context) error {
+	query := c.QueryParam("q")
+
+	products, err := productController.productService.SearchProducts(query)
+	if err != nil {
+		return productController.BadRequest(c, err)
+	}
+
+	return productController.Success(c, products, "Arama Sonuçları")
+}
+
+func (productController *ProductController) SyncElasticsearch(ctx echo.Context) error {
+	err := productController.productService.SyncElasticsearch()
+	if err != nil {
+		return productController.BadRequest(ctx, err)
+	}
+	return productController.Success(ctx, nil, "Tüm ürünler başarıyla Elasticsearch'e aktarıldı! 🚀")
 }

@@ -5,6 +5,7 @@ import (
 	"go-ecommerce-service/common/postgresql"
 	"go-ecommerce-service/config"
 	"go-ecommerce-service/controller"
+	"go-ecommerce-service/infrastructure/elasticsearch"
 	"go-ecommerce-service/infrastructure/rabbitmq"
 	"go-ecommerce-service/internal/jwt"
 	"go-ecommerce-service/persistence"
@@ -63,6 +64,7 @@ func main() {
 
 	defer dbPool.Close()
 
+	// RabbitMQ
 	var rabbitClient *rabbitmq.RabbitMQClient
 	var rabbitErr error
 
@@ -88,8 +90,11 @@ func main() {
 	}
 	defer rabbitClient.Close()
 
+	// ElasticSearch
+	esClient := elasticsearch.NewElasticSearchClient()
+	_ = esClient
 	// Dependency Injection
-	productRepository := persistence.NewProductRepository(dbPool)
+	productRepository := persistence.NewProductRepository(dbPool, esClient)
 	userRepository := persistence.NewUserRepository(dbPool)
 	cartRepository := persistence.NewCartRepository(dbPool)
 	carItemRepository := persistence.NewCartItemRepository(dbPool)
