@@ -13,6 +13,10 @@ import (
 	customMiddleware "go-ecommerce-service/pkg/middleware"
 	"go-ecommerce-service/service"
 	"go-ecommerce-service/service/worker"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -155,9 +159,24 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
-	if err := e.Start(":" + cfg.Server.Port); err != nil {
-		log.Fatal().Err(err).Msg("Failed to start server")
+	go func() {
+		if err := e.Start(":" + cfg.Server.Port); err != nil && err != http.ErrServerClosed {
+			log.Fatal().Err(err).Msg("Sunucu başlatılamadı")
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+
+	log.Warn().Msg("⚠️ Kapanma sinyali alındı! Uygulama zarifçe kapatılıyor...")
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	if err := e.Shutdown(ctx); err != nil {
+		log.Fatal().Err(err).Msg("Sunucu zorla kapatıldı")
 	}
 
-	log.Info().Msg("Server starting...")
+	log.Info().Msg("🔌 Bağlantılar kapatılıyor...")
+	log.Info().Msg("👋 Güle güle! Sistem başarıyla kapandı.")
 }

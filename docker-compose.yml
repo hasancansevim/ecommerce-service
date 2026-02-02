@@ -1,66 +1,94 @@
 version: '3.8'
 
 services:
-  # Go Uygulaması
+  # -------------------------
+  # Go Uygulaması (App)
+  # -------------------------
   app:
     build: .
+    container_name: go-ecommerce-app
     ports:
       - "8080:8080"
-    environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_USER=user
-      - RABBITMQ_PASSWORD=password
     depends_on:
       - postgres
       - redis
+      - rabbitmq
+      - elasticsearch
+    environment:
+      # PostgreSQL
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+      - DB_NAME=ecommerce
+      # Redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      # RabbitMQ
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      # ElasticSearch
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+      # Sunucu Ayarları
+      - SERVER_PORT=8080
+      - ENVIRONMENT=docker
 
+  # -------------------------
   # PostgreSQL
+  # -------------------------
   postgres:
     image: postgres:14-alpine
+    container_name: postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=ecommerce
     ports:
-      - "5432:5432"
+      - "5432:5432" # Dışarıdan erişmek için (DbBeaver vs.)
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # -------------------------
   # Redis
+  # -------------------------
   redis:
     image: redis:alpine
+    container_name: redis
     ports:
       - "6379:6379"
 
+  # -------------------------
   # RabbitMQ
+  # -------------------------
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672"   # Uygulamanın bağlanacağı port
-      - "15672:15672" # Tarayıcıdan yönetim paneline gireceğimiz port
+      - "5672:5672"
+      - "15672:15672" # Yönetim Paneli (http://localhost:15672)
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    
+
+  # -------------------------
+  # Elasticsearch
+  # -------------------------
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
     container_name: go-ecommerce-service-elastic
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m  # 512MB RAM
-      - xpack.security.enabled=false    # Şifre sormasın
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
     ports:
       - "9200:9200"
     volumes:
       - elastic_data:/usr/share/elasticsearch/data
+
+# Verilerin kalıcı olması için Volume tanımları
 volumes:
   postgres_data:
   elastic_data:
-
-

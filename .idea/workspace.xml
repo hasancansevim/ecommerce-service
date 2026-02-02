@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: Elasticsearch integration completed (Dual Write, Search, Sync, Fuzzy Matching)">
-      <change afterPath="$PROJECT_DIR$/pkg/logger/logger.go" afterDir="false" />
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="refactor: implement centralized config, zerolog and client struct updates&#10;&#10;- Replace fmt/log with zerolog for structured logging&#10;- Update RabbitMQ and Elasticsearch clients to use Config structs&#10;- Refactor main.go to support new config and logging standards&#10;- Clean up magic strings and improve error handling">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/infrastructure/elasticsearch/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/elasticsearch/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/worker/order_worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/worker/order_worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,7 +205,8 @@
     <MESSAGE value="refactor: move worker logic from main.go to dedicated worker package" />
     <MESSAGE value="Worker logic fixed : Implemented manual ack and DB update" />
     <MESSAGE value="feat: Elasticsearch integration completed (Dual Write, Search, Sync, Fuzzy Matching)" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: Elasticsearch integration completed (Dual Write, Search, Sync, Fuzzy Matching)" />
+    <MESSAGE value="refactor: implement centralized config, zerolog and client struct updates&#10;&#10;- Replace fmt/log with zerolog for structured logging&#10;- Update RabbitMQ and Elasticsearch clients to use Config structs&#10;- Refactor main.go to support new config and logging standards&#10;- Clean up magic strings and improve error handling" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: implement centralized config, zerolog and client struct updates&#10;&#10;- Replace fmt/log with zerolog for structured logging&#10;- Update RabbitMQ and Elasticsearch clients to use Config structs&#10;- Refactor main.go to support new config and logging standards&#10;- Clean up magic strings and improve error handling" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

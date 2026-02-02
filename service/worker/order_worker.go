@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"go-ecommerce-service/infrastructure/rabbitmq"
 	"go-ecommerce-service/persistence"
-	"log"
+
+	"github.com/rs/zerolog/log"
 )
 
 type OrderWorker struct {
@@ -30,26 +31,26 @@ func (w *OrderWorker) Start() {
 		nil,
 	)
 	if err != nil {
-		log.Printf("❌ Worker Kuyruğa Bağlanamadı: %v", err)
+		log.Error().Err(err).Msg("❌ Worker Kuyruğa Bağlanamadı")
 		return
 	}
 
 	go func() {
-		log.Println("👷‍♂️ Worker İş Başında! Siparişler bekleniyor...")
+		log.Info().Msg("👷‍♂️ Worker İş Başında! Siparişler bekleniyor...")
 
 		for d := range msgs {
 			order := OrderMessage{}
 			json.Unmarshal(d.Body, &order)
 
-			log.Printf("📩 Yeni İş : Mesaj alındı : %d", order.OrderId)
+			log.Info().Int64("order_id", order.OrderId).Msg("📩 Yeni İş Alındı")
 
 			_, err := w.repository.UpdateOrderStatus(order.OrderId, "Shipped")
 
 			if err != nil {
-				log.Println(err)
+				log.Error().Err(err).Msg("Sipariş güncellenemedi")
 			}
 
-			log.Println("✅ Mail Gönderildi ve Stok Güncellendi")
+			log.Info().Int64("order_id", order.OrderId).Msg("✅ Stok Güncellendi ve Durum Değişti")
 			d.Ack(false)
 		}
 	}()
