@@ -91,6 +91,17 @@ func (productController *ProductController) DeleteProduct(c echo.Context) error 
 	return productController.Created(c, nil, "Ürün Silindi")
 }
 
+// SearchProducts godoc
+// @Summary      Ürün Arama
+// @Description  Elasticsearch kullanarak ürünlerde akıllı arama yapar (Fuzzy & Wildcard).
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        q    query     string  true  "Aranacak Kelime (Örn: 'laptop')"
+// @Success      200  {object}  dto.ProductResponse
+// @Failure      400  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /products/search [get]
 func (productController *ProductController) SearchProducts(c echo.Context) error {
 	query := c.QueryParam("q")
 

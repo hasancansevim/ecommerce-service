@@ -24,15 +24,25 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	_ "go-ecommerce-service/docs"
 )
 
-func main() {
+// @title           E-Commerce API
+// @version         1.0
+// @description     Go ile geliştirilmiş, Dockerize edilmiş, Elasticsearch destekli E-Ticaret Backend'i.
+// @termsOfService  http://swagger.io/terms/
 
-	/*
-		docker-compose up -d postgres redis
-		docker-compose up -d rabbitmq
-		docker-compose up --build
-	*/
+// @contact.name    Hasan Can Sevim
+// @contact.url     http://www.swagger.io/support
+// @contact.email   support@swagger.io
+
+// @license.name    Apache 2.0
+// @license.url     http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+func main() {
 
 	logger.Init()
 
@@ -135,6 +145,8 @@ func main() {
 	orderWorker.Start()
 
 	e := echo.New()
+
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	authMiddleware := customMiddleware.AuthMiddleware(authService)
 
