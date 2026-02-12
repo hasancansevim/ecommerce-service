@@ -95,6 +95,36 @@ func (v *Validator) RangeFloat64(value float64, field string, min, max float64) 
 	return v
 }
 
+func (v *Validator) GreaterThanFloat32(value float32, threshold float32, field string) *Validator {
+	if value <= threshold {
+		v.errors = append(v.errors, ValidationError{
+			Field:   field,
+			Message: fmt.Sprintf("%s must be greater than %v", field, threshold),
+		})
+	}
+	return v
+}
+
+func (v *Validator) GreaterThanFloat64(value float64, threshold float64, field string) *Validator {
+	if value <= threshold {
+		v.errors = append(v.errors, ValidationError{
+			Field:   field,
+			Message: fmt.Sprintf("%s must be greater than %v", field, threshold),
+		})
+	}
+	return v
+}
+
+func (v *Validator) GreaterThanInt(value int, threshold int, field string) *Validator {
+	if value <= threshold {
+		v.errors = append(v.errors, ValidationError{
+			Field:   field,
+			Message: fmt.Sprintf("%s must be greater than %d", field, threshold),
+		})
+	}
+	return v
+}
+
 func (v *Validator) Error() error {
 	if len(v.errors) > 0 {
 		return ValidationErrors(v.errors)

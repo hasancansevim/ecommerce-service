@@ -4,12 +4,29 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: dockerize application and implement retry logic for elasticsearch&#10;&#10;- Add Dockerfile and docker-compose.yml for full stack deployment&#10;- Update Elasticsearch client with retry mechanism (race condition fix)&#10;- Configure environment variables for docker network&#10;- Ensure graceful shutdown and robust startup">
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: add swagger api documentation support&#10;&#10;- Integrate swaggo/echo-swagger for API docs&#10;- Add general API info annotations to main.go&#10;- Add documentation for SearchProducts endpoint&#10;- Generate swagger static files">
+      <change afterPath="$PROJECT_DIR$/manage.ps1" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/dto/order_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/order_dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/rules/order_rules.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/rules/order_rules.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/order_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/order_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/validation/order_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/order_validator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/validation/validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/validator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixture/test_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixture/test_order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixture/test_product.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixture/test_product.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/infrastructure/main_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/infrastructure/product_repository_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/repository/order_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/repository/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/mock/repository/product_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/cart_item_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/cart_item_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/cart_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/cart_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/order_item_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/order_item_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/order_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/order_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/product_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/product_service_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +61,9 @@
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 1
@@ -56,105 +76,122 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;Go Build.go build main.go.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestCreateOrder_InvalidInput in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestCreateOrder_Success in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestCreateOrder_ValidationError in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestGetOrderById_InvalidID in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestGetOrderById_Success in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestOrderControllerTestSuite in go-ecommerce-service/test/controller.executor&quot;: &quot;Debug&quot;,
-    &quot;Go Test.go test go-ecommerce-service/test/controller.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Hasan Can&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Go Build.go build main.go.executor": "Run",
+    "Go Test.TestCreateOrder_InvalidInput in go-ecommerce-service/test/controller.executor": "Run",
+    "Go Test.TestCreateOrder_Success in go-ecommerce-service/test/controller.executor": "Run",
+    "Go Test.TestCreateOrder_ValidationError in go-ecommerce-service/test/controller.executor": "Run",
+    "Go Test.TestGetOrderById_InvalidID in go-ecommerce-service/test/controller.executor": "Run",
+    "Go Test.TestGetOrderById_Success in go-ecommerce-service/test/controller.executor": "Run",
+    "Go Test.TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller.executor": "Run",
+    "Go Test.TestOrderControllerTestSuite in go-ecommerce-service/test/controller.executor": "Debug",
+    "Go Test.TestOrderService in go-ecommerce-service/test/unit/service (1).executor": "Run",
+    "Go Test.TestOrderService in go-ecommerce-service/test/unit/service.executor": "Run",
+    "Go Test.TestOrderService/CreateOrder_DatabaseError in go-ecommerce-service/test/unit/service.executor": "Run",
+    "Go Test.TestOrderService/CreateOrder_Success in go-ecommerce-service/test/unit/service.executor": "Run",
+    "Go Test.TestOrderService/CreateOrder_ValidationError in go-ecommerce-service/test/unit/service.executor": "Run",
+    "Go Test.TestOrderService/GetOrderById_Success in go-ecommerce-service/test/unit/service.executor": "Run",
+    "Go Test.TestOrderService/UpdateOrderStatus_Success in go-ecommerce-service/test/unit/service.executor": "Run",
+    "Go Test.TestProductService in go-ecommerce-service/test/unit/service.executor": "Run",
+    "Go Test.go test go-ecommerce-service/test/controller.executor": "Run",
+    "Go Test.go test go-ecommerce-service/test/unit/service (1).executor": "Run",
+    "Go Test.go test go-ecommerce-service/test/unit/service.executor": "Run",
+    "Go Test.product_service_test.go.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboarding": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "master",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Hasan Can",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Hasan Can\GolandProjects\go-ecommerce-service\pkg" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build main.go">
-    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.TestOrderService in go-ecommerce-service/test/unit/service (1)">
+    <configuration name="TestOrderService in go-ecommerce-service/test/unit/service (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-ecommerce-service" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="go-ecommerce-service" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build product_controller.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="go-ecommerce-service" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="go-ecommerce-service" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/controller/product_controller.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestGetOrderById_InvalidID in go-ecommerce-service/test/controller" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="go-ecommerce-service" />
-      <working_directory value="$PROJECT_DIR$/test/controller" />
-      <parameters value=" -testify.m ^TestGetOrderById_InvalidID$" />
+      <working_directory value="$PROJECT_DIR$/test/unit/service" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="go-ecommerce-service/test/controller" />
+      <package value="go-ecommerce-service/test/unit/service" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestOrderControllerTestSuite\E$/^\QTestGetOrderById_InvalidID\E$" />
+      <pattern value="^\QTestOrderService\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestOrderService/CreateOrder_DatabaseError in go-ecommerce-service/test/unit/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-ecommerce-service" />
-      <working_directory value="$PROJECT_DIR$/test/controller" />
-      <parameters value=" -testify.m ^TestGetOrdersByUserId_Success$" />
+      <working_directory value="$PROJECT_DIR$/test/unit/service" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="go-ecommerce-service/test/controller" />
+      <package value="go-ecommerce-service/test/unit/service" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestOrderControllerTestSuite\E$/^\QTestGetOrdersByUserId_Success\E$" />
+      <pattern value="^\QTestOrderService\E$/^\QCreateOrder_DatabaseError\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="go test go-ecommerce-service/test/controller" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestOrderService/CreateOrder_Success in go-ecommerce-service/test/unit/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-ecommerce-service" />
-      <working_directory value="$PROJECT_DIR$/test/controller" />
+      <working_directory value="$PROJECT_DIR$/test/unit/service" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="go-ecommerce-service/test/controller" />
+      <package value="go-ecommerce-service/test/unit/service" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
+      <pattern value="^\QTestOrderService\E$/^\QCreateOrder_Success\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestOrderService/CreateOrder_ValidationError in go-ecommerce-service/test/unit/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-ecommerce-service" />
+      <working_directory value="$PROJECT_DIR$/test/unit/service" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="go-ecommerce-service/test/unit/service" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestOrderService\E$/^\QCreateOrder_ValidationError\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestOrderService/UpdateOrderStatus_Success in go-ecommerce-service/test/unit/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-ecommerce-service" />
+      <working_directory value="$PROJECT_DIR$/test/unit/service" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="go-ecommerce-service/test/unit/service" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestOrderService\E$/^\QUpdateOrderStatus_Success\E$" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build main.go" />
-        <item itemvalue="Go Build.go build product_controller.go" />
-        <item itemvalue="Go Test.go test go-ecommerce-service/test/controller" />
-        <item itemvalue="Go Test.TestGetOrdersByUserId_Success in go-ecommerce-service/test/controller" />
-        <item itemvalue="Go Test.TestGetOrderById_InvalidID in go-ecommerce-service/test/controller" />
+        <item itemvalue="Go Test.TestOrderService in go-ecommerce-service/test/unit/service (1)" />
+        <item itemvalue="Go Test.TestOrderService/CreateOrder_DatabaseError in go-ecommerce-service/test/unit/service" />
+        <item itemvalue="Go Test.TestOrderService/UpdateOrderStatus_Success in go-ecommerce-service/test/unit/service" />
+        <item itemvalue="Go Test.TestOrderService/CreateOrder_ValidationError in go-ecommerce-service/test/unit/service" />
+        <item itemvalue="Go Test.TestOrderService/CreateOrder_Success in go-ecommerce-service/test/unit/service" />
       </list>
     </recent_temporary>
   </component>
@@ -207,7 +244,8 @@
     <MESSAGE value="feat: Elasticsearch integration completed (Dual Write, Search, Sync, Fuzzy Matching)" />
     <MESSAGE value="refactor: implement centralized config, zerolog and client struct updates&#10;&#10;- Replace fmt/log with zerolog for structured logging&#10;- Update RabbitMQ and Elasticsearch clients to use Config structs&#10;- Refactor main.go to support new config and logging standards&#10;- Clean up magic strings and improve error handling" />
     <MESSAGE value="feat: dockerize application and implement retry logic for elasticsearch&#10;&#10;- Add Dockerfile and docker-compose.yml for full stack deployment&#10;- Update Elasticsearch client with retry mechanism (race condition fix)&#10;- Configure environment variables for docker network&#10;- Ensure graceful shutdown and robust startup" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: dockerize application and implement retry logic for elasticsearch&#10;&#10;- Add Dockerfile and docker-compose.yml for full stack deployment&#10;- Update Elasticsearch client with retry mechanism (race condition fix)&#10;- Configure environment variables for docker network&#10;- Ensure graceful shutdown and robust startup" />
+    <MESSAGE value="feat: add swagger api documentation support&#10;&#10;- Integrate swaggo/echo-swagger for API docs&#10;- Add general API info annotations to main.go&#10;- Add documentation for SearchProducts endpoint&#10;- Generate swagger static files" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add swagger api documentation support&#10;&#10;- Integrate swaggo/echo-swagger for API docs&#10;- Add general API info annotations to main.go&#10;- Add documentation for SearchProducts endpoint&#10;- Generate swagger static files" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

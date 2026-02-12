@@ -27,10 +27,10 @@ type IOrderService interface {
 type OrderService struct {
 	orderRepository persistence.IOrderRepository
 	validator       *rules.OrderRules
-	rabbitMQClient  *rabbitmq.RabbitMQClient
+	rabbitMQClient  rabbitmq.IRabbitMQClient
 }
 
-func NewOrderService(orderRepository persistence.IOrderRepository, rabbit *rabbitmq.RabbitMQClient) IOrderService {
+func NewOrderService(orderRepository persistence.IOrderRepository, rabbit rabbitmq.IRabbitMQClient) IOrderService {
 	return &OrderService{
 		orderRepository: orderRepository,
 		validator:       rules.NewOrderRules(),
@@ -62,7 +62,7 @@ func (orderService *OrderService) CreateOrder(order dto.CreateOrderRequest) (dto
 			"total":    orderResponse.TotalPrice,
 		}
 		body, _ := json.Marshal(payload)
-		err := orderService.rabbitMQClient.Channel.Publish(
+		err := orderService.rabbitMQClient.Publish(
 			"",
 			"order_created_queue",
 			false,

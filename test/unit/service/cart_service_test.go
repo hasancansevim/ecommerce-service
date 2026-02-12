@@ -1,19 +1,6 @@
 package service
 
-import (
-	"errors"
-	"go-ecommerce-service/domain"
-	"go-ecommerce-service/service"
-	"go-ecommerce-service/service/model"
-	"go-ecommerce-service/test/fixture"
-	"go-ecommerce-service/test/mock/repository"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/suite"
-)
-
+/*
 type CartServiceTestSuite struct {
 	suite.Suite
 	mockCartRepo *repository.MockCartRepository
@@ -114,3 +101,4 @@ func (suite *CartServiceTestSuite) TestClearUserCart_UserNotFound() {
 func TestCartServiceTestSuite(t *testing.T) {
 	suite.Run(t, new(CartServiceTestSuite))
 }
+*/

@@ -1,139 +1,111 @@
 package service
 
 import (
-	"errors"
 	"go-ecommerce-service/domain"
+	"go-ecommerce-service/internal/dto"
 	"go-ecommerce-service/service"
-	"go-ecommerce-service/test/fixture"
-	"go-ecommerce-service/test/mock/repository"
+	mock_infra "go-ecommerce-service/test/mock/infrastructure"
+	mock_repository "go-ecommerce-service/test/mock/repository"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
+	"go.uber.org/mock/gomock"
 )
 
-type OrderServiceTestSuite struct {
-	suite.Suite
-	mockOrderRepo *repository.MockOrderRepository
-	orderService  service.IOrderService
-}
+func TestOrderService(t *testing.T) {
 
-func (suite *OrderServiceTestSuite) SetupTest() {
-	suite.mockOrderRepo = new(repository.MockOrderRepository)
-	suite.orderService = service.NewOrderService(suite.mockOrderRepo)
-}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-func (suite *OrderServiceTestSuite) TestCreateOrderSuccess() {
+	mockRepo := mock_repository.NewMockIOrderRepository(ctrl)
+	rabbitMQClient := mock_infra.NewMockIRabbitMQClient(ctrl)
+	orderService := service.NewOrderService(mockRepo, rabbitMQClient)
 
-	suite.mockOrderRepo.On("CreateOrder", domain.Order{
-		Id:         0,
-		UserId:     fixture.CreateTestOrderCreate().UserId,
-		TotalPrice: fixture.CreateTestOrderCreate().TotalPrice,
-		Status:     fixture.CreateTestOrderCreate().Status,
-	}).Return(nil)
+	t.Run("GetOrderById_Success", func(t *testing.T) {
 
-	err := suite.orderService.CreateOrder(fixture.CreateTestOrderCreate())
+		orderId := int64(100)
+		expectedOrder := domain.Order{
+			Id:         int64(100),
+			UserId:     int64(100),
+			TotalPrice: 15000,
+			Status:     "Pending",
+			CreatedAt:  time.Now(),
+			UpdatedAt:  time.Now(),
+		}
 
-	assert.NoError(suite.T(), err)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
+		mockRepo.EXPECT().GetOrderById(orderId).Return(expectedOrder)
 
-func (suite *OrderServiceTestSuite) TestCreateOrder_Fail() {
-	testOrder := fixture.CreateTestOrder()
-	testOrder.Id = int64(0)
-	suite.mockOrderRepo.On("CreateOrder", domain.Order{
-		Id:         testOrder.Id,
-		UserId:     testOrder.UserId,
-		TotalPrice: testOrder.TotalPrice,
-		Status:     testOrder.Status,
-	}).Return(errors.New("user not found"))
-	err := suite.orderService.CreateOrder(fixture.CreateTestOrderCreate())
+		result := orderService.GetOrderById(orderId)
+		assert.Equal(t, expectedOrder.Id, result.Id)
+		assert.Equal(t, expectedOrder.UserId, result.UserId)
+		assert.Equal(t, expectedOrder.Status, result.Status)
 
-	assert.Error(suite.T(), err)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
+	})
 
-func (suite *OrderServiceTestSuite) TestGetOrderById_Success() {
-	expectedOrder := fixture.CreateTestOrder()
+	t.Run("CreateOrder_Success", func(t *testing.T) {
+		expectedOrder := domain.Order{
+			UserId:     int64(100),
+			TotalPrice: 15000,
+			Status:     "Pending",
+			CreatedAt:  time.Now(),
+			UpdatedAt:  time.Now(),
+		}
 
-	suite.mockOrderRepo.On("GetOrderById", expectedOrder.Id).Return(expectedOrder)
+		createOrderReq := dto.CreateOrderRequest{
+			UserId:     int64(100),
+			TotalPrice: 15000,
+			Status:     "Pending",
+		}
 
-	getOrderById := suite.orderService.GetOrderById(expectedOrder.Id)
+		mockRepo.EXPECT().CreateOrder(gomock.Any()).Return(expectedOrder, nil)
+		rabbitMQClient.EXPECT().Publish(
+			"",
+			"order_created_queue",
+			false,
+			false,
+			gomock.Any(),
+		).Return(nil)
 
-	assert.Equal(suite.T(), expectedOrder, getOrderById)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
+		result, err := orderService.CreateOrder(createOrderReq)
 
-func (suite *OrderServiceTestSuite) TestGetOrdersByUserId_Success() {
-	expectedOrders := fixture.CreateTestGetOrdersByUserId()
-	suite.mockOrderRepo.On("GetOrdersByUserId", int64(1)).
-		Return(expectedOrders, nil)
+		assert.NoError(t, err)
+		assert.Equal(t, expectedOrder.Status, result.Status)
+		assert.Equal(t, expectedOrder.UserId, result.UserId)
 
-	getOrdersByUserId, err := suite.orderService.GetOrdersByUserId(int64(1))
+		time.Sleep(5 * time.Second)
+	})
 
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), expectedOrders, getOrdersByUserId)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
+	t.Run("CreateOrder_ValidationError", func(t *testing.T) {
 
-func (suite *OrderServiceTestSuite) TestGetAllOrders() {
-	expectedOrders := fixture.CreateTestGetAllOrders()
-	suite.mockOrderRepo.On("GetAllOrders").Return(expectedOrders, nil)
+		createOrderReq := dto.CreateOrderRequest{
+			UserId:     int64(100),
+			TotalPrice: -150,
+			Status:     "Pending",
+		}
 
-	orders, err := suite.orderService.GetAllOrders()
+		mockRepo.EXPECT().CreateOrder(gomock.Any()).Times(0)
+		rabbitMQClient.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+		result, err := orderService.CreateOrder(createOrderReq)
+		assert.Error(t, err)
+		assert.Equal(t, int64(0), result.Id)
+	})
 
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), expectedOrders, orders)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
+	t.Run("UpdateOrderStatus_Success", func(t *testing.T) {
+		orderId := int64(1)
+		newStatus := "Shipped"
 
-func (suite *OrderServiceTestSuite) TestUpdateOrderStatus() {
+		expectedOrder := domain.Order{
+			Id:         int64(1),
+			UserId:     int64(1),
+			TotalPrice: 15000,
+			Status:     "Shipped",
+		}
 
-	suite.mockOrderRepo.On("UpdateOrderStatus", int64(1), false).Return(nil)
-	err := suite.orderService.UpdateOrderStatus(int64(1), false)
+		mockRepo.EXPECT().UpdateOrderStatus(orderId, newStatus).Return(expectedOrder, nil)
+		response, err := orderService.UpdateOrderStatus(orderId, newStatus)
 
-	assert.NoError(suite.T(), err)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
-
-func (suite *OrderServiceTestSuite) TestDeleteOrderById_Success() {
-	orderId := int64(1)
-
-	suite.mockOrderRepo.On("DeleteOrderById", orderId).Return(nil)
-
-	err := suite.orderService.DeleteOrderById(orderId)
-
-	assert.NoError(suite.T(), err)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
-
-func (suite *OrderServiceTestSuite) TestUpdateOrderTotalPrice_Success() {
-	orderId := int64(1)
-	newPrice := float32(150.50)
-
-	suite.mockOrderRepo.On("UpdateOrderTotalPrice", orderId, newPrice).Return(nil)
-
-	err := suite.orderService.UpdateOrderTotalPrice(orderId, newPrice)
-
-	assert.NoError(suite.T(), err)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
-
-func (suite *OrderServiceTestSuite) TestGetOrdersByStatus_Success() {
-	expectedOrders := []domain.Order{
-		fixture.CreateTestOrder(),
-		{Id: 2, UserId: 1, TotalPrice: 200.0, Status: true},
-	}
-
-	suite.mockOrderRepo.On("GetOrdersByStatus", "true").Return(expectedOrders, nil)
-
-	orders, err := suite.orderService.GetOrdersByStatus("true")
-
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), expectedOrders, orders)
-	suite.mockOrderRepo.AssertExpectations(suite.T())
-}
-
-func TestOrderTestSuite(t *testing.T) {
-	suite.Run(t, new(OrderServiceTestSuite))
+		assert.NoError(t, err)
+		assert.Equal(t, expectedOrder.Status, response.Status)
+	})
 }

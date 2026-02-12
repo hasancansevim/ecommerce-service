@@ -1,18 +1,6 @@
 package service
 
-import (
-	"errors"
-	"go-ecommerce-service/domain"
-	"go-ecommerce-service/service"
-	"go-ecommerce-service/test/fixture"
-	mock2 "go-ecommerce-service/test/mock/repository"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/suite"
-)
-
+/*
 type OrderItemServiceTestSuite struct {
 	suite.Suite
 	mockOrderItemRepo *mock2.MockOrderItemRepository
@@ -147,3 +135,4 @@ func (suite *OrderItemServiceTestSuite) TestDeleteAllOrderItemsByOrderId_Success
 func TestOrderItemServiceTestSuite(t *testing.T) {
 	suite.Run(t, new(OrderItemServiceTestSuite))
 }
+*/

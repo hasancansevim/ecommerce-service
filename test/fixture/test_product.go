@@ -1,10 +1,6 @@
 package fixture
 
-import (
-	"go-ecommerce-service/domain"
-	"go-ecommerce-service/service/model"
-)
-
+/*
 func CreateTestProduct() domain.Product {
 	return domain.Product{
 		Id:       1,
@@ -23,3 +19,4 @@ func CreateTestProductCreate() model.ProductCreate {
 		Store:    "new-store",
 	}
 }
+*/

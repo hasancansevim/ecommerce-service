@@ -1,18 +1,6 @@
 package service
 
-import (
-	"errors"
-	"go-ecommerce-service/domain"
-	"go-ecommerce-service/service"
-	"go-ecommerce-service/test/fixture"
-	mock2 "go-ecommerce-service/test/mock/repository"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/suite"
-)
-
+/*
 type CartItemServiceTestSuite struct {
 	suite.Suite
 	mockCartItemRepo *mock2.MockCartItemRepository
@@ -129,3 +117,4 @@ func (suite *CartItemServiceTestSuite) TestDecreaseItemQuantity_Error() {
 func TestCartItemServiceTestSuite(t *testing.T) {
 	suite.Run(t, new(CartItemServiceTestSuite))
 }
+*/

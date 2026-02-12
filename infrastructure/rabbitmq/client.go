@@ -7,6 +7,10 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+type IRabbitMQClient interface {
+	Publish(exchange, routingKey string, mandatory, immediate bool, msg amqp.Publishing) error
+}
+
 type RabbitMQClient struct {
 	Conn    *amqp.Connection
 	Channel *amqp.Channel
@@ -45,4 +49,8 @@ func (rc *RabbitMQClient) Close() {
 	if rc.Conn != nil {
 		rc.Conn.Close()
 	}
+}
+
+func (rc *RabbitMQClient) Publish(exchange, routingKey string, mandatory, immediate bool, msg amqp.Publishing) error {
+	return rc.Channel.Publish(exchange, routingKey, mandatory, immediate, msg)
 }

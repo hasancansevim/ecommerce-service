@@ -1,6 +1,9 @@
 package rules
 
-import "go-ecommerce-service/internal/dto"
+import (
+	"errors"
+	"go-ecommerce-service/internal/dto"
+)
 
 type OrderRules struct {
 	BaseRules[dto.CreateOrderRequest]
@@ -8,4 +11,15 @@ type OrderRules struct {
 
 func NewOrderRules() *OrderRules {
 	return &OrderRules{}
+}
+
+func (r *OrderRules) ValidateCreateOrder(req dto.CreateOrderRequest) error {
+	if err := r.ValidateStructure(req); err != nil {
+		return err
+	}
+
+	if req.TotalPrice < 0 {
+		return errors.New("Sipariş Tutarı 0 dan büyük olmalıdır!")
+	}
+	return nil
 }

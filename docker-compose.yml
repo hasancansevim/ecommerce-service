@@ -68,7 +68,7 @@ services:
     container_name: rabbitmq
     ports:
       - "5672:5672"
-      - "15672:15672" # Yönetim Paneli (http://localhost:15672)
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -88,7 +88,6 @@ services:
     volumes:
       - elastic_data:/usr/share/elasticsearch/data
 
-# Verilerin kalıcı olması için Volume tanımları
 volumes:
   postgres_data:
   elastic_data:

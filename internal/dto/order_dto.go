@@ -13,6 +13,6 @@ type OrderResponse struct {
 
 type CreateOrderRequest struct {
 	UserId     int64   `json:"user_id"`
-	TotalPrice float32 `json:"total_price"`
+	TotalPrice float32 `json:"total_price" validate:"required,gt=0"`
 	Status     string  `json:"status"`
 }
