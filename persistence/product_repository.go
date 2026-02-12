@@ -104,9 +104,9 @@ func (productRepository *ProductRepository) AddProduct(product domain.Product) (
 	defer res.Body.Close()
 
 	if res.IsError() {
-		fmt.Printf("Elasticsearch Kayıt Hatası :%s\n", res.String())
+		fmt.Printf("Elasticsearch index error: %s\n", res.String())
 	} else {
-		fmt.Printf("Ürün Elasticsearch'e eklendi! ID : %d\n", addedProduct.Id)
+		fmt.Printf("Product indexed in Elasticsearch! ID: %d\n", addedProduct.Id)
 	}
 
 	return addedProduct, err
@@ -142,7 +142,7 @@ func (productRepository *ProductRepository) SearchProducts(query string) ([]doma
 	searchQuery := map[string]interface{}{
 		"query": map[string]interface{}{
 			"bool": map[string]interface{}{
-				// Yazım Hataları
+				// Fuzzy match (typos)
 				"should": []interface{}{
 					map[string]interface{}{
 						"multi_match": map[string]interface{}{
@@ -151,7 +151,7 @@ func (productRepository *ProductRepository) SearchProducts(query string) ([]doma
 							"fuzziness": "AUTO",
 						},
 					},
-					// Name içinde **query** ara
+					// Search query in Name
 					map[string]interface{}{
 						"wildcard": map[string]interface{}{
 							"name": map[string]interface{}{
@@ -159,7 +159,7 @@ func (productRepository *ProductRepository) SearchProducts(query string) ([]doma
 							},
 						},
 					},
-					// Slug içinde **query** ara
+					// Search query in Slug
 					map[string]interface{}{
 						"wildcard": map[string]interface{}{
 							"slug": map[string]interface{}{
@@ -188,7 +188,7 @@ func (productRepository *ProductRepository) SearchProducts(query string) ([]doma
 	defer res.Body.Close()
 
 	if res.IsError() {
-		return nil, fmt.Errorf("Elasticsearch cevap hatası :%s", res.String())
+		return nil, fmt.Errorf("Elasticsearch response error: %s", res.String())
 	}
 
 	type ESResponse struct {
@@ -232,7 +232,7 @@ func (productRepository *ProductRepository) IndexProduct(product domain.Product)
 	}
 	defer res.Body.Close()
 	if res.IsError() {
-		return fmt.Errorf("Elasticsearch hatası: %s", res.String())
+		return fmt.Errorf("Elasticsearch error: %s", res.String())
 	}
 	return nil
 }

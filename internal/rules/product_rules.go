@@ -21,10 +21,10 @@ func (r *ProductRules) ValidateCreate(req dto.CreateProductRequest) error {
 
 	// Business Rules
 	if req.Price < 0 {
-		return errors.New("Ürün fiyatı 0 dan küçük olamaz.")
+		return errors.New("Product price cannot be less than 0")
 	}
 	if req.Discount < 0 {
-		return errors.New("İndirim oranı 0 dan küçük olamaz")
+		return errors.New("Discount rate cannot be less than 0")
 	}
 
 	return nil

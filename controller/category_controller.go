@@ -82,7 +82,7 @@ func (categoryController *CategoryController) UpdateCategory(c echo.Context) err
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return categoryController.Success(c, category, "Kategori Güncellendi")
+	return categoryController.Success(c, category, "Category updated")
 }
 
 func (categoryController *CategoryController) DeleteCategory(c echo.Context) error {
@@ -94,7 +94,7 @@ func (categoryController *CategoryController) DeleteCategory(c echo.Context) err
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return categoryController.Success(c, nil, "Kategori Silindi")
+	return categoryController.Success(c, nil, "Category deleted")
 }
 
 func parseBool(str string) bool {

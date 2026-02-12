@@ -147,7 +147,7 @@ func (productService *ProductService) SearchProducts(query string) ([]dto.Produc
 func (productService *ProductService) SyncElasticsearch() error {
 	allProducts := productService.GetAllProducts()
 
-	fmt.Printf("🔄 Senkronizasyon Başlıyor... Toplam Ürün: %d\n", len(allProducts))
+	fmt.Printf("🔄 Sync starting... Total products: %d\n", len(allProducts))
 	for _, p := range allProducts {
 		err := productService.productRepository.IndexProduct(domain.Product{
 			Id:              p.Id,
@@ -167,10 +167,10 @@ func (productService *ProductService) SyncElasticsearch() error {
 			UpdatedAt:       time.Now(),
 		})
 		if err != nil {
-			fmt.Printf("❌ Hata (ID: %d): %v\n", p.Id, err)
+			fmt.Printf("❌ Error (ID: %d): %v\n", p.Id, err)
 			continue
 		}
-		fmt.Printf("✅ Indekslendi: %s\n", p.Name)
+		fmt.Printf("✅ Indexed: %s\n", p.Name)
 	}
 
 	return nil

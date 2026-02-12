@@ -30,7 +30,7 @@ func (productController *ProductController) RegisterRoutes(e *echo.Echo) {
 
 func (productController *ProductController) GetAllProducts(c echo.Context) error {
 	products := productController.productService.GetAllProducts()
-	return productController.Success(c, products, "Tüm Ürünler Listelendi")
+	return productController.Success(c, products, "All products listed")
 }
 
 func (productController *ProductController) GetProductById(c echo.Context) error {
@@ -44,7 +44,7 @@ func (productController *ProductController) GetProductById(c echo.Context) error
 		return productByIdErr
 	}
 
-	return productController.Success(c, product, "Ürün Getirildi")
+	return productController.Success(c, product, "Product retrieved")
 }
 
 func (productController *ProductController) AddProduct(c echo.Context) error {
@@ -58,7 +58,7 @@ func (productController *ProductController) AddProduct(c echo.Context) error {
 		return serviceErr
 	}
 
-	return productController.Success(c, addedProduct, "Ürün Eklendi")
+	return productController.Success(c, addedProduct, "Product added")
 }
 
 func (productController *ProductController) UpdateProduct(c echo.Context) error {
@@ -75,7 +75,7 @@ func (productController *ProductController) UpdateProduct(c echo.Context) error 
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return productController.Success(c, updatedProduct, "Ürün Güncellendi")
+	return productController.Success(c, updatedProduct, "Product updated")
 }
 
 func (productController *ProductController) DeleteProduct(c echo.Context) error {
@@ -88,12 +88,12 @@ func (productController *ProductController) DeleteProduct(c echo.Context) error 
 		return serviceErr
 	}
 
-	return productController.Created(c, nil, "Ürün Silindi")
+	return productController.Created(c, nil, "Product deleted")
 }
 
 // SearchProducts godoc
-// @Summary      Ürün Arama
-// @Description  Elasticsearch kullanarak ürünlerde akıllı arama yapar (Fuzzy & Wildcard).
+// @Summary      Search Products
+// @Description  Smart search on products using Elasticsearch (Fuzzy & Wildcard).
 // @Tags         products
 // @Accept       json
 // @Produce      json
@@ -110,7 +110,7 @@ func (productController *ProductController) SearchProducts(c echo.Context) error
 		return productController.BadRequest(c, err)
 	}
 
-	return productController.Success(c, products, "Arama Sonuçları")
+	return productController.Success(c, products, "Search results")
 }
 
 func (productController *ProductController) SyncElasticsearch(ctx echo.Context) error {
@@ -118,5 +118,5 @@ func (productController *ProductController) SyncElasticsearch(ctx echo.Context) 
 	if err != nil {
 		return productController.BadRequest(ctx, err)
 	}
-	return productController.Success(ctx, nil, "Tüm ürünler başarıyla Elasticsearch'e aktarıldı! 🚀")
+	return productController.Success(ctx, nil, "All products successfully synced to Elasticsearch! 🚀")
 }

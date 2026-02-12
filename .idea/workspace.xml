@@ -4,29 +4,54 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: add swagger api documentation support&#10;&#10;- Integrate swaggo/echo-swagger for API docs&#10;- Add general API info annotations to main.go&#10;- Add documentation for SearchProducts endpoint&#10;- Generate swagger static files">
-      <change afterPath="$PROJECT_DIR$/manage.ps1" afterDir="false" />
+    <list default="true" id="3c973f42-3ee2-4736-bf54-b8aa4d77e199" name="Changes" comment="feat: added unit tests for product and order services with mock isolation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/auth_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/cart_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/cart_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/cart_item_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/category_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/category_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/order_item_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/order_item_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/product_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/store_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/store_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/user_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/rabbitmq/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/dto/order_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/order_dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/infrastructure/elasticsearch/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/elasticsearch/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/rules/order_rules.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/rules/order_rules.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/rules/product_rules.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/rules/product_rules.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manage.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/manage.ps1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/persistence/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/persistence/product_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/errors/app_error.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/errors/app_error.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/middleware/error_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/middleware/error_handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/order_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/order_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/validation/order_validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/order_validator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/validation/validator.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/validation/validator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/fixture/test_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixture/test_order.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/fixture/test_product.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixture/test_product.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/infrastructure/main_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/infrastructure/product_repository_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/mock/repository/order_repository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/mock/repository/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/mock/repository/product_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/unit/service/cart_item_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/cart_item_service_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/unit/service/cart_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/cart_service_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/unit/service/order_item_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/order_item_service_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/unit/service/order_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/order_service_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/unit/service/product_service_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/unit/service/product_service_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/product_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/product_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/worker/order_worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/worker/order_worker.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/controller/auth_controller_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixture/test_cart.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixture/test_cart_item.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixture/test_order.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixture/test_order_item.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixture/test_product.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixture/test_users.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/infrastructure/testdata/product.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/infrastructure/testdata/registry.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/infrastructure/testdata/types.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/jwt_manager.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/repository/cart_item_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/repository/cart_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/repository/order_item_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/repository/user_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/service/auth_service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/service/cart_item_service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/service/cart_service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/mock/service/order_item_service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/auth_service_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/cart_item_service_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/cart_service_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unit/service/order_item_service_test.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -245,7 +270,8 @@
     <MESSAGE value="refactor: implement centralized config, zerolog and client struct updates&#10;&#10;- Replace fmt/log with zerolog for structured logging&#10;- Update RabbitMQ and Elasticsearch clients to use Config structs&#10;- Refactor main.go to support new config and logging standards&#10;- Clean up magic strings and improve error handling" />
     <MESSAGE value="feat: dockerize application and implement retry logic for elasticsearch&#10;&#10;- Add Dockerfile and docker-compose.yml for full stack deployment&#10;- Update Elasticsearch client with retry mechanism (race condition fix)&#10;- Configure environment variables for docker network&#10;- Ensure graceful shutdown and robust startup" />
     <MESSAGE value="feat: add swagger api documentation support&#10;&#10;- Integrate swaggo/echo-swagger for API docs&#10;- Add general API info annotations to main.go&#10;- Add documentation for SearchProducts endpoint&#10;- Generate swagger static files" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add swagger api documentation support&#10;&#10;- Integrate swaggo/echo-swagger for API docs&#10;- Add general API info annotations to main.go&#10;- Add documentation for SearchProducts endpoint&#10;- Generate swagger static files" />
+    <MESSAGE value="feat: added unit tests for product and order services with mock isolation" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: added unit tests for product and order services with mock isolation" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

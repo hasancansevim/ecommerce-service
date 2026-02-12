@@ -30,7 +30,7 @@ import (
 
 // @title           E-Commerce API
 // @version         1.0
-// @description     Go ile geliştirilmiş, Dockerize edilmiş, Elasticsearch destekli E-Ticaret Backend'i.
+// @description     Go e-commerce backend with Docker, Elasticsearch, Redis, RabbitMQ.
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name    Hasan Can Sevim
@@ -68,15 +68,15 @@ func main() {
 	for i := 0; i < 5; i++ {
 		dbPool, dbPoolErr = postgresql.GetConnectionPool(ctx, cfg.Database)
 		if dbPoolErr == nil {
-			log.Info().Msg("Veritabanı bağlantısı başarılı! 🚀")
+			log.Info().Msg("Database connection successful! 🚀")
 			break
 		}
-		log.Warn().Err(dbPoolErr).Msg("Veritabanına bağlanılamadı, tekrar deneniyor...")
+		log.Warn().Err(dbPoolErr).Msg("Could not connect to database, retrying...")
 		time.Sleep(3 * time.Second)
 	}
 
 	if dbPoolErr != nil {
-		log.Fatal().Err(dbPoolErr).Msg("Veritabanına bağlanılamadı, pes ediliyor: ")
+		log.Fatal().Err(dbPoolErr).Msg("Could not connect to database, giving up")
 	}
 
 	defer dbPool.Close()
@@ -89,25 +89,25 @@ func main() {
 		rabbitClient, rabbitErr = rabbitmq.NewRabbitMQClient(cfg.RabbitMQ)
 
 		if rabbitErr == nil {
-			log.Info().Msg("RabbitMQ bağlantısı başarılı! 🚀")
+			log.Info().Msg("RabbitMQ connection successful! 🚀")
 			break
 		}
 
-		log.Warn().Err(dbPoolErr).Msg("RabbitMQ'ya bağlanılamadı, tekrar deneniyor...")
+		log.Warn().Err(rabbitErr).Msg("Could not connect to RabbitMQ, retrying...")
 		time.Sleep(3 * time.Second)
 	}
 
 	if rabbitErr != nil {
-		log.Fatal().Err(rabbitErr).Msg("RabbitMQ bağlantısı kurulamadı, pes ediliyor.")
+		log.Fatal().Err(rabbitErr).Msg("Could not establish RabbitMQ connection, giving up")
 	}
 	defer rabbitClient.Close()
 
 	// ElasticSearch
 	esClient := elasticsearch.NewElasticSearchClient(cfg.ElasticSearch)
 	if _, err := esClient.Info(); err != nil {
-		log.Fatal().Err(err).Msg("ElasticSearch bağlantısı kurulamadı.")
+		log.Fatal().Err(err).Msg("Could not establish ElasticSearch connection")
 	}
-	log.Info().Msg("ElasticSearch bağlantısı başarılı! 🚀")
+	log.Info().Msg("ElasticSearch connection successful! 🚀")
 
 	// Dependency Injection
 	productRepository := persistence.NewProductRepository(dbPool, esClient)
@@ -173,7 +173,7 @@ func main() {
 
 	go func() {
 		if err := e.Start(":" + cfg.Server.Port); err != nil && err != http.ErrServerClosed {
-			log.Fatal().Err(err).Msg("Sunucu başlatılamadı")
+			log.Fatal().Err(err).Msg("Failed to start server")
 		}
 	}()
 
@@ -181,14 +181,14 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	<-quit
 
-	log.Warn().Msg("⚠️ Kapanma sinyali alındı! Uygulama zarifçe kapatılıyor...")
+	log.Warn().Msg("⚠️ Shutdown signal received! Gracefully shutting down...")
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	if err := e.Shutdown(ctx); err != nil {
-		log.Fatal().Err(err).Msg("Sunucu zorla kapatıldı")
+		log.Fatal().Err(err).Msg("Server forced to shutdown")
 	}
 
-	log.Info().Msg("🔌 Bağlantılar kapatılıyor...")
-	log.Info().Msg("👋 Güle güle! Sistem başarıyla kapandı.")
+	log.Info().Msg("🔌 Closing connections...")
+	log.Info().Msg("👋 Goodbye! System shut down successfully.")
 }

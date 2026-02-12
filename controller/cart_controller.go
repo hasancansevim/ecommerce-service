@@ -79,5 +79,5 @@ func (cartController *CartController) ClearUserCarts(c echo.Context) error {
 		return serviceErr
 	}
 
-	return cartController.Created(c, nil, "Kullanıcının Sepeti Silindi")
+	return cartController.Created(c, nil, "User cart deleted")
 }

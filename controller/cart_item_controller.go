@@ -67,7 +67,7 @@ func (cartItemController *CartItemController) UpdateItemQuantity(c echo.Context)
 	if serviceErr != nil {
 		return queryParamErr
 	}
-	return cartItemController.Created(c, cartItem, "Sepet Öğesi Güncellendi")
+	return cartItemController.Created(c, cartItem, "Cart item updated")
 }
 
 func (cartItemController *CartItemController) RemoveItemFromCart(c echo.Context) error {
@@ -78,7 +78,7 @@ func (cartItemController *CartItemController) RemoveItemFromCart(c echo.Context)
 	if serviceErr := cartItemController.cartItemService.RemoveItemFromCart(id); serviceErr != nil {
 		return serviceErr
 	}
-	return cartItemController.Created(c, nil, "Sepetten Ürün Silindi")
+	return cartItemController.Created(c, nil, "Product removed from cart")
 }
 
 func (cartItemController *CartItemController) ClearCartItems(c echo.Context) error {
@@ -89,7 +89,7 @@ func (cartItemController *CartItemController) ClearCartItems(c echo.Context) err
 	if serviceErr := cartItemController.cartItemService.ClearCartItems(cartId); serviceErr != nil {
 		return serviceErr
 	}
-	return cartItemController.Created(c, nil, "Sepetteki Ürünler Silindi")
+	return cartItemController.Created(c, nil, "Cart items cleared")
 }
 
 func (cartItemController *CartItemController) IncreaseItemQuantity(c echo.Context) error {

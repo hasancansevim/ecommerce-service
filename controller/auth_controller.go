@@ -41,7 +41,7 @@ func (authController *AuthController) Register(c echo.Context) error {
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return authController.Created(c, registerRequestModel, "Kayıt Başarılı")
+	return authController.Created(c, registerRequestModel, "Registration successful")
 }
 
 func (authController *AuthController) Login(c echo.Context) error {
@@ -56,5 +56,5 @@ func (authController *AuthController) Login(c echo.Context) error {
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return authController.Success(c, token, "Giriş Başarılı")
+	return authController.Success(c, token, "Login successful")
 }

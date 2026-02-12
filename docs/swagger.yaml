@@ -1,0 +1,85 @@
+basePath: /api/v1
+definitions:
+  dto.ProductResponse:
+    properties:
+      base_price:
+        type: number
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      discount:
+        type: number
+      id:
+        type: integer
+      image_url:
+        type: string
+      is_active:
+        type: boolean
+      is_featured:
+        type: boolean
+      meta_description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      slug:
+        type: string
+      stock_quantity:
+        type: integer
+      store_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: Hasan Can Sevim
+    url: http://www.swagger.io/support
+  description: Go e-commerce backend with Docker, Elasticsearch, Redis, RabbitMQ.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: E-Commerce API
+  version: "1.0"
+paths:
+  /products/search:
+    get:
+      consumes:
+      - application/json
+      description: Smart search on products using Elasticsearch (Fuzzy & Wildcard).
+      parameters:
+      - description: 'Aranacak Kelime (Örn: ''laptop'')'
+        in: query
+        name: q
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search Products
+      tags:
+      - products
+swagger: "2.0"

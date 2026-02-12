@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   # -------------------------
-  # Go Uygulaması (App)
+  # Go Application
   # -------------------------
   app:
     build: .
@@ -32,7 +32,7 @@ services:
       # ElasticSearch
       - ELASTICSEARCH_HOST=elasticsearch
       - ELASTICSEARCH_PORT=9200
-      # Sunucu Ayarları
+      # Server
       - SERVER_PORT=8080
       - ENVIRONMENT=docker
 
@@ -47,7 +47,7 @@ services:
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=ecommerce
     ports:
-      - "5432:5432" # Dışarıdan erişmek için (DbBeaver vs.)
+      - "5432:5432" # External access (DbBeaver etc.)
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

@@ -19,7 +19,7 @@ func (r *OrderRules) ValidateCreateOrder(req dto.CreateOrderRequest) error {
 	}
 
 	if req.TotalPrice < 0 {
-		return errors.New("Sipariş Tutarı 0 dan büyük olmalıdır!")
+		return errors.New("Order total must be greater than 0")
 	}
 	return nil
 }

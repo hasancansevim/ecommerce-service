@@ -20,14 +20,14 @@ func NewElasticSearchClient(cfg config.ElasticSearchConfig) *elasticsearch.Clien
 
 	es, err := elasticsearch.NewClient(esCfg)
 	if err != nil {
-		log.Fatal().Err(err).Msg("❌ Elasticsearch İstemcisi Oluşturulamadı")
+		log.Fatal().Err(err).Msg("❌ Failed to create Elasticsearch client")
 	}
 
 	for i := 0; i < 20; i++ {
 		res, err := es.Info()
 		if err == nil && !res.IsError() {
 			res.Body.Close()
-			log.Info().Str("address", address).Msg("✅ Elasticsearch Bağlantısı Başarılı! 🚀")
+			log.Info().Str("address", address).Msg("✅ Elasticsearch connection successful! 🚀")
 			return es
 		}
 
@@ -35,11 +35,11 @@ func NewElasticSearchClient(cfg config.ElasticSearchConfig) *elasticsearch.Clien
 			Err(err).
 			Str("host", cfg.Host).
 			Int("deneme", i+1).
-			Msg("Elasticsearch'e bağlanılamadı, tekrar deneniyor...")
+			Msg("Could not connect to Elasticsearch, retrying...")
 
 		time.Sleep(3 * time.Second)
 	}
 
-	log.Fatal().Msg("❌ Elasticsearch bağlantısı kurulamadı, pes ediliyor.")
+	log.Fatal().Msg("❌ Could not establish Elasticsearch connection, giving up")
 	return nil
 }

@@ -10,5 +10,5 @@ switch ($cmd) {
     "up-d"    { swag init; docker-compose up -d --build }
     "down"    { docker-compose down }
     "infra"   { docker-compose up -d postgres redis rabbitmq elasticsearch }
-    default   { Write-Host "Kullanım: .\manage.ps1 [swagger|run|up|down|infra]" }
+    default   { Write-Host "Usage: .\manage.ps1 [swagger|run|up|down|infra]" }
 }

@@ -9,7 +9,7 @@ import (
 
 func CustomHTTPErrorHandler(err error, c echo.Context) {
 	code := http.StatusInternalServerError
-	var response interface{} = "Sunucu Hatası"
+	var response interface{} = "Internal Server Error"
 
 	switch e := err.(type) {
 
@@ -29,7 +29,7 @@ func CustomHTTPErrorHandler(err error, c echo.Context) {
 
 	default:
 		response = map[string]interface{}{
-			"message": "Bilinmeyen Bir Hata Oluştu",
+			"message": "An unknown error occurred",
 			"details": err.Error(),
 		}
 	}

@@ -39,7 +39,7 @@ func (orderController *OrderController) CreateOrder(c echo.Context) error {
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return orderController.Success(c, createdOrder, "Sipariş Oluşturuldu")
+	return orderController.Success(c, createdOrder, "Order created")
 }
 
 func (orderController *OrderController) GetOrderById(c echo.Context) error {
@@ -84,7 +84,7 @@ func (orderController *OrderController) UpdateOrderStatus(c echo.Context) error 
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return orderController.Success(c, updatedOrder, "Sipariş Durumu Güncellendi")
+	return orderController.Success(c, updatedOrder, "Order status updated")
 }
 
 func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
@@ -96,7 +96,7 @@ func (orderController *OrderController) DeleteOrderById(c echo.Context) error {
 	if serviceErr := orderController.orderService.DeleteOrderById(id); serviceErr != nil {
 		return serviceErr
 	}
-	return orderController.Created(c, nil, "Sipariş Silinid")
+	return orderController.Created(c, nil, "Order deleted")
 }
 
 func (orderController *OrderController) UpdateOrderTotalPrice(c echo.Context) error {
@@ -115,7 +115,7 @@ func (orderController *OrderController) UpdateOrderTotalPrice(c echo.Context) er
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return orderController.Success(c, updatedOrder, "Sipariş Tutarı Güncellendi")
+	return orderController.Success(c, updatedOrder, "Order total updated")
 }
 
 func (orderController *OrderController) GetOrdersByStatus(c echo.Context) error {

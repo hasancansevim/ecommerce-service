@@ -41,7 +41,7 @@ func (orderItemController *OrderItemController) AddOrderItem(c echo.Context) err
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return orderItemController.Success(c, addedOrderItem, "Sipariş Öğesi Eklendi")
+	return orderItemController.Success(c, addedOrderItem, "Order item added")
 }
 
 func (orderItemController *OrderItemController) GetOrderItemById(c echo.Context) error {
@@ -55,7 +55,7 @@ func (orderItemController *OrderItemController) GetOrderItemById(c echo.Context)
 		return serviceErr
 	}
 
-	return orderItemController.Success(c, getOrderItem, "Sipariş Öğresi Getirildi")
+	return orderItemController.Success(c, getOrderItem, "Order item retrieved")
 }
 
 func (orderItemController *OrderItemController) GetOrderItems(c echo.Context) error {
@@ -71,7 +71,7 @@ func (orderItemController *OrderItemController) GetOrderItems(c echo.Context) er
 		if serviceErr != nil {
 			return serviceErr
 		}
-		return orderItemController.Success(c, getOrderItemsByOrderId, "Siparişe Ait Sipariş Öğeleri Getirildi")
+		return orderItemController.Success(c, getOrderItemsByOrderId, "Order items for order retrieved")
 	}
 	if productId != "" {
 		productId, convertErr := strconv.Atoi(productId)
@@ -103,7 +103,7 @@ func (orderItemController *OrderItemController) UpdateOrderItem(c echo.Context) 
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return orderItemController.Created(c, updatedOrderItem, "Sipariş Öğesi Güncellendi")
+	return orderItemController.Created(c, updatedOrderItem, "Order item updated")
 }
 
 func (orderItemController *OrderItemController) UpdateOrderItemQuantity(c echo.Context) error {
@@ -122,7 +122,7 @@ func (orderItemController *OrderItemController) UpdateOrderItemQuantity(c echo.C
 	if serviceErr != nil {
 		return serviceErr
 	}
-	return orderItemController.Created(c, updatedOrderItem, "Sipariş Öğesi Adedi Arttıldı")
+	return orderItemController.Created(c, updatedOrderItem, "Order item quantity increased")
 }
 
 func (orderItemController *OrderItemController) DeleteOrderItemById(c echo.Context) error {
@@ -134,7 +134,7 @@ func (orderItemController *OrderItemController) DeleteOrderItemById(c echo.Conte
 	if serviceErr := orderItemController.orderItemService.DeleteOrderItemById(id); serviceErr != nil {
 		return serviceErr
 	}
-	return orderItemController.Created(c, nil, "Sipariş Öğesi Silindi")
+	return orderItemController.Created(c, nil, "Order item deleted")
 }
 
 func (orderItemController *OrderItemController) DeleteAllOrderItemsByOrderId(c echo.Context) error {
@@ -147,5 +147,5 @@ func (orderItemController *OrderItemController) DeleteAllOrderItemsByOrderId(c e
 	if serviceErr := orderItemController.orderItemService.DeleteAllOrderItemsByOrderId(int64(orderId)); serviceErr != nil {
 		return serviceErr
 	}
-	return orderItemController.Created(c, nil, "Siparişe Ait Tüm İlgili Sipariş Öğeleri Silindi")
+	return orderItemController.Created(c, nil, "All order items for order deleted")
 }

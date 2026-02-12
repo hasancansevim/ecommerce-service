@@ -31,26 +31,26 @@ func (w *OrderWorker) Start() {
 		nil,
 	)
 	if err != nil {
-		log.Error().Err(err).Msg("❌ Worker Kuyruğa Bağlanamadı")
+		log.Error().Err(err).Msg("❌ Worker could not connect to queue")
 		return
 	}
 
 	go func() {
-		log.Info().Msg("👷‍♂️ Worker İş Başında! Siparişler bekleniyor...")
+		log.Info().Msg("👷‍♂️ Worker ready! Waiting for orders...")
 
 		for d := range msgs {
 			order := OrderMessage{}
 			json.Unmarshal(d.Body, &order)
 
-			log.Info().Int64("order_id", order.OrderId).Msg("📩 Yeni İş Alındı")
+			log.Info().Int64("order_id", order.OrderId).Msg("📩 New job received")
 
 			_, err := w.repository.UpdateOrderStatus(order.OrderId, "Shipped")
 
 			if err != nil {
-				log.Error().Err(err).Msg("Sipariş güncellenemedi")
+				log.Error().Err(err).Msg("Order update failed")
 			}
 
-			log.Info().Int64("order_id", order.OrderId).Msg("✅ Stok Güncellendi ve Durum Değişti")
+			log.Info().Int64("order_id", order.OrderId).Msg("✅ Stock updated and status changed")
 			d.Ack(false)
 		}
 	}()

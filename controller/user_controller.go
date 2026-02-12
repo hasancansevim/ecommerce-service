@@ -24,5 +24,5 @@ func (userController *UserController) RegisterRoutes(e *echo.Echo) {
 func (userController *UserController) GetAllUsers(c echo.Context) error {
 	allUsers := userController.userService.GetAllUsers()
 
-	return userController.Success(c, allUsers, "Tüm Kullanıcılar Getirildi")
+	return userController.Success(c, allUsers, "All users retrieved")
 }

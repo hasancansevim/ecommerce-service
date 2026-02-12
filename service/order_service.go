@@ -58,7 +58,7 @@ func (orderService *OrderService) CreateOrder(order dto.CreateOrderRequest) (dto
 		payload := map[string]interface{}{
 			"order_id": orderResponse.Id,
 			"user_id":  orderResponse.UserId,
-			"message":  "Sipariş alındı.Mail iletilecek",
+			"message":  "Order received. Email will be sent",
 			"total":    orderResponse.TotalPrice,
 		}
 		body, _ := json.Marshal(payload)
@@ -73,9 +73,9 @@ func (orderService *OrderService) CreateOrder(order dto.CreateOrderRequest) (dto
 			},
 		)
 		if err != nil {
-			fmt.Println("RabbitMQ Hatası: ", err)
+			fmt.Println("RabbitMQ error: ", err)
 		} else {
-			fmt.Println("Event Fırlatıldı : Sipariş Kuyruğa Atıldı!")
+			fmt.Println("Event published: Order queued!")
 		}
 	}()
 	return orderResponse, nil

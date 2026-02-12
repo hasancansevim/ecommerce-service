@@ -42,7 +42,7 @@ func NewUnauthorized(message string) *AppError {
 func NewInternalServerError(err error) *AppError {
 	return &AppError{
 		Code:     http.StatusInternalServerError,
-		Message:  "Sunucu Hatası",
+		Message:  "Internal Server Error",
 		Internal: err,
 	}
 }
